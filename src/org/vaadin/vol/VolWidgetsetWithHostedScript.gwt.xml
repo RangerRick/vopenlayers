@@ -2,8 +2,12 @@
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.7.0//EN" "http://google-web-toolkit.googlecode.com/svn/tags/1.7.0/distro-source/core/src/gwt-module.dtd">
 <module>
 	<!-- WS Compiler: manually edited -->
-	<!--  USE THIS IF YOU DON'T WANT TO USE THE HOSTED OL API -->
-	<inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
-	<inherits name="org.gwtopenmaps.openlayers.OpenLayers" />
+	<!--  USE THIS IF YOU WANT TO USE THE HOSTED OL API -->
+
+	<inherits name="org.vaadin.vol.VolWidgetset" />
+	
+	<script src="http://openlayers.org/api/OpenLayers.js"></script>
+	
+    <!-- <set-property name="user.agent" value="gecko"/> -->
 
 </module>

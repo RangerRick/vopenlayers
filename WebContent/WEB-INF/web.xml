@@ -15,25 +15,17 @@
 			<description>
 			Vaadin application class to start</description>
 			<param-name>application</param-name>
-			<param-value>org.vaadin.vol.VolApplication</param-value>
+			<param-value>org.vaadin.vol.demo.VolApplication</param-value>
 		</init-param>
 		<init-param>
 			<description>
 			Application widgetset</description>
 			<param-name>widgetset</param-name>
-			<param-value>org.vaadin.vol.VolWidgetset</param-value>
+			<param-value>org.vaadin.vol.demo.VolExampleAppWidgetset</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Vol Application</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-		<welcome-file>index.htm</welcome-file>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>default.html</welcome-file>
-		<welcome-file>default.htm</welcome-file>
-		<welcome-file>default.jsp</welcome-file>
-	</welcome-file-list>
 </web-app>

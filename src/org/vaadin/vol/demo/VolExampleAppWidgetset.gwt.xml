@@ -3,7 +3,7 @@
 <module>
 	<!-- WS Compiler: manually edited -->
 	<!--  USE THIS IF YOU DON'T WANT TO USE THE HOSTED OL API -->
-	<inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
-	<inherits name="org.gwtopenmaps.openlayers.OpenLayers" />
+	<inherits name="org.vaadin.vol.VolWidgetsetWithHostedScript" />
+	<script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
 
 </module>
