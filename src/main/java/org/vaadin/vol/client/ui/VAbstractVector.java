@@ -1,0 +1,64 @@
+package org.vaadin.vol.client.ui;
+
+import org.vaadin.vol.client.wrappers.Map;
+import org.vaadin.vol.client.wrappers.Projection;
+import org.vaadin.vol.client.wrappers.Vector;
+import org.vaadin.vol.client.wrappers.VectorLayer;
+
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.terminal.gwt.client.ApplicationConnection;
+import com.vaadin.terminal.gwt.client.Paintable;
+import com.vaadin.terminal.gwt.client.UIDL;
+
+public abstract class VAbstractVector extends Widget implements Paintable {
+
+	protected Vector vector;
+	private Projection projection;
+
+	public VAbstractVector() {
+		setElement(Document.get().createDivElement());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vaadin.terminal.gwt.client.Paintable#updateFromUIDL(com.vaadin.terminal
+	 * .gwt.client.UIDL, com.vaadin.terminal.gwt.client.ApplicationConnection)
+	 */
+	public void updateFromUIDL(UIDL childUIDL, final ApplicationConnection client) {
+		if (client.updateComponent(this, childUIDL, false)) {
+			return;
+		}
+		projection = Projection.get(childUIDL.getStringAttribute("projection"));
+
+		if (vector != null) {
+			getLayer().removeFeature(vector);
+		}
+		updateVector(childUIDL, client);
+		getLayer().addFeature(vector);
+	}
+	
+	protected Projection getProjection() {
+		return projection;
+	}
+
+	protected abstract void updateVector(UIDL childUIDL, ApplicationConnection client);
+
+	private VectorLayer getLayer() {
+		return (VectorLayer) ((VVectorLayer) getParent()).getLayer();
+	}
+
+
+	protected Map getMap() {
+		return ((VOpenLayersMap) getParent().getParent().getParent()).getMap();
+	}
+	
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		getLayer().removeFeature(vector);
+	}
+
+}
