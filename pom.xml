@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.vaadin.vol</groupId>
-  <artifactId>vol</artifactId>
-  <version>0.4.0-SNAPSHOT</version>
-  
-  	<properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.vaadin.vol</groupId>
+	<artifactId>vol</artifactId>
+	<version>0.4.1-SNAPSHOT</version>
+
+	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -19,31 +20,44 @@
 				</configuration>
 			</plugin>
 
-			<!-- Compile custom GWT components or widget dependencies with the GWT 
-				compiler -->
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.1.0-1</version>
+
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
 				<configuration>
-					<webappDirectory>${project.build.directory}/${project.build.finalName}/VAADIN/widgetsets</webappDirectory>
-					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
-					<runTarget>vkml</runTarget>
-					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
-					<noServer>true</noServer>
-					<port>8080</port>
-					<soyc>false</soyc>
-					<module>org.vaadin.vol.demo.VolExampleAppWidgetset</module>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<!-- Implementation-Title and Implementation-Version come from the 
+								POM by default -->
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<!-- Package format version - do not change -->
+							<Vaadin-Package-Version>1</Vaadin-Package-Version>
+
+							<!-- Add-on specific fields to update -->
+
+							<!-- Implementation-Title and Implementation-Version come from the 
+								POM by default -->
+							<!-- <Implementation-Title>${pom.name}</Implementation-Title> <Implementation-Version>${pom.version}</Implementation-Version> -->
+
+							<!-- Comma-separated list of widgetsets in the package -->
+							<Vaadin-Widgetsets>org.vaadin.vol.VolWidgetsetWithHostedScript</Vaadin-Widgetsets>
+						</manifestEntries>
+					</archive>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>resources</goal>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
+
+			<!-- Compile custom GWT components or widget dependencies with the GWT 
+				compiler <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>gwt-maven-plugin</artifactId> 
+				<version>2.1.0-1</version> <configuration> <webappDirectory>${project.build.directory}/${project.build.finalName}/VAADIN/widgetsets</webappDirectory> 
+				<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs> <hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp> 
+				<noServer>true</noServer> <port>8080</port> <soyc>false</soyc> <module>org.vaadin.vol.demo.VolExampleAppWidgetset</module> 
+				</configuration> <executions> <execution> <goals> <goal>resources</goal> 
+				<goal>compile</goal> </goals> </execution> </executions> </plugin> -->
 			<plugin>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
@@ -60,12 +74,25 @@
 			</plugin>
 
 		</plugins>
+
+		<!-- This is needed for the sources required by the GWT compiler to be 
+			included in the produced JARs -->
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+
 	</build>
 
 	<repositories>
 		<repository>
 			<id>vaadin-snapshots</id>
-			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
+			</url>
 			<releases>
 				<enabled>false</enabled>
 			</releases>
@@ -102,7 +129,8 @@
 		</pluginRepository>
 		<pluginRepository>
 			<id>vaadin-snapshots</id>
-			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
+			</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -111,10 +139,10 @@
 			</releases>
 		</pluginRepository>
 	</pluginRepositories>
-  
-  
-  <dependencies>
-  		<dependency>
+
+
+	<dependencies>
+		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin</artifactId>
 			<version>6.5.0</version>
@@ -145,7 +173,7 @@
 			<version>7.2.2.v20101205</version>
 			<scope>test</scope>
 		</dependency>
-  
-  </dependencies>
-  
+
+	</dependencies>
+
 </project>
