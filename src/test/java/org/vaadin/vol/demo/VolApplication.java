@@ -28,6 +28,8 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.VerticalLayout;
@@ -39,7 +41,7 @@ public class VolApplication extends Application {
 
 	@Override
 	public void init() {
-		Window mainWindow = new Window("Vol example Application", layout);
+		final Window mainWindow = new Window("Vol example Application", layout);
 		setMainWindow(mainWindow);
 		final OpenLayersMap map = new OpenLayersMap();
 
@@ -145,8 +147,7 @@ public class VolApplication extends Application {
 
 		// Add the marker to the marker Layer
 		markerLayer.addMarker(marker);
-//		map.setCenter(22.30, 60.452);
-		map.setCenter(22.805, 60.447);
+		map.setCenter(22.30, 60.452);
 		map.setZoom(15);
 
 		
@@ -166,8 +167,13 @@ public class VolApplication extends Application {
 		}
 		drawingMode.addListener(new Property.ValueChangeListener() {
 			public void valueChange(ValueChangeEvent event) {
-				vectorLayer.setDrawindMode((DrawingMode) event.getProperty()
-						.getValue());
+				DrawingMode mode = (DrawingMode) event.getProperty()
+				.getValue();
+				if(mode == DrawingMode.AREA || mode == DrawingMode.NONE) {
+					vectorLayer.setDrawindMode(mode );
+				} else {
+					mainWindow.showNotification("Sorry, feature is on TODO list. Try area.");
+				}
 			}
 		});
 		drawingMode.setValue(DrawingMode.NONE);
@@ -191,12 +197,20 @@ public class VolApplication extends Application {
 		
 		// map.addComponent(wms);
 		map.addLayer(mapTilerLayer);
-		map.addLayer(markerLayer);
 		map.addLayer(vectorLayer);
+		map.addLayer(markerLayer);
 
 
 
 		controls.addComponent(drawingMode);
+		Button moveToTMSExample = new Button("Move to TMS example");
+		moveToTMSExample.addListener(new Button.ClickListener() {
+			public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
+				map.setCenter(22.805, 60.447);
+				map.setZoom(15);
+			}
+		});
+		controls.addComponent(moveToTMSExample );
 
 	}
 
