@@ -1,6 +1,6 @@
 package org.vaadin.vol.client.ui;
 
-import org.vaadin.vol.client.wrappers.Layer;
+import org.vaadin.vol.client.wrappers.layer.Layer;
 
 import com.vaadin.terminal.gwt.client.Paintable;
 

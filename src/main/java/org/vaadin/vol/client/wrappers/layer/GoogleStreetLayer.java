@@ -1,4 +1,4 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.layer;
 
 
 public class GoogleStreetLayer extends Layer {

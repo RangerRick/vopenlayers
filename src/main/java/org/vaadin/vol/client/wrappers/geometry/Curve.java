@@ -1,4 +1,6 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.geometry;
+
+import org.vaadin.vol.client.wrappers.Projection;
 
 
 

@@ -1,4 +1,6 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.layer;
+
+import org.vaadin.vol.client.wrappers.Marker;
 
 
 public class MarkerLayer extends Layer {

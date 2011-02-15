@@ -1,4 +1,5 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.geometry;
+
 
 import com.google.gwt.core.client.JsArray;
 
@@ -8,9 +9,9 @@ public class LineString extends Curve {
 
 	protected LineString(){};
 
-	public native static LineString create(Point[] points) 
+	public native static LineString create(JsArray<Point> points) 
 	/*-{
-		return new $wnd.OpenLayers.Geometry.LineString(points);
+		return new $wnd.OpenLayers.Geometry.LineString($wnd.toOlArray(points));
 	}-*/;
 
 	public native final JsArray<Point> getAllVertices() 

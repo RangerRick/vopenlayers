@@ -4,12 +4,12 @@ import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Marker;
-import org.vaadin.vol.client.wrappers.Popup;
-import org.vaadin.vol.client.wrappers.PopupAnchored;
-import org.vaadin.vol.client.wrappers.PopupAnchoredBubble;
-import org.vaadin.vol.client.wrappers.PopupFramed;
-import org.vaadin.vol.client.wrappers.PopupFramedCloud;
 import org.vaadin.vol.client.wrappers.Projection;
+import org.vaadin.vol.client.wrappers.popup.Popup;
+import org.vaadin.vol.client.wrappers.popup.PopupAnchored;
+import org.vaadin.vol.client.wrappers.popup.PopupAnchoredBubble;
+import org.vaadin.vol.client.wrappers.popup.PopupFramed;
+import org.vaadin.vol.client.wrappers.popup.PopupFramedCloud;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Document;

@@ -3,7 +3,7 @@ package org.vaadin.vol.client.ui;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.Vector;
-import org.vaadin.vol.client.wrappers.VectorLayer;
+import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;

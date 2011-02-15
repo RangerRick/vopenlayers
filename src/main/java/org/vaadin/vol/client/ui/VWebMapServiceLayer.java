@@ -1,6 +1,6 @@
 package org.vaadin.vol.client.ui;
 
-import org.vaadin.vol.client.wrappers.WebMapServiceLayer;
+import org.vaadin.vol.client.wrappers.layer.WebMapServiceLayer;
 
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.UIDL;

@@ -1,4 +1,8 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.popup;
+
+import org.vaadin.vol.client.wrappers.GwtOlHandler;
+import org.vaadin.vol.client.wrappers.LonLat;
+import org.vaadin.vol.client.wrappers.Size;
 
 import com.google.gwt.core.client.JavaScriptObject;
 

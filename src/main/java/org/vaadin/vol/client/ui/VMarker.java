@@ -5,9 +5,9 @@ import org.vaadin.vol.client.wrappers.Icon;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Marker;
-import org.vaadin.vol.client.wrappers.MarkerLayer;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.Size;
+import org.vaadin.vol.client.wrappers.layer.MarkerLayer;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Document;

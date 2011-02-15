@@ -3,7 +3,7 @@ package org.vaadin.vol.client.ui;
 import java.util.Set;
 
 import org.vaadin.vol.client.wrappers.Map;
-import org.vaadin.vol.client.wrappers.MarkerLayer;
+import org.vaadin.vol.client.wrappers.layer.MarkerLayer;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;

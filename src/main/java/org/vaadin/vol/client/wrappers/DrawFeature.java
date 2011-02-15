@@ -1,5 +1,7 @@
 package org.vaadin.vol.client.wrappers;
 
+import org.vaadin.vol.client.wrappers.layer.VectorLayer;
+
 public class DrawFeature extends Control {
 	protected DrawFeature(){}
 	

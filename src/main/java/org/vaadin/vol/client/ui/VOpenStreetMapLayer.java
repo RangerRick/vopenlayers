@@ -1,6 +1,6 @@
 package org.vaadin.vol.client.ui;
 
-import org.vaadin.vol.client.wrappers.OpenStreetMapLayer;
+import org.vaadin.vol.client.wrappers.layer.OpenStreetMapLayer;
 
 public class VOpenStreetMapLayer extends VAbstracMapLayer<OpenStreetMapLayer> {
 

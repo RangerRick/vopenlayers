@@ -1,5 +1,7 @@
 package org.vaadin.vol.client.wrappers;
 
+import org.vaadin.vol.client.wrappers.geometry.Geometry;
+
 import com.google.gwt.core.client.JavaScriptObject;
 
 

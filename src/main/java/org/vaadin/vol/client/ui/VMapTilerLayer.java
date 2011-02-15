@@ -3,7 +3,7 @@ package org.vaadin.vol.client.ui;
 import org.vaadin.vol.client.wrappers.Bounds;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Projection;
-import org.vaadin.vol.client.wrappers.TileMapServiceLayer;
+import org.vaadin.vol.client.wrappers.layer.TileMapServiceLayer;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;

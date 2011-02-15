@@ -1,5 +1,8 @@
 package org.vaadin.vol.client.wrappers;
 
+import org.vaadin.vol.client.wrappers.layer.Layer;
+import org.vaadin.vol.client.wrappers.popup.Popup;
+
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;

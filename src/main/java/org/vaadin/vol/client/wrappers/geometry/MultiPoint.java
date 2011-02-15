@@ -1,4 +1,5 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.geometry;
+
 
 
 

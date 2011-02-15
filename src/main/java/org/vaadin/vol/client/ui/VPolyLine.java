@@ -2,7 +2,7 @@ package org.vaadin.vol.client.ui;
 
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.Vector;
-import org.vaadin.vol.client.wrappers.geometry.LinearRing;
+import org.vaadin.vol.client.wrappers.geometry.LineString;
 import org.vaadin.vol.client.wrappers.geometry.Point;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -10,7 +10,7 @@ import com.google.gwt.core.client.JsArray;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.UIDL;
 
-public class VArea extends VAbstractVector {
+public class VPolyLine extends VAbstractVector {
 
 	@Override
 	protected void updateVector(UIDL childUIDL, ApplicationConnection client) {
@@ -27,7 +27,7 @@ public class VArea extends VAbstractVector {
 			points.push(p);
 		}
 		
-		LinearRing lr = LinearRing.create(points);
+		LineString lr = LineString.create(points);
 
 		JavaScriptObject style = null;
 		JavaScriptObject attributes = null;

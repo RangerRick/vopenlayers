@@ -1,4 +1,9 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.layer;
+
+import org.vaadin.vol.client.wrappers.AbstractOpenLayersWrapper;
+import org.vaadin.vol.client.wrappers.Bounds;
+import org.vaadin.vol.client.wrappers.MapOverlay;
+import org.vaadin.vol.client.wrappers.Projection;
 
 
 /**

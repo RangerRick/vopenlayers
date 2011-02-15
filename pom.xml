@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.vaadin.vol</groupId>
-	<artifactId>vol</artifactId>
+	<artifactId>openlayers-wrapper</artifactId>
 	<version>0.4.1-SNAPSHOT</version>
 
 	<properties>
@@ -42,7 +42,7 @@
 
 							<!-- Implementation-Title and Implementation-Version come from the 
 								POM by default -->
-							<!-- <Implementation-Title>${pom.name}</Implementation-Title> <Implementation-Version>${pom.version}</Implementation-Version> -->
+							<Implementation-Title>OpenLayers Wrapper</Implementation-Title>
 
 							<!-- Comma-separated list of widgetsets in the package -->
 							<Vaadin-Widgetsets>org.vaadin.vol.VolWidgetsetWithHostedScript</Vaadin-Widgetsets>

@@ -169,7 +169,7 @@ public class VolApplication extends Application {
 			public void valueChange(ValueChangeEvent event) {
 				DrawingMode mode = (DrawingMode) event.getProperty()
 				.getValue();
-				if(mode == DrawingMode.AREA || mode == DrawingMode.NONE) {
+				if(mode == DrawingMode.AREA || mode == DrawingMode.LINE || mode == DrawingMode.NONE) {
 					vectorLayer.setDrawindMode(mode );
 				} else {
 					mainWindow.showNotification("Sorry, feature is on TODO list. Try area.");

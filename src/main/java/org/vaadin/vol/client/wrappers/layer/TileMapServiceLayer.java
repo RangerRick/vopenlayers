@@ -1,4 +1,6 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.layer;
+
+import org.vaadin.vol.client.wrappers.LonLat;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;

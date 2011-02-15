@@ -6,16 +6,17 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.vaadin.vol.client.wrappers.DrawFeature;
-import org.vaadin.vol.client.wrappers.Geometry;
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.JsObject;
-import org.vaadin.vol.client.wrappers.LineString;
 import org.vaadin.vol.client.wrappers.Map;
-import org.vaadin.vol.client.wrappers.Point;
+import org.vaadin.vol.client.wrappers.PathHandler;
 import org.vaadin.vol.client.wrappers.PolygonHandler;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.Vector;
-import org.vaadin.vol.client.wrappers.VectorLayer;
+import org.vaadin.vol.client.wrappers.geometry.Geometry;
+import org.vaadin.vol.client.wrappers.geometry.LineString;
+import org.vaadin.vol.client.wrappers.geometry.Point;
+import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -149,7 +150,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 			if (drawingMode == "AREA") {
 				df = DrawFeature.create(getLayer(), PolygonHandler.get());
 			} else if (drawingMode == "LINE") {
-				// TODO
+				df = DrawFeature.create(getLayer(), PathHandler.get());
 			} else if (drawingMode == "POINT") {
 				// TODO
 			}

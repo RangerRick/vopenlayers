@@ -92,13 +92,20 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 			for (int i = 0; i < points.length; i++) {
 				points[i] = Point.valueOf(object[i]);
 			}
-			Area area = new Area();
-			area.setPoints(points);
-			newAreaPainted(area);
+			
+			if(drawindMode == DrawingMode.AREA) {
+				Area area = new Area();
+				area.setPoints(points);
+				newAreaPainted(area);
+			} else if (drawindMode == DrawingMode.LINE) {
+				PolyLine polyLine = new PolyLine();
+				polyLine.setPoints(points);
+				newAreaPainted(polyLine);
+			}
 		}
 	}
 
-	protected void newAreaPainted(Area area) {
+	protected void newAreaPainted(Vector area) {
 		VectorDrawnEvent vectorDrawnEvent = new VectorDrawnEvent(this, area);
 		fireEvent(vectorDrawnEvent);
 		requestRepaint();

@@ -1,7 +1,7 @@
 package org.vaadin.vol.client.ui;
 
-import org.vaadin.vol.client.wrappers.Layer;
 import org.vaadin.vol.client.wrappers.Map;
+import org.vaadin.vol.client.wrappers.layer.Layer;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;

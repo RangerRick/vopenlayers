@@ -1,5 +1,8 @@
 package org.vaadin.vol.client.wrappers;
 
+import org.vaadin.vol.client.wrappers.layer.Layer;
+import org.vaadin.vol.client.wrappers.popup.Popup;
+
 import com.google.gwt.core.client.JavaScriptObject;
 
 public class MapOverlay extends JavaScriptObject {
