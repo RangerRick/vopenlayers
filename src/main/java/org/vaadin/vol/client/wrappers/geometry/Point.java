@@ -17,5 +17,10 @@ public class Point extends Geometry {
 	/*-{
 		this.transform(fromProjection, toProjection);
 	}-*/;
+
+	public final native Point nativeClone() 
+	/*-{
+		return this.clone();
+	}-*/;
 	
 }

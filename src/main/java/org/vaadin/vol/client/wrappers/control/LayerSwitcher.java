@@ -1,4 +1,4 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.control;
 
 
 public class LayerSwitcher extends Control {

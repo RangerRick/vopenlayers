@@ -60,5 +60,9 @@ public abstract class VAbstractVector extends Widget implements Paintable {
 		super.onDetach();
 		getLayer().removeFeature(vector);
 	}
+	
+	public Vector getVector() {
+		return vector;
+	}
 
 }

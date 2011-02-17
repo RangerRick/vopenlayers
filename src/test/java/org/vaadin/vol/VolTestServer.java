@@ -7,7 +7,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-public class TestServer {
+public class VolTestServer {
 
 	private static final int PORT = 9998;
 
@@ -32,7 +32,7 @@ public class TestServer {
 		File file = new File("./target");
 		File[] listFiles = file.listFiles();
 		for (File file2 : listFiles) {
-			if (file2.isDirectory() && file2.getName().startsWith("vol-")) {
+			if (file2.isDirectory() && file2.getName().startsWith("vol")) {
 				context.setWar(file2.getPath());
 				break;
 			}

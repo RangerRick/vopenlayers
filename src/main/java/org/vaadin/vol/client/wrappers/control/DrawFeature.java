@@ -1,5 +1,6 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.control;
 
+import org.vaadin.vol.client.wrappers.handler.Handler;
 import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 public class DrawFeature extends Control {
@@ -10,14 +11,5 @@ public class DrawFeature extends Control {
 		return new $wnd.OpenLayers.Control.DrawFeature(targetLayer, drawHandler);
 	}-*/;
 
-	public native final void activate() 
-	/*-{
-		this.activate();
-	}-*/;
-
-	public native final void deActivate() 
-	/*-{
-		this.deactivate();
-	}-*/;
 
 }

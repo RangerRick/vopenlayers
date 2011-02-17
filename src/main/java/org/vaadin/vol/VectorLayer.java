@@ -25,11 +25,11 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 	
 	public enum DrawingMode {
 		NONE, 
-		/** NOT YET IMPLEMENTED */
 		LINE, 
 		AREA, 
 		/** NOT YET IMPLEMENTED */
-		POINT
+		POINT,
+		MODIFY
 	}
 	
 	private DrawingMode drawindMode = DrawingMode.NONE;
@@ -93,16 +93,22 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 				points[i] = Point.valueOf(object[i]);
 			}
 			
-			if(drawindMode == DrawingMode.AREA) {
+			if(drawindMode == DrawingMode.AREA || drawindMode == DrawingMode.LINE) {
 				Area area = new Area();
 				area.setPoints(points);
 				newAreaPainted(area);
-			} else if (drawindMode == DrawingMode.LINE) {
-				PolyLine polyLine = new PolyLine();
-				polyLine.setPoints(points);
-				newAreaPainted(polyLine);
+			} else if(drawindMode == DrawingMode.MODIFY) {
+				Area area = (Area) variables.get("modifiedVector");
+				area.setPoints(points);
+				areaModified(area);
 			}
+			
 		}
+	}
+
+	private void areaModified(Area object2) {
+		VectorModifiedEvent vectorModifiedEvent = new VectorModifiedEvent(this, object2);
+		fireEvent(vectorModifiedEvent);
 	}
 
 	protected void newAreaPainted(Vector area) {
@@ -126,6 +132,23 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 	public void removeListener(VectorDrawnListener listener) {
 		removeListener(VectorDrawnEvent.class, listener, VectorDrawnListener.method);
 	}
+	
+	public interface VectorModifiedListener {
+		
+		public final Method method = ReflectTools.findMethod(VectorModifiedListener.class, "vectorModified", VectorModifiedEvent.class); 
+		
+		public void vectorModified(VectorModifiedEvent event);
+		
+	}
+	
+	public void addListener(VectorModifiedListener listener) {
+		addListener(VectorModifiedEvent.class, listener, VectorModifiedListener.method);
+	}
+	
+	public void removeListener(VectorModifiedListener listener) {
+		removeListener(VectorModifiedEvent.class, listener, VectorModifiedListener.method);
+	}
+
 	
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
@@ -153,4 +176,24 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 		}
 		
 	}
+	
+	public class VectorModifiedEvent extends Event {
+
+		private Vector vector;
+
+		public VectorModifiedEvent(Component source, Vector vector) {
+			super(source);
+			this.setVector(vector);
+		}
+
+		private void setVector(Vector vector) {
+			this.vector = vector;
+		}
+
+		public Vector getVector() {
+			return vector;
+		}
+		
+	}
+
 }

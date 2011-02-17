@@ -6,6 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.vaadin.vol.Area;
 import org.vaadin.vol.GoogleStreetMapLayer;
+import org.vaadin.vol.MapTilerLayer;
 import org.vaadin.vol.Marker;
 import org.vaadin.vol.MarkerLayer;
 import org.vaadin.vol.OpenLayersMap;
@@ -15,12 +16,12 @@ import org.vaadin.vol.Popup;
 import org.vaadin.vol.Popup.CloseEvent;
 import org.vaadin.vol.Popup.CloseListener;
 import org.vaadin.vol.Popup.PopupStyle;
-import org.vaadin.vol.MapTilerLayer;
 import org.vaadin.vol.Vector;
 import org.vaadin.vol.VectorLayer;
 import org.vaadin.vol.VectorLayer.DrawingMode;
 import org.vaadin.vol.VectorLayer.VectorDrawnEvent;
 import org.vaadin.vol.VectorLayer.VectorDrawnListener;
+import org.vaadin.vol.VectorLayer.VectorModifiedEvent;
 import org.xml.sax.SAXException;
 
 import com.vaadin.Application;
@@ -29,7 +30,6 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.VerticalLayout;
@@ -84,11 +84,15 @@ public class VolApplication extends Application {
 		// wms.setDisplayName("Canadian data");
 		// wms.setBaseLayer(false);
 		// map.addLayer(wms);
-		
+
 		MapTilerLayer mapTilerLayer = null;
 		try {
-//			mapTilerLayer = new MapTilerLayer("http://matti.virtuallypreinstalled.com/tiles/pirttikankare/pirttikankare/");
-			mapTilerLayer = new MapTilerLayer("http://dl.dropbox.com/u/4041822/pirttikankare/");
+			// mapTilerLayer = new
+			// MapTilerLayer("http://matti.virtuallypreinstalled.com/tiles/pirttikankare/pirttikankare/");
+			mapTilerLayer = new MapTilerLayer(
+					"http://dl.dropbox.com/u/4041822/pirttikankare/");
+			mapTilerLayer.setDisplayName("Pirttikankare");
+			mapTilerLayer.setBaseLayer(false);
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -99,9 +103,6 @@ public class VolApplication extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		mapTilerLayer.setDisplayName("Pirttikankare");
-		mapTilerLayer.setBaseLayer(false);
-		
 
 		final VectorLayer vectorLayer = new VectorLayer();
 
@@ -150,11 +151,9 @@ public class VolApplication extends Application {
 		map.setCenter(22.30, 60.452);
 		map.setZoom(15);
 
-		
-		
 		map.setSizeFull();
-//		map.setWidth("600px");
-//		map.setHeight("400px");
+		// map.setWidth("600px");
+		// map.setHeight("400px");
 
 		layout.setSizeFull();
 		layout.addComponent(controls);
@@ -167,12 +166,13 @@ public class VolApplication extends Application {
 		}
 		drawingMode.addListener(new Property.ValueChangeListener() {
 			public void valueChange(ValueChangeEvent event) {
-				DrawingMode mode = (DrawingMode) event.getProperty()
-				.getValue();
-				if(mode == DrawingMode.AREA || mode == DrawingMode.LINE || mode == DrawingMode.NONE) {
-					vectorLayer.setDrawindMode(mode );
+				DrawingMode mode = (DrawingMode) event.getProperty().getValue();
+				if (mode == DrawingMode.MODIFY || mode == DrawingMode.AREA
+						|| mode == DrawingMode.LINE || mode == DrawingMode.NONE) {
+					vectorLayer.setDrawindMode(mode);
 				} else {
-					mainWindow.showNotification("Sorry, feature is on TODO list. Try area.");
+					mainWindow
+							.showNotification("Sorry, feature is on TODO list. Try area.");
 				}
 			}
 		});
@@ -187,20 +187,24 @@ public class VolApplication extends Application {
 						"Vector drawn:" + vector);
 			}
 		});
-		
+
+		vectorLayer.addListener(new VectorLayer.VectorModifiedListener() {
+			public void vectorModified(VectorModifiedEvent event) {
+				vectorLayer.getWindow().showNotification(
+						"Vector modified:" + event.getVector());
+			}
+		});
+
 		// add layers
-		
+
 		// base layers
 		map.addLayer(googleStreets);
 		map.addLayer(osm);
 
-		
 		// map.addComponent(wms);
 		map.addLayer(mapTilerLayer);
 		map.addLayer(vectorLayer);
 		map.addLayer(markerLayer);
-
-
 
 		controls.addComponent(drawingMode);
 		Button moveToTMSExample = new Button("Move to TMS example");
@@ -210,7 +214,7 @@ public class VolApplication extends Application {
 				map.setZoom(15);
 			}
 		});
-		controls.addComponent(moveToTMSExample );
+		controls.addComponent(moveToTMSExample);
 
 	}
 

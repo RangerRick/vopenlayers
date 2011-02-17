@@ -23,6 +23,7 @@ public class Area extends Vector {
 
 	public void setPoints(Point[] points) {
 		this.points = points;
+		requestRepaint();
 	}
 
 	public Point[] getPoints() {

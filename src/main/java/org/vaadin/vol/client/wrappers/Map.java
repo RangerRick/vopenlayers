@@ -1,5 +1,6 @@
 package org.vaadin.vol.client.wrappers;
 
+import org.vaadin.vol.client.wrappers.control.Control;
 import org.vaadin.vol.client.wrappers.layer.Layer;
 import org.vaadin.vol.client.wrappers.popup.Popup;
 

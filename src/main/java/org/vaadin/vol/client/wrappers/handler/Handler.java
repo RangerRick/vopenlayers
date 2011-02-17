@@ -1,4 +1,4 @@
-package org.vaadin.vol.client.wrappers;
+package org.vaadin.vol.client.wrappers.handler;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
