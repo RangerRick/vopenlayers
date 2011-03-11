@@ -3,7 +3,6 @@ package org.vaadin.vol.client.wrappers.layer;
 import org.vaadin.vol.client.wrappers.LonLat;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 
 public class TileMapServiceLayer extends Layer {
 
@@ -13,7 +12,6 @@ public class TileMapServiceLayer extends Layer {
 	public native final static TileMapServiceLayer create(String display,
 			String url, boolean isBaseLayer, JavaScriptObject getUrlMethod)
 	/*-{
-	 	debugger;
 		var params = {};
  		params.getURL = getUrlMethod;
 //		params.transparent = true;

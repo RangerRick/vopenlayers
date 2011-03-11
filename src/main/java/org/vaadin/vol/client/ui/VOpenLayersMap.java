@@ -5,11 +5,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.management.ImmutableDescriptor;
+
+import org.vaadin.vol.client.wrappers.Bounds;
+import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.control.LayerSwitcher;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
@@ -17,6 +22,8 @@ import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
+import com.vaadin.terminal.gwt.client.Util;
+import com.vaadin.terminal.gwt.client.VConsole;
 
 /**
  * Client side widget which communicates with the server. Messages from the
@@ -46,6 +53,10 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 
 	private HashSet<String> orphanedcomponents;
 
+	private GwtOlHandler extentChangeListener;
+
+	private boolean immediate;
+
 	/**
 	 * The constructor should first call super() to initialize the component and
 	 * then handle any initialization relevant to Vaadin.
@@ -65,7 +76,7 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 	/**
 	 * Called whenever an update is received from the server
 	 */
-	public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
+	public void updateFromUIDL(UIDL uidl, final ApplicationConnection client) {
 
 		// This call should be made first.
 		// It handles sizes, captions, tooltips, etc. automatically.
@@ -74,6 +85,35 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 			// and we
 			// do not need to update anything.
 			return;
+		}
+		
+		immediate = uidl.hasAttribute("immediate");
+		
+		if(extentChangeListener == null) {
+			extentChangeListener = new GwtOlHandler() {
+				public void onEvent(JsArray arguments) {
+					int zoom = map.getZoom();
+					client.updateVariable(paintableId, "zoom", zoom, false);
+					Bounds extent = map.getExtent();
+					if(extent == null) {
+						VConsole.log(" extent null");
+						return;
+					}
+					Projection projection = map.getProjection();
+					extent.transform(projection, DEFAULT_PROJECTION);
+					client.updateVariable(paintableId, "left", extent.getLeft(), false);
+					client.updateVariable(paintableId, "right", extent.getRight(), false);
+					client.updateVariable(paintableId, "top", extent.getTop(), false);
+					client.updateVariable(paintableId, "bottom", extent.getBottom(), immediate);
+				}
+			};
+			getMap().registerEventHandler("moveend", extentChangeListener);
+			getMap().registerEventHandler("zoomed", extentChangeListener);
+			
+			/*
+			 * Update extent on first paint.
+			 */
+//			extentChangeListener.onEvent(null);
 		}
 
 		map.addControl(LayerSwitcher.create());
@@ -112,7 +152,16 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 	private void updateZoomAndCenter(UIDL uidl) {
 		// // TODO set zoom only if marked dirty on server, also separately from
 		// // center point
-		int zoom = uidl.getIntAttribute("zoom");
+		
+		int zoom = map.getZoom();
+		if(uidl.hasAttribute("zoom")) {
+			zoom = uidl.getIntAttribute("zoom");
+			if(!uidl.hasAttribute("clat")) {
+				// just set zoom, no center position
+				map.setZoom(zoom);
+			}
+		}
+		
 		if (uidl.hasAttribute("clat")) {
 			double lat = uidl.getDoubleAttribute("clat");
 			double lon = uidl.getDoubleAttribute("clon");

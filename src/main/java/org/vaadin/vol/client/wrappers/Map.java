@@ -85,4 +85,20 @@ public class Map extends Widget {
 		return getMap().getMaxExtent();
 	}
 
+	public int getZoom() {
+		return getMap().getZoom();
+	}
+
+	public void setZoom(int zoom) {
+		getMap().zoomTo(zoom);
+	}
+	
+	public void registerEventHandler(String evtName, GwtOlHandler handler) {
+		getMap().registerHandler(evtName, handler);
+	}
+
+	public Bounds getExtent() {
+		return getMap().getExtent();
+	}
+
 }

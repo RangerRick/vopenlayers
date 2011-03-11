@@ -22,6 +22,7 @@ import org.vaadin.vol.VectorLayer.DrawingMode;
 import org.vaadin.vol.VectorLayer.VectorDrawnEvent;
 import org.vaadin.vol.VectorLayer.VectorDrawnListener;
 import org.vaadin.vol.VectorLayer.VectorModifiedEvent;
+import org.vaadin.vol.WebMapServiceLayer;
 import org.xml.sax.SAXException;
 
 import com.vaadin.Application;
@@ -41,9 +42,36 @@ public class VolApplication extends Application {
 
 	@Override
 	public void init() {
+//		final Window mainWindow2 = new Window("Vol example Application", layout);
+//        setMainWindow(mainWindow2);
+//        final OpenLayersMap map2 = new OpenLayersMap();
+//        // Defining a WMS layer as in OL examples
+//        WebMapServiceLayer wms = new WebMapServiceLayer();
+//
+//        wms.setUri("http://vmap0.tiles.osgeo.org/wms/vmap0");
+//        wms.setLayers("basic");
+//        wms.setServiceType("wms");
+//        wms.setDisplayName("OpenLayers WMS");
+//        wms.setBaseLayer(true);
+//        map2.addLayer(wms);
+//        map2.setZoom(12);
+//        map2.setCenter(0, 0);
+//
+//        map2.setSizeFull();
+//		
+//		        layout.setSizeFull();
+//		        layout.addComponent(controls);
+//		        layout.addComponent(map2);
+//		        layout.setExpandRatio(map2, 1);		
+//
+//		if(true) {
+//			return;
+//		}
 		final Window mainWindow = new Window("Vol example Application", layout);
 		setMainWindow(mainWindow);
 		final OpenLayersMap map = new OpenLayersMap();
+		
+		map.setImmediate(true); // update extent and zoom to server as they change
 
 		/*
 		 * Open street maps layer as a base layer. Note importance of the order,
@@ -133,13 +161,14 @@ public class VolApplication extends Application {
 		// Add some server side integration when clicking a marker
 		marker.addClickListener(new ClickListener() {
 			public void click(ClickEvent event) {
-				Popup popup = new Popup(marker.getLon(), marker.getLat(),
+				final Popup popup = new Popup(marker.getLon(), marker.getLat(),
 						"Vaadin HQ is <em>here</em>!");
 				popup.setAnchor(marker);
 				popup.setPopupStyle(PopupStyle.FRAMED_CLOUD);
 				popup.addListener(new CloseListener() {
 					public void onClose(CloseEvent event) {
 						System.err.println("Closed");
+						map.removeComponent(popup);
 					}
 				});
 				map.addPopup(popup);
