@@ -98,64 +98,6 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 			}
 			paintable.updateFromUIDL(layerUidl, client);
 
-			// String name = layer.getStringAttribute("name");
-			// assert name != null;
-			//
-			// if (name.equals("google")) {
-			// // TODO make this work with Gmaps V3
-			// GoogleOptions params = new GoogleOptions();
-			// params.setType(GMapType.G_SATELLITE_MAP);
-			// params.setSphericalMercator(false);
-			// params.setIsBaseLayer(layer.getBooleanAttribute("isBaseLayer"));
-			// Google google = new Google("Google Satelitte", params);
-			//
-			// getMap().addLayers(new Layer[] { google });
-			// } else if (name.equals("osm")) {
-			//
-			// OSM osm = OSM.Mapnik(null);
-			// OSM osmarender = OSM.Osmarender("Osmarender");
-			// osm.setIsBaseLayer(layer.getBooleanAttribute("isBaseLayer"));
-			// osmarender.setIsBaseLayer(layer.getBooleanAttribute("isBaseLayer"));
-			// getMap().addLayer(osm);
-			// getMap().addLayer(osmarender);
-			//
-			// } else if (name.equals("markers")) {
-			// markerLayer = new MarkerLayer("Markers");
-			// markerLayer.updateFromUIDL(layer);
-			// getMap().addLayer(markerLayer);
-			// } else if (name.equals("wms")) {
-			// // Defining a WMSLayer and adding it to a Map
-			// WMSParams wmsParams = new WMSParams();
-			// wmsParams.setFormat("image/jpeg");
-			// wmsParams.setLayers(layer.getStringAttribute("layer"));
-			//
-			// if (layer.hasAttribute("featureid")) {
-			// if (!layer.getStringAttribute("featureid").equals("")) {
-			// // wmsParams.setFilters(layer.getStringAttribute("featureid"));
-			// }
-			// }
-			// WMSOptions wmsOptions = new WMSOptions();
-			// wmsOptions.setIsBaseLayer(layer
-			// .getBooleanAttribute("isBaseLayer"));
-			// if (layer.hasAttribute("opacity")) {
-			// wmsOptions.setLayerOpacity(layer
-			// .getDoubleAttribute("opacity"));
-			// }
-			// if (layer.hasAttribute("projection")) {
-			// wmsOptions.setProjection(layer
-			// .getStringAttribute("projection"));
-			// }
-			//
-			// WMS wms = new WMS(layer.getStringAttribute("display"),
-			// layer.getStringAttribute("uri"), wmsParams, wmsOptions);
-			//
-			// // TODO save by name/id or similar, targeted updates, best
-			// // would be to make layers vaadin widgets somehow ->
-			// // framework
-			// // would point updates to right place
-			// getMap().addLayer(wms);
-			//
-			// }
 		}
 
 		for (String id : orphanedcomponents) {
