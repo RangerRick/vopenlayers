@@ -75,7 +75,11 @@ public class OpenLayersMap extends AbstractComponentContainer {
 	}
 
 	private boolean isDirty(String fieldName) {
-		if (fullRepaint) {
+		/*
+		 * If full repaint if request repaint called directly or painted without
+		 * repaint.
+		 */
+		if (fullRepaint || dirtyFields.isEmpty()) {
 			return true;
 		} else {
 			return dirtyFields.contains(fieldName);
@@ -122,7 +126,7 @@ public class OpenLayersMap extends AbstractComponentContainer {
 		bottom = (Double) variables.get("bottom");
 		left = (Double) variables.get("left");
 	}
-	
+
 	/**
 	 * Note, this does not work until the map is rendered.
 	 * 
