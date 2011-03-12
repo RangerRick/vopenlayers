@@ -19,13 +19,6 @@ public class MapOverlay extends AbstractOpenLayersWrapper {
 	 */
 	public static native MapOverlay get(String id)
 	/*-{
-
-		
-		// This is needed to overcome infamous javascript array detection issue with iframe borders
-		if(!$wnd.toOlArray) {
-			$wnd.eval("toOlArray = function(a) { var ra = []; for(var i = 0; i < a.length; i++) { ra.push(a[i]);}return ra;};");
-		}
-
 	            var options = {
 	            // for only map tiler base layer, use these
 	//	                projection: new $wnd.OpenLayers.Projection("EPSG:900913"),
