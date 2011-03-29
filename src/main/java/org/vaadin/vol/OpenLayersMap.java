@@ -29,6 +29,11 @@ public class OpenLayersMap extends AbstractComponentContainer {
 		setHeight("350px");
 	}
 
+	/**
+	 * A typed alias for {@link #addComponent(Component)}.
+	 * 
+	 * @param layer
+	 */
 	public void addLayer(Layer layer) {
 		addComponent(layer);
 	}
@@ -40,6 +45,16 @@ public class OpenLayersMap extends AbstractComponentContainer {
 		setDirty("components");
 	}
 
+	/**
+	 * Adds component into the OpenLayers Map. Note that the map only supports
+	 * certain types of Components.
+	 * <p>
+	 * Developers are encouraged to use better typed methods instead:
+	 * @see #addLayer(Layer)
+	 * @see #addPopup(Popup)
+	 * 
+	 * @see com.vaadin.ui.AbstractComponentContainer#addComponent(com.vaadin.ui.Component)
+	 */
 	@Override
 	public void addComponent(Component c) {
 		setDirty("components");
