@@ -22,6 +22,7 @@ import org.vaadin.vol.VectorLayer.DrawingMode;
 import org.vaadin.vol.VectorLayer.VectorDrawnEvent;
 import org.vaadin.vol.VectorLayer.VectorDrawnListener;
 import org.vaadin.vol.VectorLayer.VectorModifiedEvent;
+import org.vaadin.vol.WebMapServiceLayer;
 import org.xml.sax.SAXException;
 
 import com.vaadin.Application;
@@ -43,11 +44,11 @@ public class VolApplication extends Application {
 	public void init() {
 		final Window mainWindow = new Window("Vol example Application", layout);
 		setMainWindow(mainWindow);
-		
+
 		OpenLayersMap map = createTestMap(mainWindow);
-//		OpenLayersMap map = getMapIssue1();
-		
-		
+		// OpenLayersMap map = getMapIssue1();
+		// OpenLayersMap map = getMapIssue2();
+
 		layout.setSizeFull();
 		layout.addComponent(controls);
 		layout.addComponent(map);
@@ -57,7 +58,8 @@ public class VolApplication extends Application {
 
 	private OpenLayersMap createTestMap(final Window mainWindow) {
 		final OpenLayersMap map = new OpenLayersMap();
-		map.setImmediate(true); // update extent and zoom to server as they change
+		map.setImmediate(true); // update extent and zoom to server as they
+								// change
 
 		/*
 		 * Open street maps layer as a base layer. Note importance of the order,
@@ -225,65 +227,100 @@ public class VolApplication extends Application {
 			}
 		});
 		controls.addComponent(moveToTMSExample);
-		
+
 		return map;
 	}
-	
-    private OpenLayersMap getMapIssue1(){
-        OpenLayersMap map = new OpenLayersMap();
-        //map.setImmediate(true);
 
-        /*
-                 * Open street maps layer as a base layer. Note importance of the order,
-                 * OSM layer now sets the projection to Spherical Mercator. If added eg.
-                 * after markers or vectors, they might render with bad values.
-                 */
-                OpenStreetMapLayer osm = new OpenStreetMapLayer();
+	private OpenLayersMap getMapIssue1() {
+		OpenLayersMap map = new OpenLayersMap();
+		// map.setImmediate(true);
 
-                GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
+		/*
+		 * Open street maps layer as a base layer. Note importance of the order,
+		 * OSM layer now sets the projection to Spherical Mercator. If added eg.
+		 * after markers or vectors, they might render with bad values.
+		 */
+		OpenStreetMapLayer osm = new OpenStreetMapLayer();
 
-        
-        /**
-         * Creating a WMS layer to add to OpenLayersMap
-         */
+		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
 
-      
-        
-        /**
-         * Creating a MarketLayer to add to OpenLayersMap
-         */
-        MarkerLayer markerLayer = new MarkerLayer();
-        Marker marker = new Marker(22.30083, 60.452541);
-        marker.setIcon("http://dev.vaadin.com/chrome/site/vaadin-trac.png", 60, 20);
-        markerLayer.addComponent(marker);
+		/**
+		 * Creating a WMS layer to add to OpenLayersMap
+		 */
 
-        /**
-         * Creating a VectorLayer to add to OpenLayersMap
-         */
-        VectorLayer vectorLayer=new VectorLayer();
-        vectorLayer.setDisplayName("Vector layer");
-        vectorLayer.setDrawindMode(VectorLayer.DrawingMode.NONE);
+		/**
+		 * Creating a MarketLayer to add to OpenLayersMap
+		 */
+		MarkerLayer markerLayer = new MarkerLayer();
+		Marker marker = new Marker(22.30083, 60.452541);
+		marker.setIcon("http://dev.vaadin.com/chrome/site/vaadin-trac.png", 60,
+				20);
+		markerLayer.addComponent(marker);
 
-        OpenStreetMapLayer osmLayer=new OpenStreetMapLayer();
+		/**
+		 * Creating a VectorLayer to add to OpenLayersMap
+		 */
+		VectorLayer vectorLayer = new VectorLayer();
+		vectorLayer.setDisplayName("Vector layer");
+		vectorLayer.setDrawindMode(VectorLayer.DrawingMode.NONE);
 
+		OpenStreetMapLayer osmLayer = new OpenStreetMapLayer();
 
-        map.setCenter(22.30, 60.452);
-        map.setZoom(1000);
+		map.setCenter(22.30, 60.452);
+		map.setZoom(1000);
 
-        // base layers
-        //map.addLayer(googleStreets);
-        map.addLayer(osm);
+		// base layers
+		// map.addLayer(googleStreets);
+		map.addLayer(osm);
 
-        //map.addComponent(wmsLayer);
-        //map.addLayer(wmsLayer);
-        //map.addComponent(markerLayer);
-        map.addLayer(markerLayer);
-        map.addComponent(vectorLayer);
-        map.addComponent(osmLayer);
-        map.setSizeFull();
+		// map.addComponent(wmsLayer);
+		// map.addLayer(wmsLayer);
+		// map.addComponent(markerLayer);
+		map.addLayer(markerLayer);
+		map.addComponent(vectorLayer);
+		map.addComponent(osmLayer);
+		map.setSizeFull();
 
+		return map;
+	}
 
-        return map;
-    }
+	private static OpenLayersMap getMapIssue2() {
 
+		final OpenLayersMap map = new OpenLayersMap();
+
+		// Defining a WMS layer as in OL examples
+		WebMapServiceLayer wms = new WebMapServiceLayer();
+		wms.setUri("http://vmap0.tiles.osgeo.org/wms/vmap0");
+		wms.setLayers("basic");
+		wms.setServiceType("wms");
+		wms.setDisplayName("OpenLayers WMS");
+		wms.setBaseLayer(true);
+		map.addLayer(wms);
+
+		// OL example data from canada
+		// var dm_wms = new OpenLayers.Layer.WMS(
+		// "Canadian Data",
+		// "http://www2.dmsolutions.ca/cgi-bin/mswms_gmap",
+		// {
+		// layers: "bathymetry,land_fn,park,drain_fn,drainage," +
+		// "prov_bound,fedlimit,rail,road,popplace",
+		// transparent: "true",
+		// format: "image/png"
+		// },
+		// {isBaseLayer: false, visibility: false}
+		// );
+
+		wms = new WebMapServiceLayer();
+		wms.setUri("http://www2.dmsolutions.ca/cgi-bin/mswms_gmap");
+		wms.setLayers("bathymetry,land_fn,park,drain_fn,drainage,"
+				+ "prov_bound,fedlimit,rail,road,popplace");
+		wms.setFormat("image/png");
+		wms.setDisplayName("Canadian data");
+		wms.setBaseLayer(false);
+		map.addLayer(wms);
+
+		map.setSizeFull();
+
+		return map;
+	}
 }
