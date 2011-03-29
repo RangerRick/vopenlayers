@@ -22,7 +22,6 @@ import org.vaadin.vol.VectorLayer.DrawingMode;
 import org.vaadin.vol.VectorLayer.VectorDrawnEvent;
 import org.vaadin.vol.VectorLayer.VectorDrawnListener;
 import org.vaadin.vol.VectorLayer.VectorModifiedEvent;
-import org.vaadin.vol.WebMapServiceLayer;
 import org.xml.sax.SAXException;
 
 import com.vaadin.Application;
@@ -42,35 +41,22 @@ public class VolApplication extends Application {
 
 	@Override
 	public void init() {
-//		final Window mainWindow2 = new Window("Vol example Application", layout);
-//        setMainWindow(mainWindow2);
-//        final OpenLayersMap map2 = new OpenLayersMap();
-//        // Defining a WMS layer as in OL examples
-//        WebMapServiceLayer wms = new WebMapServiceLayer();
-//
-//        wms.setUri("http://vmap0.tiles.osgeo.org/wms/vmap0");
-//        wms.setLayers("basic");
-//        wms.setServiceType("wms");
-//        wms.setDisplayName("OpenLayers WMS");
-//        wms.setBaseLayer(true);
-//        map2.addLayer(wms);
-//        map2.setZoom(12);
-//        map2.setCenter(0, 0);
-//
-//        map2.setSizeFull();
-//		
-//		        layout.setSizeFull();
-//		        layout.addComponent(controls);
-//		        layout.addComponent(map2);
-//		        layout.setExpandRatio(map2, 1);		
-//
-//		if(true) {
-//			return;
-//		}
 		final Window mainWindow = new Window("Vol example Application", layout);
 		setMainWindow(mainWindow);
-		final OpenLayersMap map = new OpenLayersMap();
 		
+		OpenLayersMap map = createTestMap(mainWindow);
+//		OpenLayersMap map = getMapIssue1();
+		
+		
+		layout.setSizeFull();
+		layout.addComponent(controls);
+		layout.addComponent(map);
+		layout.setExpandRatio(map, 1);
+
+	}
+
+	private OpenLayersMap createTestMap(final Window mainWindow) {
+		final OpenLayersMap map = new OpenLayersMap();
 		map.setImmediate(true); // update extent and zoom to server as they change
 
 		/*
@@ -184,11 +170,6 @@ public class VolApplication extends Application {
 		// map.setWidth("600px");
 		// map.setHeight("400px");
 
-		layout.setSizeFull();
-		layout.addComponent(controls);
-		layout.addComponent(map);
-		layout.setExpandRatio(map, 1);
-
 		OptionGroup drawingMode = new OptionGroup();
 		for (DrawingMode l : VectorLayer.DrawingMode.values()) {
 			drawingMode.addItem(l);
@@ -244,7 +225,65 @@ public class VolApplication extends Application {
 			}
 		});
 		controls.addComponent(moveToTMSExample);
-
+		
+		return map;
 	}
+	
+    private OpenLayersMap getMapIssue1(){
+        OpenLayersMap map = new OpenLayersMap();
+        //map.setImmediate(true);
+
+        /*
+                 * Open street maps layer as a base layer. Note importance of the order,
+                 * OSM layer now sets the projection to Spherical Mercator. If added eg.
+                 * after markers or vectors, they might render with bad values.
+                 */
+                OpenStreetMapLayer osm = new OpenStreetMapLayer();
+
+                GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
+
+        
+        /**
+         * Creating a WMS layer to add to OpenLayersMap
+         */
+
+      
+        
+        /**
+         * Creating a MarketLayer to add to OpenLayersMap
+         */
+        MarkerLayer markerLayer = new MarkerLayer();
+        Marker marker = new Marker(22.30083, 60.452541);
+        marker.setIcon("http://dev.vaadin.com/chrome/site/vaadin-trac.png", 60, 20);
+        markerLayer.addComponent(marker);
+
+        /**
+         * Creating a VectorLayer to add to OpenLayersMap
+         */
+        VectorLayer vectorLayer=new VectorLayer();
+        vectorLayer.setDisplayName("Vector layer");
+        vectorLayer.setDrawindMode(VectorLayer.DrawingMode.NONE);
+
+        OpenStreetMapLayer osmLayer=new OpenStreetMapLayer();
+
+
+        map.setCenter(22.30, 60.452);
+        map.setZoom(1000);
+
+        // base layers
+        //map.addLayer(googleStreets);
+        map.addLayer(osm);
+
+        //map.addComponent(wmsLayer);
+        //map.addLayer(wmsLayer);
+        //map.addComponent(markerLayer);
+        map.addLayer(markerLayer);
+        map.addComponent(vectorLayer);
+        map.addComponent(osmLayer);
+        map.setSizeFull();
+
+
+        return map;
+    }
 
 }
