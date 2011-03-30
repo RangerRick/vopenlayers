@@ -47,7 +47,9 @@ public class VolApplication extends Application {
 
 		// OpenLayersMap map = createTestMap(mainWindow);
 		// OpenLayersMap map = getMapIssue1();
-		OpenLayersMap map = getMapIssue2();
+//		OpenLayersMap map = getMapIssue2();
+
+		OpenLayersMap map = getMapWithUsHighWaysOnTopOfWebMercator();
 
 		layout.setSizeFull();
 		layout.addComponent(controls);
@@ -339,7 +341,7 @@ public class VolApplication extends Application {
 	 * 
 	 * @return
 	 */
-	public OpenLayersMap getMapWithUsHighWays() {
+	public OpenLayersMap getMapWithUsHighWaysOnTopOfWebMercator() {
 		final OpenLayersMap map = new OpenLayersMap();
 
 		map.setJsMapOptions("{projection: "
@@ -352,6 +354,10 @@ public class VolApplication extends Application {
 		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
 		googleStreets.setProjection("EPSG:102113");
 		map.addLayer(googleStreets);
+		
+		OpenStreetMapLayer osm = new OpenStreetMapLayer();
+		osm.setProjection("EPSG:102113");
+        map.addLayer(osm);
 
 		WebMapServiceLayer wms = new WebMapServiceLayer();
 		wms.setUri("http://sampleserver1.arcgisonline.com/arcgis/services/Specialty/ESRI_StateCityHighway_USA/MapServer/WMSServer");

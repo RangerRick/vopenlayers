@@ -5,9 +5,18 @@ public class OpenStreetMapLayer extends Layer {
 	
 	protected OpenStreetMapLayer(){};
 	
-	public native final static OpenStreetMapLayer create()
+	public native final static OpenStreetMapLayer create(String displayName, String projection)
 	/*-{
-		return new $wnd.OpenLayers.Layer.OSM.Mapnik();
+
+		var options = {sphericalMercator: true};
+		if(projection) {
+			options.projection = projection;
+		}
+		
+		if(!displayName) displayName = "OpenStreetMap";
+		
+		return new $wnd.OpenLayers.Layer.OSM.Mapnik(displayName, options);
+		
 	}-*/;
 
 }

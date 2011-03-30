@@ -6,7 +6,7 @@ public class VOpenStreetMapLayer extends VAbstracMapLayer<OpenStreetMapLayer> {
 
 	@Override
 	OpenStreetMapLayer createLayer() {
-		return OpenStreetMapLayer.create();
+		return OpenStreetMapLayer.create(getDisplayName(), getProjection());
 	}
 
 }
