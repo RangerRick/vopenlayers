@@ -5,10 +5,18 @@ public class GoogleStreetLayer extends Layer {
 	
 	protected GoogleStreetLayer(){};
 	
-	public native final static GoogleStreetLayer create()
+	public native final static GoogleStreetLayer create(String displayName, String projection)
 	/*-{
-		return new $wnd.OpenLayers.Layer.Google("Google Streets",
-    				{numZoomLevels: 17, sphericalMercator: true});
+
+		var options = {numZoomLevels: 17, sphericalMercator: true};
+		if(projection) {
+			options.projection = projection;
+		}
+		
+		if(!displayName) displayName = "Google Streets";
+		
+		return new $wnd.OpenLayers.Layer.Google(displayName,
+    				options);
 	}-*/;
 
 }

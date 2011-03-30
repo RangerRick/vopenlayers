@@ -17,17 +17,10 @@ public class MapOverlay extends AbstractOpenLayersWrapper {
 	 * @param id
 	 * @return
 	 */
-	public static native MapOverlay get(String id)
+	public static native MapOverlay get(String id, String optionsJs)
 	/*-{
-	            var options = {
-	            // for only map tiler base layer, use these
-	//	                projection: new $wnd.OpenLayers.Projection("EPSG:900913"),
-	//	                displayProjection: new $wnd.OpenLayers.Projection("EPSG:4326"),
-	//	                units: "m",
-	//	                maxResolution: 156543.0339,
-	//	                maxExtent: new $wnd.OpenLayers.Bounds(-20037508, -20037508, 20037508, 20037508.34)
-		            };
-		
+
+
 		 //
 		 // Rude hack to add "firebug lite" to GWT iframe (actually to all iframes). 
 		 // Without this some OL functions may fail without modern browser or firebug.
@@ -42,7 +35,13 @@ public class MapOverlay extends AbstractOpenLayersWrapper {
 				}
 			} catch(e){};
 		}
+		var OpenLayers = $wnd.OpenLayers;
 
+		var options;
+		if(optionsJs) {
+	     	eval("options = " +optionsJs+ ";");
+		}
+		
 		return new $wnd.OpenLayers.Map(id, options);
 	}-*/;
 

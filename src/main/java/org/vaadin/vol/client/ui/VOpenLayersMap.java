@@ -85,6 +85,10 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 		}
 
 		immediate = uidl.hasAttribute("immediate");
+		
+		if(uidl.hasAttribute("jsMapOptions")) {
+			map.setMapInitOptions(uidl.getStringAttribute("jsMapOptions"));
+		}
 
 		if (extentChangeListener == null) {
 			extentChangeListener = new GwtOlHandler() {

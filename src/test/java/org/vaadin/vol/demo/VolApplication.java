@@ -45,9 +45,9 @@ public class VolApplication extends Application {
 		final Window mainWindow = new Window("Vol example Application", layout);
 		setMainWindow(mainWindow);
 
-		OpenLayersMap map = createTestMap(mainWindow);
+		// OpenLayersMap map = createTestMap(mainWindow);
 		// OpenLayersMap map = getMapIssue1();
-		// OpenLayersMap map = getMapIssue2();
+		OpenLayersMap map = getMapIssue2();
 
 		layout.setSizeFull();
 		layout.addComponent(controls);
@@ -295,7 +295,11 @@ public class VolApplication extends Application {
 		wms.setServiceType("wms");
 		wms.setDisplayName("OpenLayers WMS");
 		wms.setBaseLayer(true);
-		map.addLayer(wms);
+		 map.addLayer(wms);
+
+//		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
+//		googleStreets.setProjection("EPSG:102113");
+//		map.addLayer(googleStreets);
 
 		// OL example data from canada
 		// var dm_wms = new OpenLayers.Layer.WMS(
@@ -322,5 +326,45 @@ public class VolApplication extends Application {
 		map.setSizeFull();
 
 		return map;
+	}
+
+	/**
+	 * Google projection, spherial mercator, web mercator, 900913, 1002113. All
+	 * the same practically.
+	 * 
+	 * <p>
+	 * Use js map settings and override base layer projection to 102113
+	 * (~90091~...). Then works with arcgis server that don't know abot google
+	 * mercator.
+	 * 
+	 * @return
+	 */
+	public OpenLayersMap getMapWithUsHighWays() {
+		final OpenLayersMap map = new OpenLayersMap();
+
+		map.setJsMapOptions("{projection: "
+				+ "new OpenLayers.Projection(\"EPSG:102113\"),"
+				+ "units: \"m\","
+				+ "numZoomLevels: 17,"
+				+ "maxResolution: 156543.0339, "
+				+ "maxExtent: new OpenLayers.Bounds(-20037508, -20037508,20037508, 20037508.34)}");
+
+		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
+		googleStreets.setProjection("EPSG:102113");
+		map.addLayer(googleStreets);
+
+		WebMapServiceLayer wms = new WebMapServiceLayer();
+		wms.setUri("http://sampleserver1.arcgisonline.com/arcgis/services/Specialty/ESRI_StateCityHighway_USA/MapServer/WMSServer");
+		wms.setLayers("2");
+		wms.setTransparent(true);
+		wms.setFormat("image/gif");
+		wms.setDisplayName("wms");
+		wms.setBaseLayer(false);
+		map.addLayer(wms);
+
+		map.setSizeFull();
+
+		return map;
+
 	}
 }

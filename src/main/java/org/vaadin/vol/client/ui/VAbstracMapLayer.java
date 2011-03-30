@@ -17,6 +17,8 @@ public abstract class VAbstracMapLayer<T extends Layer> extends Widget
 
 	private T layer;
 	protected boolean layerAttached = false;
+	private String displayName;
+	private String projection;
 
 	public T getLayer() {
 		if (layer == null) {
@@ -31,6 +33,9 @@ public abstract class VAbstracMapLayer<T extends Layer> extends Widget
 		if (client.updateComponent(this, uidl, false)) {
 			return;
 		}
+		
+		displayName = uidl.hasAttribute("name") ? uidl.getStringAttribute("name") : null;
+		projection = uidl.hasAttribute("projection") ? uidl.getStringAttribute("projection") : null;
 		// we'll do this lazy, not in attach, so implementations can
 		// customize parameters for layer constructors. Possible changes must be
 		// dealt inimplementation.
@@ -57,6 +62,14 @@ public abstract class VAbstracMapLayer<T extends Layer> extends Widget
 	@Override
 	protected void onAttach() {
 		super.onAttach();
+	}
+	
+	protected String getProjection() {
+		return projection;
+	}
+	
+	protected String getDisplayName() {
+		return displayName;
 	}
 
 }

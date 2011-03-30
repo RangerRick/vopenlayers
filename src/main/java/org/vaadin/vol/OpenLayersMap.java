@@ -50,6 +50,7 @@ public class OpenLayersMap extends AbstractComponentContainer {
 	 * certain types of Components.
 	 * <p>
 	 * Developers are encouraged to use better typed methods instead:
+	 * 
 	 * @see #addLayer(Layer)
 	 * @see #addPopup(Popup)
 	 * 
@@ -82,6 +83,8 @@ public class OpenLayersMap extends AbstractComponentContainer {
 	private double bottom;
 	private double left;
 
+	private String jsMapOptions;
+
 	private void setDirty(String fieldName) {
 		if (!fullRepaint) {
 			dirtyFields.add(fieldName);
@@ -104,6 +107,9 @@ public class OpenLayersMap extends AbstractComponentContainer {
 	@Override
 	public void paintContent(PaintTarget target) throws PaintException {
 		super.paintContent(target);
+		if(fullRepaint && jsMapOptions != null) {
+			target.addAttribute("jsMapOptions", jsMapOptions);
+		}
 		if (isDirty("clat")) {
 			target.addAttribute("clon", centerLon);
 			target.addAttribute("clat", centerLat);
@@ -188,6 +194,26 @@ public class OpenLayersMap extends AbstractComponentContainer {
 
 	private void clearPartialPaintFlags() {
 		dirtyFields.clear();
+	}
+
+	/**
+	 * Sets the js snippet that will be evaluated as maps custom options. See
+	 * OpenLayers JS api for more details.
+	 * <p>
+	 * Note, that the string will be executed as javascript on the client side.
+	 * VALIDATE content in case you accept input from the client.
+	 * <p>
+	 * Also note that init options only take effect if they are set before the
+	 * map gets rendered.
+	 * 
+	 * @param jsMapOptions
+	 */
+	public void setJsMapOptions(String jsMapOptions) {
+		this.jsMapOptions = jsMapOptions;
+	}
+
+	public String getJsMapOptions() {
+		return jsMapOptions;
 	}
 
 }

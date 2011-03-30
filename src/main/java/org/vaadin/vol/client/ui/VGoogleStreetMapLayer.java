@@ -6,7 +6,7 @@ public class VGoogleStreetMapLayer extends VAbstracMapLayer<GoogleStreetLayer> {
 
 	@Override
 	GoogleStreetLayer createLayer() {
-		return GoogleStreetLayer.create();
+		return GoogleStreetLayer.create(getDisplayName(), getProjection());
 	}
 
 }

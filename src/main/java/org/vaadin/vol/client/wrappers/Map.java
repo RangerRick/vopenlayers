@@ -22,6 +22,8 @@ public class Map extends Widget {
 
 	private final DivElement mapElement;
 
+	private String mapInitOptions;
+
 	public Map() {
 		setElement(Document.get().createDivElement());
 		mapElement = Document.get().createDivElement();
@@ -35,9 +37,21 @@ public class Map extends Widget {
 		mapElement.setId(id);
 	}
 
+	/**
+	 * @param mapInitOptions
+	 *            the js string that will be evaluated as options for the map.
+	 */
+	public void setMapInitOptions(String mapInitOptions) {
+		this.mapInitOptions = mapInitOptions;
+	}
+
+	public String getMapInitOptions() {
+		return mapInitOptions;
+	}
+
 	private MapOverlay getMap() {
 		if (jsoverlay == null) {
-			jsoverlay = MapOverlay.get(mapElement.getId());
+			jsoverlay = MapOverlay.get(mapElement.getId(), mapInitOptions);
 		}
 		return jsoverlay;
 	}
@@ -49,11 +63,10 @@ public class Map extends Widget {
 	public void addLayer(Layer layer) {
 		getMap().addLayer(layer);
 	}
-	
+
 	public void removeLayer(Layer remove) {
 		getMap().removeLayer(remove);
 	}
-
 
 	public void setCenter(LonLat lonLat, int zoom) {
 		getMap().setCenter(lonLat, zoom);
@@ -92,7 +105,7 @@ public class Map extends Widget {
 	public void setZoom(int zoom) {
 		getMap().zoomTo(zoom);
 	}
-	
+
 	public void registerEventHandler(String evtName, GwtOlHandler handler) {
 		getMap().registerHandler(evtName, handler);
 	}
