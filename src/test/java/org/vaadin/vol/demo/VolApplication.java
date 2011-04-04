@@ -45,11 +45,11 @@ public class VolApplication extends Application {
 		final Window mainWindow = new Window("Vol example Application", layout);
 		setMainWindow(mainWindow);
 
-		// OpenLayersMap map = createTestMap(mainWindow);
+		 OpenLayersMap map = createTestMap(mainWindow);
 		// OpenLayersMap map = getMapIssue1();
 //		OpenLayersMap map = getMapIssue2();
 
-		OpenLayersMap map = getMapWithUsHighWaysOnTopOfWebMercator();
+//		OpenLayersMap map = getMapWithUsHighWaysOnTopOfWebMercator();
 
 		layout.setSizeFull();
 		layout.addComponent(controls);
@@ -182,7 +182,7 @@ public class VolApplication extends Application {
 			public void valueChange(ValueChangeEvent event) {
 				DrawingMode mode = (DrawingMode) event.getProperty().getValue();
 				if (mode == DrawingMode.MODIFY || mode == DrawingMode.AREA
-						|| mode == DrawingMode.LINE || mode == DrawingMode.NONE) {
+						|| mode == DrawingMode.LINE || mode == DrawingMode.POINT || mode == DrawingMode.NONE) {
 					vectorLayer.setDrawindMode(mode);
 				} else {
 					mainWindow
@@ -212,8 +212,8 @@ public class VolApplication extends Application {
 		// add layers
 
 		// base layers
-		map.addLayer(googleStreets);
 		map.addLayer(osm);
+		map.addLayer(googleStreets);
 
 		// map.addComponent(wms);
 		map.addLayer(mapTilerLayer);

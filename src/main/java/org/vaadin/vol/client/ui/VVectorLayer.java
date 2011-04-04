@@ -16,13 +16,13 @@ import org.vaadin.vol.client.wrappers.geometry.Geometry;
 import org.vaadin.vol.client.wrappers.geometry.LineString;
 import org.vaadin.vol.client.wrappers.geometry.Point;
 import org.vaadin.vol.client.wrappers.handler.PathHandler;
+import org.vaadin.vol.client.wrappers.handler.PointHandler;
 import org.vaadin.vol.client.wrappers.handler.PolygonHandler;
 import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.WidgetCollection;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
@@ -45,7 +45,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 		if (vectors == null) {
 			vectors = VectorLayer.create(displayName);
 			vectors.registerHandler("featureadded", getFeatureAddedListener());
-			vectors.registerHandler("featuremodified", getFeatureModifiedListener());
+			vectors.registerHandler("featuremodified",
+					getFeatureModifiedListener());
 			vectors.registerHandler("afterfeaturemodified", new GwtOlHandler() {
 				public void onEvent(JsArray arguments) {
 					client.sendPendingVariableChanges();
@@ -83,25 +84,28 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 										Projection.get("EPSG:4326"));
 								points[i] = point.toString();
 							}
-//							VConsole.log("modified");
+							// VConsole.log("modified");
 							// communicate points to server and mark the
 							// new geometry to be removed on next update.
 							client.updateVariable(paintableId, "vertices",
 									points, false);
-							
-							Vector modifiedFeature = ((ModifyFeature) df.cast()).getModifiedFeature();
+
+							Vector modifiedFeature = ((ModifyFeature) df.cast())
+									.getModifiedFeature();
 							Iterator<Widget> iterator = iterator();
-							while(iterator.hasNext()) {
-								VAbstractVector next = (VAbstractVector) iterator.next();
+							while (iterator.hasNext()) {
+								VAbstractVector next = (VAbstractVector) iterator
+										.next();
 								Vector vector = next.getVector();
-								if(vector == modifiedFeature) {
-									client.updateVariable(paintableId, "modifiedVector", next, false);
+								if (vector == modifiedFeature) {
+									client.updateVariable(paintableId,
+											"modifiedVector", next, false);
 									break;
 								}
 							}
-							
-//							client.sendPendingVariableChanges();
-//							lastNewDrawing = feature;
+
+							// client.sendPendingVariableChanges();
+							// lastNewDrawing = feature;
 						}
 					}
 				}
@@ -141,13 +145,24 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 								points[i] = point.toString();
 							}
 							VConsole.log("drawing done");
-							// communicate points to server and mark the
-							// new geometry to be removed on next update.
 							client.updateVariable(paintableId, "vertices",
 									points, false);
-							client.sendPendingVariableChanges();
-							lastNewDrawing = feature;
+						} else { 
+							// point
+							Point point = geometry.cast();
+							point.transform(getMap().getProjection(),
+									Projection.get("EPSG:4326"));
+							double x = point.getX();
+							double y = point.getY();
+							client.updateVariable(paintableId, "x",
+									x, false);
+							client.updateVariable(paintableId, "y",
+									y, false);
 						}
+						// communicate points to server and mark the
+						// new geometry to be removed on next update.
+						client.sendPendingVariableChanges();
+						lastNewDrawing = feature;
 					}
 				}
 			};
@@ -163,21 +178,20 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 		this.paintableId = layer.getId();
 		updating = true;
 		displayName = layer.getStringAttribute("name");
-		if(!added ) {
+		if (!added) {
 			getMap().addLayer(getLayer());
 			added = true;
 		}
 
 		// Last new drawing only visible to next update. If used by server side
 		// handler, we probably have it as a child component
-		if(lastNewDrawing != null) {
+		if (lastNewDrawing != null) {
 			getLayer().removeFeature(lastNewDrawing);
 			lastNewDrawing = null;
 		}
-		
 
 		HashSet<Widget> orphaned = new HashSet<Widget>();
-		for(Iterator<Widget> iterator = iterator();iterator.hasNext();) {
+		for (Iterator<Widget> iterator = iterator(); iterator.hasNext();) {
 			orphaned.add(iterator.next());
 		}
 
@@ -218,7 +232,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 			} else if (drawingMode == "MODIFY") {
 				df = ModifyFeature.create(getLayer());
 			} else if (drawingMode == "POINT") {
-				// TODO
+				df = DrawFeature.create(getLayer(), PointHandler.get());
 			}
 			if (df != null) {
 				getMap().addControl(df);

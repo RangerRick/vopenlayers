@@ -22,5 +22,23 @@ public class Point extends Geometry {
 	/*-{
 		return this.clone();
 	}-*/;
+
+	public final native double getX() 
+	/*-{
+		return this.x;
+	}-*/;
+
+	public final native double getY() 
+	/*-{
+		return this.y;
+	}-*/;
 	
+	public final double getLongitude() {
+		return getX();
+	}
+	
+	public final double getLatitude() {
+		return getY();
+	}
+
 }
