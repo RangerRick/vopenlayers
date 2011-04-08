@@ -70,7 +70,6 @@ public class Map extends Widget {
 
 	public void setCenter(LonLat lonLat, int zoom) {
 		getMap().setCenter(lonLat, zoom);
-		// TODO Auto-generated method stub
 
 	}
 
@@ -112,6 +111,14 @@ public class Map extends Widget {
 
 	public Bounds getExtent() {
 		return getMap().getExtent();
+	}
+
+	public void zoomToExtent(Bounds bounds) {
+		getMap().zoomToExtent(bounds);
+	}
+
+	public void setRestrictedExtent(Bounds bounds) {
+		getMap().setRestrictedExtent(bounds);
 	}
 
 }

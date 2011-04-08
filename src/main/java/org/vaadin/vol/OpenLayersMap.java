@@ -84,6 +84,8 @@ public class OpenLayersMap extends AbstractComponentContainer {
 	private double left;
 
 	private String jsMapOptions;
+	private Bounds zoomToExtent;
+	private Bounds restrictedExtend;
 
 	private void setDirty(String fieldName) {
 		if (!fullRepaint) {
@@ -107,15 +109,25 @@ public class OpenLayersMap extends AbstractComponentContainer {
 	@Override
 	public void paintContent(PaintTarget target) throws PaintException {
 		super.paintContent(target);
-		if(fullRepaint && jsMapOptions != null) {
+		if (fullRepaint && jsMapOptions != null) {
 			target.addAttribute("jsMapOptions", jsMapOptions);
 		}
-		if (isDirty("clat")) {
-			target.addAttribute("clon", centerLon);
-			target.addAttribute("clat", centerLat);
+
+		if (isDirty("restrictedExtend") && restrictedExtend != null) {
+			restrictedExtend.paint("re", target);
 		}
-		if (isDirty("zoom")) {
-			target.addAttribute("zoom", zoom);
+
+		if (isDirty("zoomToExtent") && zoomToExtent != null) {
+			zoomToExtent.paint("ze", target);
+			zoomToExtent = null;
+		} else {
+			if (isDirty("clat")) {
+				target.addAttribute("clon", centerLon);
+				target.addAttribute("clat", centerLat);
+			}
+			if (isDirty("zoom")) {
+				target.addAttribute("zoom", zoom);
+			}
 		}
 		if (isDirty("components")) {
 			for (Component component : layers) {
@@ -214,6 +226,38 @@ public class OpenLayersMap extends AbstractComponentContainer {
 
 	public String getJsMapOptions() {
 		return jsMapOptions;
+	}
+
+	/**
+	 * Zooms the map to display given bounds.
+	 * 
+	 * <p>
+	 * Note that this method overrides possibly set center and zoom levels.
+	 * 
+	 * @param bounds
+	 */
+	public void zoomToExtent(Bounds bounds) {
+		zoomToExtent = bounds;
+		setDirty("zoomToExtent");
+	}
+
+	/**
+	 * Sets the area within the panning and zooming is restricted. With this
+	 * method developer can "limit" the area that is shown for the end user.
+	 * <p>
+	 * Note, that due the fact that open layers supports just zoom levels, the
+	 * displayed area might be slightly larger if the size of the component
+	 * don't match with the size of restricted area on minimum zoom level. If
+	 * area outside restricted extent may not be displayed at all, one must
+	 * ensure about this by either using a base layer that only contains the
+	 * desired area or by "masking" out the undesired area with e.g. a vector
+	 * layer.
+	 * 
+	 * @param bounds
+	 */
+	public void setRestrictedExtent(Bounds bounds) {
+		restrictedExtend = bounds;
+		setDirty("restrictedExtend");
 	}
 
 }

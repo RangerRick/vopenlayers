@@ -110,4 +110,14 @@ public class MapOverlay extends AbstractOpenLayersWrapper {
 		return this.getExtent();
 	}-*/;
 
+	public final native void zoomToExtent(Bounds bounds) 
+	/*-{
+		this.zoomToExtent(bounds);
+	}-*/;
+
+	public final native void setRestrictedExtent(Bounds bounds) 
+	/*-{
+		this.setOptions({restrictedExtent:bounds});
+	}-*/;
+
 }

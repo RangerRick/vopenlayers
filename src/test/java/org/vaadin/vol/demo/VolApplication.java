@@ -5,6 +5,8 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.vaadin.vol.Area;
+import org.vaadin.vol.Bounds;
+import org.vaadin.vol.GoogleSatelliteMapLayer;
 import org.vaadin.vol.GoogleStreetMapLayer;
 import org.vaadin.vol.MapTilerLayer;
 import org.vaadin.vol.Marker;
@@ -45,11 +47,11 @@ public class VolApplication extends Application {
 		final Window mainWindow = new Window("Vol example Application", layout);
 		setMainWindow(mainWindow);
 
-		 OpenLayersMap map = createTestMap(mainWindow);
+		OpenLayersMap map = createTestMap(mainWindow);
 		// OpenLayersMap map = getMapIssue1();
-//		OpenLayersMap map = getMapIssue2();
+		// OpenLayersMap map = getMapIssue2();
 
-//		OpenLayersMap map = getMapWithUsHighWaysOnTopOfWebMercator();
+		// OpenLayersMap map = getMapWithUsHighWaysOnTopOfWebMercator();
 
 		layout.setSizeFull();
 		layout.addComponent(controls);
@@ -71,6 +73,7 @@ public class VolApplication extends Application {
 		OpenStreetMapLayer osm = new OpenStreetMapLayer();
 
 		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
+		GoogleSatelliteMapLayer googleSatellite = new GoogleSatelliteMapLayer();
 
 		// Defining a WMS layer as in OL examples
 		// WebMapServiceLayer wms = new WebMapServiceLayer();
@@ -136,6 +139,9 @@ public class VolApplication extends Application {
 		Area area = new Area();
 		area.setPoints(points);
 
+		//setRestrictedExtent(map, points);
+		zoomToExtent(map, points);
+
 		vectorLayer.addVector(area);
 
 		// Definig a Marker Layer
@@ -182,7 +188,9 @@ public class VolApplication extends Application {
 			public void valueChange(ValueChangeEvent event) {
 				DrawingMode mode = (DrawingMode) event.getProperty().getValue();
 				if (mode == DrawingMode.MODIFY || mode == DrawingMode.AREA
-						|| mode == DrawingMode.LINE || mode == DrawingMode.POINT || mode == DrawingMode.NONE) {
+						|| mode == DrawingMode.LINE
+						|| mode == DrawingMode.POINT
+						|| mode == DrawingMode.NONE) {
 					vectorLayer.setDrawindMode(mode);
 				} else {
 					mainWindow
@@ -214,6 +222,7 @@ public class VolApplication extends Application {
 		// base layers
 		map.addLayer(osm);
 		map.addLayer(googleStreets);
+		map.addLayer(googleSatellite);
 
 		// map.addComponent(wms);
 		map.addLayer(mapTilerLayer);
@@ -231,6 +240,29 @@ public class VolApplication extends Application {
 		controls.addComponent(moveToTMSExample);
 
 		return map;
+	}
+
+	/**
+	 * An example how to zoom the map so that it covers given points.
+	 * 
+	 * @param map
+	 * @param points
+	 */
+	private void zoomToExtent(OpenLayersMap map, Point[] points) {
+		Bounds bounds = new Bounds(points);
+		map.zoomToExtent(bounds);
+	}
+
+	/**
+	 * An example how to restrict the displayed map so that it covers minimal
+	 * rectangular area that contains given points.
+	 * 
+	 * @param map
+	 * @param points
+	 */
+	private void setRestrictedExtent(OpenLayersMap map, Point[] points) {
+		Bounds bounds = new Bounds(points);
+		map.setRestrictedExtent(bounds);
 	}
 
 	private OpenLayersMap getMapIssue1() {
@@ -297,11 +329,11 @@ public class VolApplication extends Application {
 		wms.setServiceType("wms");
 		wms.setDisplayName("OpenLayers WMS");
 		wms.setBaseLayer(true);
-		 map.addLayer(wms);
+		map.addLayer(wms);
 
-//		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
-//		googleStreets.setProjection("EPSG:102113");
-//		map.addLayer(googleStreets);
+		// GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
+		// googleStreets.setProjection("EPSG:102113");
+		// map.addLayer(googleStreets);
 
 		// OL example data from canada
 		// var dm_wms = new OpenLayers.Layer.WMS(
@@ -354,10 +386,10 @@ public class VolApplication extends Application {
 		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
 		googleStreets.setProjection("EPSG:102113");
 		map.addLayer(googleStreets);
-		
+
 		OpenStreetMapLayer osm = new OpenStreetMapLayer();
 		osm.setProjection("EPSG:102113");
-        map.addLayer(osm);
+		map.addLayer(osm);
 
 		WebMapServiceLayer wms = new WebMapServiceLayer();
 		wms.setUri("http://sampleserver1.arcgisonline.com/arcgis/services/Specialty/ESRI_StateCityHighway_USA/MapServer/WMSServer");

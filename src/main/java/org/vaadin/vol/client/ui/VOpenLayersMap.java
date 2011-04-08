@@ -85,8 +85,8 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 		}
 
 		immediate = uidl.hasAttribute("immediate");
-		
-		if(uidl.hasAttribute("jsMapOptions")) {
+
+		if (uidl.hasAttribute("jsMapOptions")) {
 			map.setMapInitOptions(uidl.getStringAttribute("jsMapOptions"));
 		}
 
@@ -145,18 +145,39 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 
 		}
 
-		for (String id : orphanedcomponents) {
-			Widget remove = components.remove(id);
-			fakePaintables.remove(remove);
+		if (uidl.hasAttribute("re_top")) {
+			Bounds bounds = Bounds.create(uidl.getDoubleAttribute("re_left"),
+					uidl.getDoubleAttribute("re_bottom"),
+					uidl.getDoubleAttribute("re_right"),
+					uidl.getDoubleAttribute("re_top"));
+			bounds.transform(DEFAULT_PROJECTION, getMap().getProjection());
+			map.setRestrictedExtent(bounds);
 		}
 
 		updateZoomAndCenter(uidl);
 
+		for (String id : orphanedcomponents) {
+			Widget remove = components.remove(id);
+			fakePaintables.remove(remove);
+		}
+		
 	}
 
 	private void updateZoomAndCenter(UIDL uidl) {
-		// // TODO set zoom only if marked dirty on server, also separately from
-		// // center point
+
+		if (uidl.hasAttribute("ze_top")) {
+			/*
+			 * Zoom to extent
+			 */
+			double top = uidl.getDoubleAttribute("ze_top");
+			double right = uidl.getDoubleAttribute("ze_right");
+			double bottom = uidl.getDoubleAttribute("ze_bottom");
+			double left = uidl.getDoubleAttribute("ze_left");
+			Bounds bounds = Bounds.create(left, bottom, right, top);
+			bounds.transform(DEFAULT_PROJECTION, getMap().getProjection());
+			getMap().zoomToExtent(bounds);
+			return;
+		}
 
 		int zoom = map.getZoom();
 		if (uidl.hasAttribute("zoom")) {
