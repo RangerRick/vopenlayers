@@ -71,6 +71,17 @@ public class OpenLayersMap extends AbstractComponentContainer {
 		requestRepaint();
 	}
 
+	/**
+	 * Set the center of map to the center of a bounds 
+	 * 
+	 */
+	public void setCenter(Bounds bounds) {
+		this.centerLat = (bounds.getBottom() + bounds.getTop()) / 2.0;
+		this.centerLon = (bounds.getRight() + bounds.getLeft()) / 2.0;
+		setDirty("clat");
+		requestRepaint();
+	}
+	
 	public void setZoom(int zoomLevel) {
 		this.zoom = zoomLevel;
 		setDirty("zoom");

@@ -11,16 +11,17 @@ public class Bounds {
 	private double right;
 
 	public Bounds(Point... points) {
+		// pre init to avoid 
+		// first point check
+		// and speed up bounds computing with huge arrays
+		//
+		bottom = +90.00; 
+		top = -90.00;
+		right = -180.00;
+		left = +180.00;
 		for (int i = 0; i < points.length; i++) {
 			Point p = points[i];
-			if (i == 0) {
-				top = p.getLat();
-				bottom = p.getLat();
-				left = p.getLon();
-				right = p.getLon();
-			} else {
 				extend(p);
-			}
 		}
 	}
 

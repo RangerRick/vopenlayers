@@ -13,12 +13,10 @@ public class VPointVector extends VAbstractVector {
 	@Override
 	protected void updateVector(UIDL childUIDL, ApplicationConnection client) {
 		Projection mapProjection = getMap().getProjection();
-		double lon = childUIDL.getDoubleAttribute("x");
-		double lat = childUIDL.getDoubleAttribute("y");
 
-		Point p = Point.create((float) lon, (float) lat);
+		Point p = Point.create(childUIDL.getStringArrayAttribute("points")[0]);
 		p.transform(getProjection(), mapProjection);
-		
+
 		JavaScriptObject style = null;
 		JavaScriptObject attributes = null;
 		vector = Vector.create(p, attributes, style);

@@ -89,16 +89,19 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 				points[i] = Point.valueOf(object[i]);
 			}
 
-			if (drawindMode == DrawingMode.AREA
-					|| drawindMode == DrawingMode.LINE) {
+			if (drawindMode == DrawingMode.LINE) {
+				PolyLine polyline = new PolyLine();
+				polyline.setPoints(points);
+				newVectorPainted(polyline);
+			} else if (drawindMode == DrawingMode.AREA) {
 				Area area = new Area();
 				area.setPoints(points);
 				newVectorPainted(area);
 			} else if (drawindMode == DrawingMode.MODIFY) {
-				Area area = (Area) variables.get("modifiedVector");
-				area.setPoints(points);
-				areaModified(area);
-			}
+				Vector vector = (Vector) variables.get("modifiedVector");
+				vector.setPoints(points);
+				vectorModified(vector);
+			} 
 		}
 		if (drawindMode == DrawingMode.POINT && variables.containsKey("x")) {
 			Double x = (Double) variables.get("x");
@@ -108,7 +111,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 		}
 	}
 
-	private void areaModified(Area object2) {
+	private void vectorModified(Vector object2) {
 		VectorModifiedEvent vectorModifiedEvent = new VectorModifiedEvent(this,
 				object2);
 		fireEvent(vectorModifiedEvent);

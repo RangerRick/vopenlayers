@@ -19,10 +19,7 @@ public class VArea extends VAbstractVector {
 				.getStringArrayAttribute("points");
 		JsArray<Point> points = (JsArray<Point>) JsArray.createArray();
 		for (int i = 0; i < stringArrayAttribute.length; i++) {
-			String[] split = stringArrayAttribute[i].split(":");
-			float lon = Float.parseFloat(split[0]);
-			float lat = Float.parseFloat(split[1]);
-			Point p = Point.create(lon, lat);
+			Point p = Point.create(stringArrayAttribute[i]);
 			p.transform(getProjection(), mapProjection);
 			points.push(p);
 		}

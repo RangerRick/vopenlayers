@@ -8,7 +8,7 @@ public class GoogleSatelliteLayer extends Layer {
 	public native final static GoogleSatelliteLayer create(String displayName, String projection)
 	/*-{
 
-		var options = {type: $wnd.google.maps.MapTypeId.SATELLITE, numZoomLevels: 22, sphericalMercator: true};
+		var options = {type: $wnd.google.maps.MapTypeId.SATELLITE, numZoomLevels: 17, sphericalMercator: true};
 		if(projection) {
 			options.projection = projection;
 		}

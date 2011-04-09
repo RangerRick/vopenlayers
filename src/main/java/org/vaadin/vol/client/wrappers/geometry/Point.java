@@ -8,7 +8,7 @@ public class Point extends Geometry {
 
 	protected Point(){};
 
-	public native static Point create(float x, float y) 
+	public native static Point create(double x, double y) 
 	/*-{
 		return new $wnd.OpenLayers.Geometry.Point(x,y);
 	}-*/;
@@ -39,6 +39,18 @@ public class Point extends Geometry {
 	
 	public final double getLatitude() {
 		return getY();
+	}
+
+	/**
+	 * Creates a point from string representation where lon and lat are separated by ":".
+	 * @param string
+	 * @return
+	 */
+	public static final Point create(String string) {
+		String[] split = string.split(":");
+		float lon = Float.parseFloat(split[0]);
+		float lat = Float.parseFloat(split[1]);
+		return create(lon, lat);
 	}
 
 }
