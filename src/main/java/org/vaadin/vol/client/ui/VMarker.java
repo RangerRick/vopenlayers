@@ -31,7 +31,8 @@ public class VMarker extends Widget implements Paintable {
 	 * com.vaadin.terminal.gwt.client.Paintable#updateFromUIDL(com.vaadin.terminal
 	 * .gwt.client.UIDL, com.vaadin.terminal.gwt.client.ApplicationConnection)
 	 */
-	public void updateFromUIDL(UIDL childUIDL, final ApplicationConnection client) {
+	public void updateFromUIDL(UIDL childUIDL,
+			final ApplicationConnection client) {
 		if (client.updateComponent(this, childUIDL, false)) {
 			return;
 		}
@@ -47,10 +48,13 @@ public class VMarker extends Widget implements Paintable {
 		point.transform(projection, projection2);
 
 		Icon icon = null;
-		if (childUIDL.hasAttribute("icon_url")) {
-			String url = childUIDL.getStringAttribute("icon_url");
-			int width = childUIDL.getIntAttribute("icon_w");
-			int height = childUIDL.getIntAttribute("icon_h");
+		if (childUIDL.hasAttribute("icon")) {
+			String url = client.translateVaadinUri(childUIDL
+					.getStringAttribute("icon"));
+			int width = childUIDL.hasAttribute("icon_w") ? childUIDL
+					.getIntAttribute("icon_w") : 32;
+			int height = childUIDL.hasAttribute("icon_h") ? childUIDL
+					.getIntAttribute("icon_h") : 32;
 			icon = Icon.create(url, Size.create(width, height));
 		}
 		marker = Marker.create(point, icon);
@@ -58,7 +62,8 @@ public class VMarker extends Widget implements Paintable {
 		if (client.hasEventListeners(this, "click")) {
 			marker.addClickHandler(new GwtOlHandler() {
 				public void onEvent(JsArray arguments) {
-					client.updateVariable(client.getPid(VMarker.this), "click", "", true);
+					client.updateVariable(client.getPid(VMarker.this), "click",
+							"", true);
 				}
 			});
 		}
