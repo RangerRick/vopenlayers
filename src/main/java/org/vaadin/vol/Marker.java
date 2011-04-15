@@ -21,7 +21,6 @@ import com.vaadin.ui.ClientWidget;
 public class Marker extends AbstractComponent {
 	private double lon;
 	private double lat;
-	private String icon_url;
 	private String projection = "EPSG:4326";
 	private int icon_w;
 	private int icon_h;
@@ -51,26 +50,24 @@ public class Marker extends AbstractComponent {
 
 	public void setIcon(String url, int width, int height) {
 		setIcon(new ExternalResource(url));
-		this.icon_w = width;
-		this.icon_h = height;
+		icon_w = width;
+		icon_h = height;
 		requestRepaint();
 	}
 
 	public void setIcon(Resource icon, int width, int height) {
 		setIcon(icon);
 		icon_w = width;
-		this.icon_h = height;
+		icon_h = height;
 	}
 
 	public void paintContent(PaintTarget target) throws PaintException {
 		target.addAttribute("lon", lon);
 		target.addAttribute("lat", lat);
 		target.addAttribute("pr", projection);
-		if (icon_url != null) {
-			target.addAttribute("icon_url", icon_url);
+		if(getIcon() != null) {
 			target.addAttribute("icon_w", icon_w);
 			target.addAttribute("icon_h", icon_h);
-
 		}
 	}
 
