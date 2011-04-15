@@ -65,7 +65,7 @@ public class Marker extends AbstractComponent {
 		target.addAttribute("lon", lon);
 		target.addAttribute("lat", lat);
 		target.addAttribute("pr", projection);
-		if(getIcon() != null) {
+		if(getIcon() != null && icon_h != 0 && icon_w != 0) {
 			target.addAttribute("icon_w", icon_w);
 			target.addAttribute("icon_h", icon_h);
 		}
