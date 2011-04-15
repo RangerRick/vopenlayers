@@ -9,8 +9,10 @@ import org.vaadin.vol.client.ui.VMarker;
 
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
+import com.vaadin.terminal.Resource;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.ClientWidget;
 
@@ -28,32 +30,37 @@ public class Marker extends AbstractComponent {
 		this.lon = lon;
 		this.lat = lat;
 	}
-	
+
 	public double getLon() {
 		return lon;
 	}
-	
+
 	public double getLat() {
 		return lat;
 	}
-	
+
 	public void setLon(double lon) {
 		this.lon = lon;
 		requestRepaint();
 	}
-	
+
 	public void setLat(double lat) {
 		this.lat = lat;
 		requestRepaint();
 	}
 
 	public void setIcon(String url, int width, int height) {
-		this.icon_url = url;
+		setIcon(new ExternalResource(url));
 		this.icon_w = width;
 		this.icon_h = height;
 		requestRepaint();
 	}
 
+	public void setIcon(Resource icon, int width, int height) {
+		setIcon(icon);
+		icon_w = width;
+		this.icon_h = height;
+	}
 
 	public void paintContent(PaintTarget target) throws PaintException {
 		target.addAttribute("lon", lon);
@@ -63,24 +70,24 @@ public class Marker extends AbstractComponent {
 			target.addAttribute("icon_url", icon_url);
 			target.addAttribute("icon_w", icon_w);
 			target.addAttribute("icon_h", icon_h);
-			
+
 		}
 	}
-	
-	
+
 	public void addClickListener(ClickListener listener) {
-		addListener("click",ClickEvent.class, listener,ClickListener.clickMethod);
+		addListener("click", ClickEvent.class, listener,
+				ClickListener.clickMethod);
 		requestRepaint();
 	}
-	
+
 	public void removeClickListener(ClickListener listener) {
 		removeListener(ClickEvent.class, listener);
 	}
-	
+
 	@Override
 	public void changeVariables(Object source, Map<String, Object> variables) {
 		super.changeVariables(source, variables);
-		if(variables.containsKey("click")) {
+		if (variables.containsKey("click")) {
 			fireEvent(new ClickEvent(this, null));
 		}
 	}
