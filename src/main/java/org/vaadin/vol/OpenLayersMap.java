@@ -1,10 +1,13 @@
 package org.vaadin.vol;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
@@ -24,9 +27,32 @@ public class OpenLayersMap extends AbstractComponentContainer {
 	private int zoom = 3;
 	private boolean partialRepaint;
 
+	private HashSet<Control> controls = new HashSet<Control>();
+
 	public OpenLayersMap() {
 		setWidth("500px");
 		setHeight("350px");
+		addControl(Control.PanZoom);
+		addControl(Control.LayerSwitcher);
+	}
+
+	public void addControl(Control control) {
+		controls.add(control);
+		setDirty("controls");
+	}
+
+	public void removeControl(Control control) {
+		controls.remove(control);
+		setDirty("controls");
+	}
+
+	/**
+	 * @return set of current controls used by this map. Note that returns
+	 *         reference to internal data structure. If you modify the set directly, call
+	 *         requestRepaint for the map to force repaint.
+	 */
+	public Set<Control> getControls() {
+		return controls;
 	}
 
 	/**
@@ -71,7 +97,7 @@ public class OpenLayersMap extends AbstractComponentContainer {
 	}
 
 	/**
-	 * Set the center of map to the center of a bounds 
+	 * Set the center of map to the center of a bounds
 	 * 
 	 */
 	public void setCenter(Bounds bounds) {
@@ -79,12 +105,12 @@ public class OpenLayersMap extends AbstractComponentContainer {
 		this.centerLon = (bounds.getRight() + bounds.getLeft()) / 2.0;
 		setDirty("clat");
 	}
-	
+
 	public void setZoom(int zoomLevel) {
 		this.zoom = zoomLevel;
 		setDirty("zoom");
 	}
-	
+
 	public int getZoom() {
 		return zoom;
 	}
@@ -147,6 +173,9 @@ public class OpenLayersMap extends AbstractComponentContainer {
 			for (Component component : layers) {
 				component.paint(target);
 			}
+		}
+		if (isDirty("controls")) {
+			target.addAttribute("controls", controls.toArray());
 		}
 		clearPartialPaintFlags();
 		fullRepaint = false;

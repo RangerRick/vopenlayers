@@ -4,7 +4,7 @@ import org.vaadin.vol.client.wrappers.control.Control;
 import org.vaadin.vol.client.wrappers.layer.Layer;
 import org.vaadin.vol.client.wrappers.popup.Popup;
 
-import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 
 public class MapOverlay extends AbstractOpenLayersWrapper {
 
@@ -118,6 +118,16 @@ public class MapOverlay extends AbstractOpenLayersWrapper {
 	public final native void setRestrictedExtent(Bounds bounds) 
 	/*-{
 		this.setOptions({restrictedExtent:bounds});
+	}-*/;
+
+	public final native Layer getBaseLayer() 
+	/*-{
+		return this.baseLayer;
+	}-*/;
+
+	public final native JsArray<Control> getControls() 
+	/*-{
+		return this.controls;
 	}-*/;
 
 }

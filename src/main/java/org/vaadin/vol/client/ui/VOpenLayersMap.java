@@ -10,7 +10,7 @@ import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Projection;
-import org.vaadin.vol.client.wrappers.control.LayerSwitcher;
+import org.vaadin.vol.client.wrappers.control.Control;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -54,11 +54,14 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 
 	private boolean immediate;
 
+	private HashMap<String,Control> myControls = new HashMap<String,Control>();
+
 	/**
 	 * The constructor should first call super() to initialize the component and
 	 * then handle any initialization relevant to Vaadin.
 	 */
 	public VOpenLayersMap() {
+		myControls.put("PanZoom", null);
 		setWidth("500px");
 		setHeight("500px");
 		add(map);
@@ -121,8 +124,6 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 			// extentChangeListener.onEvent(null);
 		}
 
-		map.addControl(LayerSwitcher.create());
-
 		// Save reference to server connection object to be able to send
 		// user interaction later
 		this.client = client;
@@ -157,6 +158,42 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 		}
 
 		updateZoomAndCenter(uidl);
+
+		if (uidl.hasAttribute("controls")) {
+			
+			HashSet<String> oldcontrols = new HashSet<String>(myControls.keySet());
+			
+			String[] controls = uidl.getStringArrayAttribute("controls");
+			for (int i = 0; i < controls.length; i++) {
+				String name = controls[i];
+				if(oldcontrols.contains(name)) {
+					oldcontrols.remove(name);
+				} else {
+					Control controlByName = Control.getControlByName(name, getMap());
+					map.addControl(controlByName);
+					myControls.put(name, controlByName);
+				}
+			}
+			
+			for (String string : oldcontrols) {
+				Control control = myControls.get(string);
+				if(control != null) {
+					map.removeControl(control);
+				} else {
+					// default control not in myControls
+					JsArray<Control> controls2 = map.getControls();
+					for(int i = 0; i < controls2.length(); i++) {
+						Control control2 = controls2.get(i);
+						if(control2.getId().contains("." + string + "_")) {
+							map.removeControl(control2);
+							break;
+						}
+					}
+				}
+				myControls.remove(string);
+			}
+
+		}
 
 		if (uidl.getBooleanAttribute("componentsPainted")) {
 			for (String id : orphanedcomponents) {

@@ -4,6 +4,7 @@ import org.vaadin.vol.client.wrappers.control.Control;
 import org.vaadin.vol.client.wrappers.layer.Layer;
 import org.vaadin.vol.client.wrappers.popup.Popup;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
@@ -119,6 +120,14 @@ public class Map extends Widget {
 
 	public void setRestrictedExtent(Bounds bounds) {
 		getMap().setRestrictedExtent(bounds);
+	}
+
+	public Layer getBaseLayer() {
+		return getMap().getBaseLayer();
+	}
+
+	public JsArray<Control> getControls() {
+		return getMap().getControls();
 	}
 
 }

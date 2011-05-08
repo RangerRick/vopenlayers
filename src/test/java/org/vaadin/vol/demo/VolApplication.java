@@ -1,11 +1,13 @@
 package org.vaadin.vol.demo;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.vaadin.vol.Area;
 import org.vaadin.vol.Bounds;
+import org.vaadin.vol.Control;
 import org.vaadin.vol.GoogleSatelliteMapLayer;
 import org.vaadin.vol.GoogleStreetMapLayer;
 import org.vaadin.vol.MapTilerLayer;
@@ -15,7 +17,6 @@ import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.OpenStreetMapLayer;
 import org.vaadin.vol.Point;
 import org.vaadin.vol.Popup;
-import org.vaadin.vol.WebMapServiceLayerStyled;
 import org.vaadin.vol.Popup.CloseEvent;
 import org.vaadin.vol.Popup.CloseListener;
 import org.vaadin.vol.Popup.PopupStyle;
@@ -26,16 +27,20 @@ import org.vaadin.vol.VectorLayer.VectorDrawnEvent;
 import org.vaadin.vol.VectorLayer.VectorDrawnListener;
 import org.vaadin.vol.VectorLayer.VectorModifiedEvent;
 import org.vaadin.vol.WebMapServiceLayer;
+import org.vaadin.vol.WebMapServiceLayerStyled;
 import org.xml.sax.SAXException;
 
 import com.vaadin.Application;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.OptionGroup;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -141,7 +146,7 @@ public class VolApplication extends Application {
 		Area area = new Area();
 		area.setPoints(points);
 
-		//setRestrictedExtent(map, points);
+		// setRestrictedExtent(map, points);
 		zoomToExtent(map, points);
 
 		vectorLayer.addVector(area);
@@ -239,6 +244,37 @@ public class VolApplication extends Application {
 				map.setZoom(15);
 			}
 		});
+
+		Panel panel = new Panel(new CssLayout());
+		OptionGroup mapcontrols = new OptionGroup();
+		mapcontrols.setMultiSelect(true);
+		mapcontrols.setImmediate(true);
+		Control[] values = Control.values();
+		for (int i = 0; i < values.length; i++) {
+			mapcontrols.addItem(values[i]);
+		}
+		mapcontrols.setValue(map.getControls());
+		mapcontrols.addListener(new ValueChangeListener() {
+			public void valueChange(ValueChangeEvent event) {
+				Control[] controls3 = map.getControls().toArray(
+						new Control[map.getControls().size()]);
+				for (int i = 0; i < controls3.length; i++) {
+					Control control = controls3[i];
+					map.removeControl(control);
+				}
+				Collection<Control> value = (Collection<Control>) event
+						.getProperty().getValue();
+				for (Control control : value) {
+					map.addControl(control);
+				}
+			}
+		});
+		panel.setHeight("100px");
+		panel.setWidth("200px");
+		panel.addComponent(mapcontrols);
+
+		controls.addComponent(panel);
+
 		controls.addComponent(moveToTMSExample);
 
 		return map;
@@ -407,17 +443,16 @@ public class VolApplication extends Application {
 		return map;
 
 	}
-	
+
 	public OpenLayersMap getMapWithCustomStyle() {
 		final OpenLayersMap map = new OpenLayersMap();
 
 		map.setJsMapOptions("{projection: "
-			+ "new OpenLayers.Projection(\"EPSG:900913\"),"
-			+ "units: \"m\","
-			+ "numZoomLevels: 22,"
-			+ "maxResolution: 156543.0339, "
-			+ "maxExtent: new OpenLayers.Bounds(-20037508, -20037508,20037508, 20037508.34)}");
-		
+				+ "new OpenLayers.Projection(\"EPSG:900913\"),"
+				+ "units: \"m\","
+				+ "numZoomLevels: 22,"
+				+ "maxResolution: 156543.0339, "
+				+ "maxExtent: new OpenLayers.Bounds(-20037508, -20037508,20037508, 20037508.34)}");
 
 		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
 		googleStreets.setProjection("EPSG:900913");
@@ -429,15 +464,19 @@ public class VolApplication extends Application {
 
 		WebMapServiceLayerStyled wms = new WebMapServiceLayerStyled();
 		wms.setUri("http://giswebservices.massgis.state.ma.us/geoserver/wms");
-//		wms.setUri("http://127.0.0.1:8090/geoserver/wms");
-//		wms.setLayers("topp:states");
+		// wms.setUri("http://127.0.0.1:8090/geoserver/wms");
+		// wms.setLayers("topp:states");
 		wms.setLayers("states");
 		wms.setTransparent(true);
 		wms.setFormat("image/gif");
 		wms.setBaseLayer(false);
 		wms.setDisplayName("states");
-		//Be careful about namespaces in SLD like topp:states or massgis:states otherwise it will render the map using defaultstyle. Basically a mistake in the namespace will prevent overriding the style with the one provided.
-//		String sld = "<StyledLayerDescriptor version=\"1.0.0\"><NamedLayer><Name>topp:states</Name><UserStyle><FeatureTypeStyle><Rule><LineSymbolizer><Stroke/></LineSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>";
+		// Be careful about namespaces in SLD like topp:states or massgis:states
+		// otherwise it will render the map using defaultstyle. Basically a
+		// mistake in the namespace will prevent overriding the style with the
+		// one provided.
+		// String sld =
+		// "<StyledLayerDescriptor version=\"1.0.0\"><NamedLayer><Name>topp:states</Name><UserStyle><FeatureTypeStyle><Rule><LineSymbolizer><Stroke/></LineSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>";
 		String sld = "<StyledLayerDescriptor version=\"1.0.0\"><NamedLayer><Name>massgis:states</Name><UserStyle><FeatureTypeStyle><Rule><LineSymbolizer><Stroke><CssParameter name=\"stroke\">#FF0000</CssParameter></Stroke></LineSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>";
 		wms.setSld(sld);
 		map.addLayer(wms);
