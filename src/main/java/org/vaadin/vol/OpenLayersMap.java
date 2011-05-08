@@ -68,7 +68,6 @@ public class OpenLayersMap extends AbstractComponentContainer {
 		this.centerLat = lan;
 		this.centerLon = lon;
 		setDirty("clat");
-		requestRepaint();
 	}
 
 	/**
@@ -79,7 +78,6 @@ public class OpenLayersMap extends AbstractComponentContainer {
 		this.centerLat = (bounds.getBottom() + bounds.getTop()) / 2.0;
 		this.centerLon = (bounds.getRight() + bounds.getLeft()) / 2.0;
 		setDirty("clat");
-		requestRepaint();
 	}
 	
 	public void setZoom(int zoomLevel) {
