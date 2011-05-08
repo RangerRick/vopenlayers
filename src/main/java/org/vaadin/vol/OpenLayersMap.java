@@ -86,6 +86,10 @@ public class OpenLayersMap extends AbstractComponentContainer {
 		this.zoom = zoomLevel;
 		setDirty("zoom");
 	}
+	
+	public int getZoom() {
+		return zoom;
+	}
 
 	private HashSet<String> dirtyFields = new HashSet<String>();
 	private boolean fullRepaint = true;
