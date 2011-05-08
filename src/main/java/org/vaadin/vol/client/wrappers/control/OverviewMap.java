@@ -1,12 +1,12 @@
 package org.vaadin.vol.client.wrappers.control;
 
-import org.vaadin.vol.client.wrappers.layer.VectorLayer;
+import org.vaadin.vol.client.wrappers.layer.Layer;
 
 
 public class OverviewMap extends Control {
 	protected OverviewMap() {};
 	
-	public static native OverviewMap create(VectorLayer targetLayer) 
+	public static native OverviewMap create(Layer targetLayer) 
 	/*-{
 	     	var options = {
     		layers: [targetLayer]
