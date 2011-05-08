@@ -19,16 +19,6 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
 	WebMapServiceLayer createLayer() {
 		return WebMapServiceLayer.create(display, uri, layers, format, isBaseLayer, transparent);
 	}
-	
-
-	
-//	target.addAttribute("uri", uri);
-//	target.addAttribute("type", type);
-//	target.addAttribute("layers", layers);
-//	target.addAttribute("display", display_name);
-//	target.addAttribute("isBaseLayer", isBaseLayer);
-//	target.addAttribute("opacity", opacity);
-//	target.addAttribute("featureid", feature_id);
 
 	@Override
 	public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
@@ -43,5 +33,44 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
 		}
 		super.updateFromUIDL(uidl, client);
 	}
+	
+	public String getUri() {
+	    return uri;
+	}
 
+
+
+	public String getLayers() {
+	    return layers;
+	}
+
+
+
+	public String getDisplay() {
+	    return display;
+	}
+
+
+
+	public Boolean isBaseLayer() {
+	    return isBaseLayer;
+	}
+
+
+
+	public Double getOpacity() {
+	    return opacity;
+	}
+
+
+
+	public String getFormat() {
+	    return format;
+	}
+
+
+
+	public boolean isTransparent() {
+	    return transparent;
+	}
 }
