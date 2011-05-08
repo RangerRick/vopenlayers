@@ -130,19 +130,21 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 		// Save the client side identifier (paintable id) for the widget
 		paintableId = uidl.getId();
 
-		orphanedcomponents = new HashSet<String>(components.keySet());
+		if (uidl.getBooleanAttribute("componentsPainted")) {
+			orphanedcomponents = new HashSet<String>(components.keySet());
 
-		Iterator<Object> childIterator = uidl.getChildIterator();
-		while (childIterator.hasNext()) {
-			UIDL layerUidl = (UIDL) childIterator.next();
-			orphanedcomponents.remove(layerUidl.getId());
-			Paintable paintable = client.getPaintable(layerUidl);
-			if (!components.containsKey(layerUidl.getId())) {
-				components.put(layerUidl.getId(), (Widget) paintable);
-				fakePaintables.add((Widget) paintable);
+			Iterator<Object> childIterator = uidl.getChildIterator();
+			while (childIterator.hasNext()) {
+				UIDL layerUidl = (UIDL) childIterator.next();
+				orphanedcomponents.remove(layerUidl.getId());
+				Paintable paintable = client.getPaintable(layerUidl);
+				if (!components.containsKey(layerUidl.getId())) {
+					components.put(layerUidl.getId(), (Widget) paintable);
+					fakePaintables.add((Widget) paintable);
+				}
+				paintable.updateFromUIDL(layerUidl, client);
+
 			}
-			paintable.updateFromUIDL(layerUidl, client);
-
 		}
 
 		if (uidl.hasAttribute("re_top")) {
@@ -156,11 +158,13 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 
 		updateZoomAndCenter(uidl);
 
-		for (String id : orphanedcomponents) {
-			Widget remove = components.remove(id);
-			fakePaintables.remove(remove);
+		if (uidl.getBooleanAttribute("componentsPainted")) {
+			for (String id : orphanedcomponents) {
+				Widget remove = components.remove(id);
+				fakePaintables.remove(remove);
+			}
 		}
-		
+
 	}
 
 	private void updateZoomAndCenter(UIDL uidl) {

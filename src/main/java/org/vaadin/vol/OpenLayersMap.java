@@ -143,6 +143,7 @@ public class OpenLayersMap extends AbstractComponentContainer {
 			}
 		}
 		if (isDirty("components")) {
+			target.addAttribute("componentsPainted", true);
 			for (Component component : layers) {
 				component.paint(target);
 			}
