@@ -15,6 +15,7 @@ public class WebMapServiceLayer extends AbstractComponent implements Layer {
 	private String uri = "";
 	private String type = "wms";
 	private String layers = "basic";
+	private String cqlFilter = null;
 	private String display_name = "";
 	private Boolean isBaseLayer = true;
 	private Double opacity = 1.0;
@@ -36,6 +37,9 @@ public class WebMapServiceLayer extends AbstractComponent implements Layer {
 		target.addAttribute("featureid", feature_id);
 		target.addAttribute("format", format);
 		target.addAttribute("transparent", transparent);
+		if(cqlFilter != null) {
+			target.addAttribute("cqlFilter", cqlFilter);
+		}
 	}
 
 	public void setUri(String uri) {
@@ -124,9 +128,19 @@ public class WebMapServiceLayer extends AbstractComponent implements Layer {
 
 	public void setTransparent(Boolean transparent) {
 		this.transparent = transparent;
+		requestRepaint();
 	}
 
 	public Boolean getTransparent() {
 		return transparent;
+	}
+
+	public void setCqlFilter(String cqlFilter) {
+		this.cqlFilter = cqlFilter;
+		requestRepaint();
+	}
+
+	public String getCqlFilter() {
+		return cqlFilter;
 	}
 }

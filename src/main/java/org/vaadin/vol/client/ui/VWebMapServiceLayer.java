@@ -14,10 +14,11 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
 	private Double opacity;
 	private String format;
 	private boolean transparent;
+	private String cqlFilter;
 
 	@Override
 	WebMapServiceLayer createLayer() {
-		return WebMapServiceLayer.create(display, uri, layers, format, isBaseLayer, transparent);
+		return WebMapServiceLayer.create(display, uri, layers, format,cqlFilter, isBaseLayer, transparent);
 	}
 
 	@Override
@@ -30,6 +31,7 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
 			transparent = uidl.getBooleanAttribute("transparent");
 			opacity = uidl.getDoubleAttribute("opacity");
 			format = uidl.getStringAttribute("format");
+			cqlFilter = uidl.hasAttribute("cqlFilter") ? uidl.getStringAttribute("cqlFilter") : null;
 		}
 		super.updateFromUIDL(uidl, client);
 	}

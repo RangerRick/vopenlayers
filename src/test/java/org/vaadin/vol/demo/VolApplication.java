@@ -56,6 +56,7 @@ public class VolApplication extends Application {
 		OpenLayersMap map = createTestMap(mainWindow);
 		// OpenLayersMap map = getMapIssue1();
 		// OpenLayersMap map = getMapIssue2();
+//		 OpenLayersMap map = wmsCqlFilter();
 
 		// OpenLayersMap map = getMapWithUsHighWaysOnTopOfWebMercator();
 		// OpenLayersMap map = getMapWithCustomStyle();
@@ -65,6 +66,28 @@ public class VolApplication extends Application {
 		layout.addComponent(map);
 		layout.setExpandRatio(map, 1);
 
+	}
+
+	private OpenLayersMap wmsCqlFilter() {
+		OpenLayersMap openLayersMap = new OpenLayersMap();
+		WebMapServiceLayer webMapServiceLayer = new WebMapServiceLayer();
+		webMapServiceLayer.setUri("http://vmap0.tiles.osgeo.org/wms/vmap0");
+		webMapServiceLayer.setBaseLayer(true);
+		webMapServiceLayer.setDisplayName("Base map");
+		openLayersMap.addLayer(webMapServiceLayer);
+		
+		WebMapServiceLayer cqlTest = new WebMapServiceLayer();
+		cqlTest.setUri("http://www.example.com:8080/geoserver/wms?service=wms");
+		cqlTest.setLayers("detail_occurrences");
+		cqlTest.setTransparent(true);
+		cqlTest.setFormat("image/png");
+		cqlTest.setDisplayName("CQL test");
+		cqlTest.setBaseLayer(false);
+		openLayersMap.addLayer(cqlTest);
+		
+		openLayersMap.setSizeFull();
+		
+		return openLayersMap;
 	}
 
 	private OpenLayersMap createTestMap(final Window mainWindow) {
