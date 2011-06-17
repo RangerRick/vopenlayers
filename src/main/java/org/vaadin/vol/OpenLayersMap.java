@@ -1,7 +1,5 @@
 package org.vaadin.vol;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -148,7 +146,7 @@ public class OpenLayersMap extends AbstractComponentContainer {
 	@Override
 	public void paintContent(PaintTarget target) throws PaintException {
 		super.paintContent(target);
-		if (fullRepaint && jsMapOptions != null) {
+		if (isDirty("jsMapOptions") && jsMapOptions != null) {
 			target.addAttribute("jsMapOptions", jsMapOptions);
 		}
 
