@@ -52,12 +52,20 @@
 			</plugin>
 
 			<!-- Compile custom GWT components or widget dependencies with the GWT 
-				compiler <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>gwt-maven-plugin</artifactId> 
-				<version>2.1.0-1</version> <configuration> <webappDirectory>${project.build.directory}/${project.build.finalName}/VAADIN/widgetsets</webappDirectory> 
-				<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs> <hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp> 
-				<noServer>true</noServer> <port>8080</port> <soyc>false</soyc> <module>org.vaadin.vol.demo.VolExampleAppWidgetset</module> 
-				</configuration> <executions> <execution> <goals> <goal>resources</goal> 
-				<goal>compile</goal> </goals> </execution> </executions> </plugin> -->
+				compiler -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>2.3.0</version>
+				<configuration>
+					<webappDirectory>${project.build.directory}/testwebapp/VAADIN/widgetsets</webappDirectory>
+					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+					<hostedWebapp>${project.build.directory}/testwebapp</hostedWebapp>
+					<noServer>true</noServer>
+					<module>org.vaadin.vol.demo.VolExampleAppWidgetset</module>
+					<runTarget>http://localhost:9998/</runTarget>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
@@ -80,6 +88,9 @@
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
+			</resource>
+			<resource>
+				<directory>src/test/java</directory>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -145,32 +156,32 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin</artifactId>
-			<version>6.5.4</version>
+			<version>LATEST</version>
 		</dependency>
 		<!-- This is also used by gwt-maven-plugin to deduce GWT version number. -->
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
-			<version>2.1.1</version>
+			<version>2.3.0</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
-			<version>7.2.2.v20101205</version>
+			<version>LATEST</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
-			<version>7.2.2.v20101205</version>
+			<version>LATEST</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-			<version>7.2.2.v20101205</version>
+			<version>LATEST</version>
 			<scope>test</scope>
 		</dependency>
 

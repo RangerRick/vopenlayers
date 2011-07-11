@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: OpenLayers Wrapper
-Implementation-Version: 0.3.0
-Vaadin-Package-Version: 1
-Vaadin-Widgetsets: org.vaadin.vol.VolWidgetsetWithHostedScript
-Class-Path: 
-
