@@ -5,5 +5,5 @@ public enum Control {
     /**
      * Supported from OpenLayers 2.11.
      */
-    TouchNavigation, Attribution
+    TouchNavigation, Attribution, ZoomPanel
 }

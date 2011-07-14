@@ -170,8 +170,12 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 					oldcontrols.remove(name);
 				} else {
 					Control controlByName = Control.getControlByName(name, getMap());
-					map.addControl(controlByName);
-					myControls.put(name, controlByName);
+					if(controlByName != null) {
+						map.addControl(controlByName);
+						myControls.put(name, controlByName);
+					} else {
+						VConsole.error("Control not in OL build: " + name);
+					}
 				}
 			}
 			

@@ -34,7 +34,11 @@ public abstract class Control extends JavaScriptObject {
 
 	private native static final Control getControlByName(String name) 
 	/*-{
-		return new $wnd.OpenLayers.Control[name]();
+		if($wnd.OpenLayers.Control[name]) {
+			return new $wnd.OpenLayers.Control[name]();
+		} else {
+			return null;
+		}
 	}-*/;
 
 	public native final String getId() 
