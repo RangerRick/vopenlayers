@@ -8,14 +8,14 @@ public class OpenStreetMapLayer extends Layer {
 	public native final static OpenStreetMapLayer create(String displayName, String projection)
 	/*-{
 
-		var options = {sphericalMercator: true};
+		var options = {transitionEffect: 'resize'};
 		if(projection) {
 			options.projection = projection;
 		}
 		
 		if(!displayName) displayName = "OpenStreetMap";
-		
-		return new $wnd.OpenLayers.Layer.OSM.Mapnik(displayName, options);
+		var OpenLayers = $wnd.OpenLayers;
+		return new OpenLayers.Layer.OSM(displayName,null,options);
 		
 	}-*/;
 
