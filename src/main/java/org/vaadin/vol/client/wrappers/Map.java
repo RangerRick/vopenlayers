@@ -17,117 +17,125 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class Map extends Widget {
 
-	private static int sequense = 0;
+    private static int sequense = 0;
 
-	private MapOverlay jsoverlay;
+    private MapOverlay jsoverlay;
 
-	private final DivElement mapElement;
+    private final DivElement mapElement;
 
-	private String mapInitOptions;
+    private String mapInitOptions;
 
-	public Map() {
-		setElement(Document.get().createDivElement());
-		mapElement = Document.get().createDivElement();
-		Style style = mapElement.getStyle();
-		style.setWidth(100, Unit.PCT);
-		style.setHeight(100, Unit.PCT);
-		setWidth("100%");
-		setHeight("100%");
-		getElement().appendChild(mapElement);
-		String id = "VOLMAP_" + sequense++;
-		mapElement.setId(id);
-	}
+    private JsArray<Control> initialControls = (JsArray<Control>) JsArray
+            .createArray();
 
-	/**
-	 * @param mapInitOptions
-	 *            the js string that will be evaluated as options for the map.
-	 */
-	public void setMapInitOptions(String mapInitOptions) {
-		this.mapInitOptions = mapInitOptions;
-	}
+    public Map() {
+        setElement(Document.get().createDivElement());
+        mapElement = Document.get().createDivElement();
+        Style style = mapElement.getStyle();
+        style.setWidth(100, Unit.PCT);
+        style.setHeight(100, Unit.PCT);
+        setWidth("100%");
+        setHeight("100%");
+        getElement().appendChild(mapElement);
+        String id = "VOLMAP_" + sequense++;
+        mapElement.setId(id);
+    }
 
-	public String getMapInitOptions() {
-		return mapInitOptions;
-	}
+    /**
+     * @param mapInitOptions
+     *            the js string that will be evaluated as options for the map.
+     */
+    public void setMapInitOptions(String mapInitOptions) {
+        this.mapInitOptions = mapInitOptions;
+    }
 
-	private MapOverlay getMap() {
-		if (jsoverlay == null) {
-			jsoverlay = MapOverlay.get(mapElement.getId(), mapInitOptions);
-		}
-		return jsoverlay;
-	}
+    public String getMapInitOptions() {
+        return mapInitOptions;
+    }
 
-	public void addControl(Control control) {
-		getMap().addControl(control);
-	}
+    private MapOverlay getMap() {
+        if (jsoverlay == null) {
+            jsoverlay = MapOverlay.get(mapElement.getId(), mapInitOptions,
+                    initialControls);
+        }
+        return jsoverlay;
+    }
 
-	public void addLayer(Layer layer) {
-		getMap().addLayer(layer);
-	}
+    public void addControl(Control control) {
+        if (jsoverlay == null) {
+            initialControls.push(control);
+        } else {
+            getMap().addControl(control);
+        }
+    }
 
-	public void removeLayer(Layer remove) {
-		getMap().removeLayer(remove);
-	}
+    public void addLayer(Layer layer) {
+        getMap().addLayer(layer);
+    }
 
-	public void setCenter(LonLat lonLat, int zoom) {
-		getMap().setCenter(lonLat, zoom);
+    public void removeLayer(Layer remove) {
+        getMap().removeLayer(remove);
+    }
 
-	}
+    public void setCenter(LonLat lonLat, int zoom) {
+        getMap().setCenter(lonLat, zoom);
 
-	public Projection getProjection() {
-		return getMap().getProjection();
-	}
+    }
 
-	public void addPopup(Popup popup) {
-		getMap().addPopup(popup);
-	}
+    public Projection getProjection() {
+        return getMap().getProjection();
+    }
 
-	public void removePopup(Popup popup) {
-		getMap().removePopup(popup);
-	}
+    public void addPopup(Popup popup) {
+        getMap().addPopup(popup);
+    }
 
-	public Layer getLayer(String id) {
-		return getMap().getLayer(id);
-	}
+    public void removePopup(Popup popup) {
+        getMap().removePopup(popup);
+    }
 
-	public void removeControl(Control control) {
-		getMap().removeContol(control);
-	}
+    public Layer getLayer(String id) {
+        return getMap().getLayer(id);
+    }
 
-	public Bounds getMaxExtent() {
-		return getMap().getMaxExtent();
-	}
+    public void removeControl(Control control) {
+        getMap().removeContol(control);
+    }
 
-	public int getZoom() {
-		return getMap().getZoom();
-	}
+    public Bounds getMaxExtent() {
+        return getMap().getMaxExtent();
+    }
 
-	public void setZoom(int zoom) {
-		getMap().zoomTo(zoom);
-	}
+    public int getZoom() {
+        return getMap().getZoom();
+    }
 
-	public void registerEventHandler(String evtName, GwtOlHandler handler) {
-		getMap().registerHandler(evtName, handler);
-	}
+    public void setZoom(int zoom) {
+        getMap().zoomTo(zoom);
+    }
 
-	public Bounds getExtent() {
-		return getMap().getExtent();
-	}
+    public void registerEventHandler(String evtName, GwtOlHandler handler) {
+        getMap().registerHandler(evtName, handler);
+    }
 
-	public void zoomToExtent(Bounds bounds) {
-		getMap().zoomToExtent(bounds);
-	}
+    public Bounds getExtent() {
+        return getMap().getExtent();
+    }
 
-	public void setRestrictedExtent(Bounds bounds) {
-		getMap().setRestrictedExtent(bounds);
-	}
+    public void zoomToExtent(Bounds bounds) {
+        getMap().zoomToExtent(bounds);
+    }
 
-	public Layer getBaseLayer() {
-		return getMap().getBaseLayer();
-	}
+    public void setRestrictedExtent(Bounds bounds) {
+        getMap().setRestrictedExtent(bounds);
+    }
 
-	public JsArray<Control> getControls() {
-		return getMap().getControls();
-	}
+    public Layer getBaseLayer() {
+        return getMap().getBaseLayer();
+    }
+
+    public JsArray<Control> getControls() {
+        return getMap().getControls();
+    }
 
 }
