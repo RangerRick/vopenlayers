@@ -282,6 +282,9 @@ public class OpenLayersMap extends AbstractComponentContainer {
      */
     public void zoomToExtent(Bounds bounds) {
         zoomToExtent = bounds;
+        // also save center point for refreshes
+        centerLon = (zoomToExtent.getMinLon() + zoomToExtent.getMaxLon()) / 2;
+        centerLat = (zoomToExtent.getMinLat() + zoomToExtent.getMaxLat()) / 2;
         setDirty("zoomToExtent");
     }
 
