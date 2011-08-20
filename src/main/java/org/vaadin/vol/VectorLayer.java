@@ -19,194 +19,309 @@ import com.vaadin.ui.Component;
 @ClientWidget(org.vaadin.vol.client.ui.VVectorLayer.class)
 public class VectorLayer extends AbstractComponentContainer implements Layer {
 
-	private String displayName = "Vector layer";
+    public enum SelectionMode {
+        NONE, SIMPLE
+        // MULTI, MULTI_WITH_AREA_SELECTION etc
+    }
 
-	private List<Vector> vectors = new LinkedList<Vector>();
+    private String displayName = "Vector layer";
 
-	public enum DrawingMode {
-		NONE, LINE, AREA, POINT, MODIFY
-	}
+    private List<Vector> vectors = new LinkedList<Vector>();
 
-	private DrawingMode drawindMode = DrawingMode.NONE;
+    private SelectionMode selectionMode = SelectionMode.NONE;
 
-	public void addVector(Vector m) {
-		addComponent(m);
-	}
+    public enum DrawingMode {
+        NONE, LINE, AREA, POINT, MODIFY
+    }
 
-	public void paintContent(PaintTarget target) throws PaintException {
-		target.addAttribute("name", displayName);
-		target.addAttribute("dmode", drawindMode.toString());
-		for (Vector m : vectors) {
-			m.paint(target);
-		}
-	}
+    private DrawingMode drawindMode = DrawingMode.NONE;
 
-	public void replaceComponent(Component oldComponent, Component newComponent) {
-		throw new UnsupportedOperationException();
-	}
+    public void addVector(Vector m) {
+        addComponent(m);
+    }
 
-	public Iterator<Component> getComponentIterator() {
-		LinkedList<Component> list = new LinkedList<Component>(vectors);
-		return list.iterator();
-	}
+    @Override
+    public void paintContent(PaintTarget target) throws PaintException {
+        target.addAttribute("name", displayName);
+        target.addAttribute("dmode", drawindMode.toString());
+        target.addAttribute("smode", selectionMode.toString());
 
-	@Override
-	public void addComponent(Component c) {
-		if (c instanceof Vector) {
-			vectors.add((Vector) c);
-			super.addComponent(c);
-		} else {
-			throw new IllegalArgumentException(
-					"VectorLayer supports only Vectors");
-		}
-	}
+        for (Vector m : vectors) {
+            m.paint(target);
+        }
 
-	@Override
-	public void removeComponent(Component c) {
-		vectors.remove(c);
-		super.removeComponent(c);
-		requestRepaint();
-	}
+    }
 
-	public void setDrawindMode(DrawingMode drawindMode) {
-		this.drawindMode = drawindMode;
-		requestRepaint();
-	}
+    public void replaceComponent(Component oldComponent, Component newComponent) {
+        throw new UnsupportedOperationException();
+    }
 
-	public DrawingMode getDrawindMode() {
-		return drawindMode;
-	}
+    public Iterator<Component> getComponentIterator() {
+        LinkedList<Component> list = new LinkedList<Component>(vectors);
+        return list.iterator();
+    }
 
-	@Override
-	public void changeVariables(Object source, Map<String, Object> variables) {
-		super.changeVariables(source, variables);
-		// support other drawing modes than area
-		// TODO make events fired when new object is drawn/edited
-		if (variables.containsKey("vertices")) {
-			String[] object = (String[]) variables.get("vertices");
-			Point[] points = new Point[object.length];
-			for (int i = 0; i < points.length; i++) {
-				points[i] = Point.valueOf(object[i]);
-			}
+    @Override
+    public void addComponent(Component c) {
+        if (c instanceof Vector) {
+            vectors.add((Vector) c);
+            super.addComponent(c);
+        } else {
+            throw new IllegalArgumentException(
+                    "VectorLayer supports only Vectors");
+        }
+    }
 
-			if (drawindMode == DrawingMode.LINE) {
-				PolyLine polyline = new PolyLine();
-				polyline.setPoints(points);
-				newVectorPainted(polyline);
-			} else if (drawindMode == DrawingMode.AREA) {
-				Area area = new Area();
-				area.setPoints(points);
-				newVectorPainted(area);
-			} else if (drawindMode == DrawingMode.MODIFY) {
-				Vector vector = (Vector) variables.get("modifiedVector");
-				vector.setPoints(points);
-				vectorModified(vector);
-			} 
-		}
-		if (drawindMode == DrawingMode.POINT && variables.containsKey("x")) {
-			Double x = (Double) variables.get("x");
-			Double y = (Double) variables.get("y");
-			PointVector point = new PointVector(x, y);
-			newVectorPainted(point);
-		}
-	}
+    @Override
+    public void removeComponent(Component c) {
+        vectors.remove(c);
+        super.removeComponent(c);
+        requestRepaint();
+    }
 
-	private void vectorModified(Vector object2) {
-		VectorModifiedEvent vectorModifiedEvent = new VectorModifiedEvent(this,
-				object2);
-		fireEvent(vectorModifiedEvent);
-	}
+    public void setDrawindMode(DrawingMode drawindMode) {
+        this.drawindMode = drawindMode;
+        requestRepaint();
+    }
 
-	protected void newVectorPainted(Vector vector) {
-		VectorDrawnEvent vectorDrawnEvent = new VectorDrawnEvent(this, vector);
-		fireEvent(vectorDrawnEvent);
-		requestRepaint();
-	}
+    public DrawingMode getDrawindMode() {
+        return drawindMode;
+    }
 
-	public interface VectorDrawnListener {
+    @Override
+    public void changeVariables(Object source, Map<String, Object> variables) {
+        super.changeVariables(source, variables);
+        // support other drawing modes than area
+        // TODO make events fired when new object is drawn/edited
+        if (variables.containsKey("vertices")) {
+            String[] object = (String[]) variables.get("vertices");
+            Point[] points = new Point[object.length];
+            for (int i = 0; i < points.length; i++) {
+                points[i] = Point.valueOf(object[i]);
+            }
 
-		public final Method method = ReflectTools.findMethod(
-				VectorDrawnListener.class, "vectorDrawn",
-				VectorDrawnEvent.class);
+            if (drawindMode == DrawingMode.LINE) {
+                PolyLine polyline = new PolyLine();
+                polyline.setPoints(points);
+                newVectorPainted(polyline);
+            } else if (drawindMode == DrawingMode.AREA) {
+                Area area = new Area();
+                area.setPoints(points);
+                newVectorPainted(area);
+            } else if (drawindMode == DrawingMode.MODIFY) {
+                Vector vector = (Vector) variables.get("modifiedVector");
+                vector.setPoints(points);
+                vectorModified(vector);
+            }
+        }
+        if (drawindMode == DrawingMode.POINT && variables.containsKey("x")) {
+            Double x = (Double) variables.get("x");
+            Double y = (Double) variables.get("y");
+            PointVector point = new PointVector(x, y);
+            newVectorPainted(point);
+        }
+        if (variables.containsKey("vsel")) {
+            Vector object = (Vector) variables.get("vsel");
+            VectorSelectedEvent vectorSelectedEvent = new VectorSelectedEvent(
+                    this, object);
+            fireEvent(vectorSelectedEvent);
+        }
+        if (variables.containsKey("vusel")) {
+            Vector object = (Vector) variables.get("vusel");
+            VectorUnSelectedEvent vectorSelectedEvent = new VectorUnSelectedEvent(
+                    this, object);
+            fireEvent(vectorSelectedEvent);
+        }
+    }
 
-		public void vectorDrawn(VectorDrawnEvent event);
+    private void vectorModified(Vector object2) {
+        VectorModifiedEvent vectorModifiedEvent = new VectorModifiedEvent(this,
+                object2);
+        fireEvent(vectorModifiedEvent);
+    }
 
-	}
+    protected void newVectorPainted(Vector vector) {
+        VectorDrawnEvent vectorDrawnEvent = new VectorDrawnEvent(this, vector);
+        fireEvent(vectorDrawnEvent);
+        requestRepaint();
+    }
 
-	public void addListener(VectorDrawnListener listener) {
-		addListener(VectorDrawnEvent.class, listener,
-				VectorDrawnListener.method);
-	}
+    public interface VectorDrawnListener {
 
-	public void removeListener(VectorDrawnListener listener) {
-		removeListener(VectorDrawnEvent.class, listener,
-				VectorDrawnListener.method);
-	}
+        public final Method method = ReflectTools.findMethod(
+                VectorDrawnListener.class, "vectorDrawn",
+                VectorDrawnEvent.class);
 
-	public interface VectorModifiedListener {
+        public void vectorDrawn(VectorDrawnEvent event);
 
-		public final Method method = ReflectTools.findMethod(
-				VectorModifiedListener.class, "vectorModified",
-				VectorModifiedEvent.class);
+    }
 
-		public void vectorModified(VectorModifiedEvent event);
+    public void addListener(VectorDrawnListener listener) {
+        addListener(VectorDrawnEvent.class, listener,
+                VectorDrawnListener.method);
+    }
 
-	}
+    public void removeListener(VectorDrawnListener listener) {
+        removeListener(VectorDrawnEvent.class, listener,
+                VectorDrawnListener.method);
+    }
 
-	public void addListener(VectorModifiedListener listener) {
-		addListener(VectorModifiedEvent.class, listener,
-				VectorModifiedListener.method);
-	}
+    public interface VectorModifiedListener {
 
-	public void removeListener(VectorModifiedListener listener) {
-		removeListener(VectorModifiedEvent.class, listener,
-				VectorModifiedListener.method);
-	}
+        public final Method method = ReflectTools.findMethod(
+                VectorModifiedListener.class, "vectorModified",
+                VectorModifiedEvent.class);
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+        public void vectorModified(VectorModifiedEvent event);
 
-	public String getDisplayName() {
-		return displayName;
-	}
+    }
 
-	public class VectorDrawnEvent extends Event {
+    public void addListener(VectorModifiedListener listener) {
+        addListener(VectorModifiedEvent.class, listener,
+                VectorModifiedListener.method);
+    }
 
-		private Vector vector;
+    public void removeListener(VectorModifiedListener listener) {
+        removeListener(VectorModifiedEvent.class, listener,
+                VectorModifiedListener.method);
+    }
 
-		public VectorDrawnEvent(Component source, Vector vector) {
-			super(source);
-			this.setVector(vector);
-		}
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
-		private void setVector(Vector vector) {
-			this.vector = vector;
-		}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-		public Vector getVector() {
-			return vector;
-		}
+    public void setSelectionMode(SelectionMode selectionMode) {
+        this.selectionMode = selectionMode;
+        requestRepaint();
+    }
 
-	}
+    public SelectionMode getSelectionMode() {
+        return selectionMode;
+    }
 
-	public class VectorModifiedEvent extends Event {
+    public class VectorDrawnEvent extends Event {
 
-		private Vector vector;
+        private Vector vector;
 
-		public VectorModifiedEvent(Component source, Vector vector) {
-			super(source);
-			this.setVector(vector);
-		}
+        public VectorDrawnEvent(Component source, Vector vector) {
+            super(source);
+            setVector(vector);
+        }
 
-		private void setVector(Vector vector) {
-			this.vector = vector;
-		}
+        private void setVector(Vector vector) {
+            this.vector = vector;
+        }
 
-		public Vector getVector() {
-			return vector;
-		}
+        public Vector getVector() {
+            return vector;
+        }
 
-	}
+    }
+
+    public class VectorModifiedEvent extends Event {
+
+        private Vector vector;
+
+        public VectorModifiedEvent(Component source, Vector vector) {
+            super(source);
+            setVector(vector);
+        }
+
+        private void setVector(Vector vector) {
+            this.vector = vector;
+        }
+
+        public Vector getVector() {
+            return vector;
+        }
+
+    }
+
+    public interface VectorSelectedListener {
+
+        public final String EVENT_ID = "vsel";
+
+        public final Method method = ReflectTools.findMethod(
+                VectorSelectedListener.class, "vectorSelected",
+                VectorSelectedEvent.class);
+
+        public void vectorSelected(VectorSelectedEvent event);
+
+    }
+
+    public void addListener(VectorSelectedListener listener) {
+        addListener(VectorSelectedListener.EVENT_ID, VectorSelectedEvent.class,
+                listener, VectorSelectedListener.method);
+    }
+
+    public void removeListener(VectorSelectedListener listener) {
+        removeListener(VectorSelectedListener.EVENT_ID,
+                VectorSelectedEvent.class, listener);
+    }
+
+    public class VectorSelectedEvent extends Event {
+
+        private Vector vector;
+
+        public VectorSelectedEvent(Component source, Vector vector) {
+            super(source);
+            this.setVector(vector);
+        }
+
+        private void setVector(Vector vector) {
+            this.vector = vector;
+        }
+
+        public Vector getVector() {
+            return vector;
+        }
+
+    }
+
+    public interface VectorUnSelectedListener {
+
+        public final String EVENT_ID = "vusel";
+
+        public final Method method = ReflectTools.findMethod(
+                VectorUnSelectedListener.class, "vectorSelected",
+                VectorUnSelectedEvent.class);
+
+        public void vectorSelected(VectorUnSelectedEvent event);
+
+    }
+
+    public void addListener(VectorUnSelectedListener listener) {
+        addListener(VectorUnSelectedListener.EVENT_ID,
+                VectorUnSelectedEvent.class, listener,
+                VectorUnSelectedListener.method);
+    }
+
+    public void removeListener(VectorUnSelectedListener listener) {
+        removeListener(VectorUnSelectedListener.EVENT_ID,
+                VectorUnSelectedEvent.class, listener);
+    }
+
+    public class VectorUnSelectedEvent extends Event {
+
+        private Vector vector;
+
+        public VectorUnSelectedEvent(Component source, Vector vector) {
+            super(source);
+            this.setVector(vector);
+        }
+
+        private void setVector(Vector vector) {
+            this.vector = vector;
+        }
+
+        public Vector getVector() {
+            return vector;
+        }
+
+    }
 
 }

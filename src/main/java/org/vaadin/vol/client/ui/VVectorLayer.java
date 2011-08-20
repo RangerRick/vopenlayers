@@ -12,6 +12,7 @@ import org.vaadin.vol.client.wrappers.Vector;
 import org.vaadin.vol.client.wrappers.control.Control;
 import org.vaadin.vol.client.wrappers.control.DrawFeature;
 import org.vaadin.vol.client.wrappers.control.ModifyFeature;
+import org.vaadin.vol.client.wrappers.control.SelectFeature;
 import org.vaadin.vol.client.wrappers.geometry.Geometry;
 import org.vaadin.vol.client.wrappers.geometry.LineString;
 import org.vaadin.vol.client.wrappers.geometry.Point;
@@ -29,6 +30,7 @@ import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
 import com.vaadin.terminal.gwt.client.VConsole;
+import com.vaadin.terminal.gwt.client.ValueMap;
 
 public class VVectorLayer extends FlowPanel implements VLayer, Container {
 
@@ -52,6 +54,40 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                     client.sendPendingVariableChanges();
                 }
             });
+            vectors.registerHandler("featureselected", new GwtOlHandler() {
+                public void onEvent(JsArray arguments) {
+                    if (client.hasEventListeners(VVectorLayer.this, "vsel")) {
+                        ValueMap javaScriptObject = arguments.get(0).cast();
+                        Vector vector = javaScriptObject.getValueMap("feature")
+                                .cast();
+                        for (Widget w : getChildren()) {
+                            VAbstractVector v = (VAbstractVector) w;
+                            if (v.getVector() == vector) {
+                                client.updateVariable(paintableId, "vsel", v,
+                                        true);
+                            }
+                        }
+                    }
+                }
+            });
+
+            vectors.registerHandler("featureunselected", new GwtOlHandler() {
+                public void onEvent(JsArray arguments) {
+                    if (client.hasEventListeners(VVectorLayer.this, "vusel")) {
+                        ValueMap javaScriptObject = arguments.get(0).cast();
+                        Vector vector = javaScriptObject.getValueMap("feature")
+                                .cast();
+                        for (Widget w : getChildren()) {
+                            VAbstractVector v = (VAbstractVector) w;
+                            if (v.getVector() == vector) {
+                                client.updateVariable(paintableId, "vusel", v,
+                                        true);
+                            }
+                        }
+                    }
+                }
+            });
+
         }
         return vectors;
     }
@@ -117,6 +153,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
     private String paintableId;
     private Vector lastNewDrawing;
     private boolean added = false;
+    private String currentSelectionMode;
+    private SelectFeature selectFeature;
 
     private GwtOlHandler getFeatureAddedListener() {
         if (_fAddedListener == null) {
@@ -209,7 +247,40 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
             widget.removeFromParent();
         }
         setDrawingMode(layer.getStringAttribute("dmode"));
+        setSelectionMode(layer);
         updating = false;
+    }
+
+    private void setSelectionMode(UIDL layer) {
+        String newSelectionMode = layer.getStringAttribute("smode");
+        if (currentSelectionMode != newSelectionMode) {
+            if (selectFeature != null) {
+                selectFeature.deActivate();
+                getMap().removeControl(selectFeature);
+                selectFeature = null;
+            }
+
+            if (newSelectionMode != "NONE") {
+                selectFeature = SelectFeature.create(vectors);
+                getMap().addControl(selectFeature);
+                selectFeature.activate();
+            }
+
+            currentSelectionMode = newSelectionMode;
+        }
+        if (selectFeature != null) {
+
+            selectFeature.unselectAll();
+
+            if (layer.hasAttribute("selectedVectors")) {
+                int c = layer.getIntAttribute("selectedVectors");
+                for (int i = 0; i < c; i++) {
+                    VAbstractVector p = (VAbstractVector) layer
+                            .getPaintableAttribute("s" + i, client);
+                    selectFeature.select(p.getVector());
+                }
+            }
+        }
     }
 
     private void setDrawingMode(String newDrawingMode) {
