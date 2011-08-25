@@ -191,7 +191,7 @@ public class VolApplication extends Application {
         Style vaadinColors = new Style();
         vaadinColors.setStrokeColor("#1cffff");
         vaadinColors.setFillColor("#adfffc");
-        vaadinColors.setFillOpacity(0.2);
+        vaadinColors.setFillOpacity(0.4);
         vaadinColors.setStrokeWidth(3);
         area.setCustomStyle(vaadinColors);
 
@@ -224,7 +224,7 @@ public class VolApplication extends Application {
         area2.setPoints(points2);
         vectorLayer.addVector(area2);
         
-        // Add red dots to area corners, styling with styleNames
+        // Add styled PointVectors to area corners, styling with styleNames
         
         Style style = new Style();
         style.setFill(true);
@@ -233,10 +233,26 @@ public class VolApplication extends Application {
         style.setStroke(false);
         style.setPointRadius(30);
         stylemap.setStyle("red", style);
+        Style markerStyle = new Style();
+        markerStyle.setExternalGraphic(getURL() + "VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker.png");
+        markerStyle.setGraphicZIndex(11);
+        markerStyle.setGraphicSize(16, 21);
+        markerStyle.setBackgroundGraphic(getURL() + "VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker_shadow.png");
+        markerStyle.setBackgroundYOffset(-7);
+        markerStyle.setBackgroundXOffset(0);
+        markerStyle.setBackgroundGraphicZIndex(10);
+        markerStyle.setFillOpacity(1);
+        markerStyle.setStrokeOpacity(1);
+        markerStyle.setPointRadius(10);
+        stylemap.setStyle("marker", markerStyle);
         
         for (int i = 0; i < points.length; i++) {
             PointVector pointVector = new PointVector(points[i].getLon(), points[i].getLat());
-            pointVector.setStyleName("red");
+            if(i == 0) {
+                pointVector.setStyleName("marker");
+            } else {
+                pointVector.setStyleName("red");
+            }
             vectorLayer.addVector(pointVector);
         }
         
