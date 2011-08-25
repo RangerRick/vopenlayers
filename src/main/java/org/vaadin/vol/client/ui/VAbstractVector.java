@@ -13,56 +13,65 @@ import com.vaadin.terminal.gwt.client.UIDL;
 
 public abstract class VAbstractVector extends Widget implements Paintable {
 
-	protected Vector vector;
-	private Projection projection;
+    protected Vector vector;
+    private Projection projection;
 
-	public VAbstractVector() {
-		setElement(Document.get().createDivElement());
-	}
+    public VAbstractVector() {
+        setElement(Document.get().createDivElement());
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.vaadin.terminal.gwt.client.Paintable#updateFromUIDL(com.vaadin.terminal
-	 * .gwt.client.UIDL, com.vaadin.terminal.gwt.client.ApplicationConnection)
-	 */
-	public void updateFromUIDL(UIDL childUIDL, final ApplicationConnection client) {
-		if (client.updateComponent(this, childUIDL, false)) {
-			return;
-		}
-		projection = Projection.get(childUIDL.getStringAttribute("projection"));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.terminal.gwt.client.Paintable#updateFromUIDL(com.vaadin.terminal
+     * .gwt.client.UIDL, com.vaadin.terminal.gwt.client.ApplicationConnection)
+     */
+    public void updateFromUIDL(UIDL childUIDL,
+            final ApplicationConnection client) {
+        if (client.updateComponent(this, childUIDL, false)) {
+            return;
+        }
+        projection = Projection.get(childUIDL.getStringAttribute("projection"));
 
-		if (vector != null) {
-			getLayer().removeFeature(vector);
-		}
-		updateVector(childUIDL, client);
-		getLayer().addFeature(vector);
-	}
-	
-	protected Projection getProjection() {
-		return projection;
-	}
+        if (vector != null) {
+            getLayer().removeFeature(vector);
+        }
+        updateVector(childUIDL, client);
+        updateStyle(childUIDL, client);
 
-	protected abstract void updateVector(UIDL childUIDL, ApplicationConnection client);
+        getLayer().addFeature(vector);
+    }
 
-	private VectorLayer getLayer() {
-		return (VectorLayer) ((VVectorLayer) getParent()).getLayer();
-	}
+    private void updateStyle(UIDL childUIDL, ApplicationConnection client) {
+        if (childUIDL.hasAttribute("olStyle")) {
+            vector.setStyle(childUIDL.getMapAttribute("olStyle"));
+        }
+    }
 
+    protected Projection getProjection() {
+        return projection;
+    }
 
-	protected Map getMap() {
-		return ((VOpenLayersMap) getParent().getParent().getParent()).getMap();
-	}
-	
-	@Override
-	protected void onDetach() {
-		super.onDetach();
-		getLayer().removeFeature(vector);
-	}
-	
-	public Vector getVector() {
-		return vector;
-	}
+    protected abstract void updateVector(UIDL childUIDL,
+            ApplicationConnection client);
+
+    private VectorLayer getLayer() {
+        return ((VVectorLayer) getParent()).getLayer();
+    }
+
+    protected Map getMap() {
+        return ((VOpenLayersMap) getParent().getParent().getParent()).getMap();
+    }
+
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        getLayer().removeFeature(vector);
+    }
+
+    public Vector getVector() {
+        return vector;
+    }
 
 }

@@ -21,6 +21,8 @@ import org.vaadin.vol.Popup;
 import org.vaadin.vol.Popup.CloseEvent;
 import org.vaadin.vol.Popup.CloseListener;
 import org.vaadin.vol.Popup.PopupStyle;
+import org.vaadin.vol.Style;
+import org.vaadin.vol.StyleMap;
 import org.vaadin.vol.Vector;
 import org.vaadin.vol.VectorLayer;
 import org.vaadin.vol.VectorLayer.DrawingMode;
@@ -185,10 +187,41 @@ public class VolApplication extends Application {
         Area area = new Area();
         area.setPoints(points);
 
+        Style vaadinColors = new Style();
+        vaadinColors.setStrokeColor("#1cffff");
+        vaadinColors.setFillColor("#adfffc");
+        vaadinColors.setFillOpacity(0.2);
+        vaadinColors.setStrokeWidth(3);
+        area.setCustomStyle(vaadinColors);
+
+        Style defaultstyle = new Style();
+        /* Set stroke color to green, otherwise like default style */
+        defaultstyle.extendCoreStyle("default");
+        defaultstyle.setStrokeColor("#00b963");
+
+        // Make borders of selected graphs bigger
+        Style selectStyle = new Style();
+        selectStyle.setStrokeWidth(5);
+
+        StyleMap stylemap = new StyleMap(defaultstyle, selectStyle, null);
+        // make selectStyle inherit attributes not explicitly set
+        stylemap.setExtendDefault(true);
+        vectorLayer.setStyleMap(stylemap);
+
         // setRestrictedExtent(map, points);
         zoomToExtent(map, points);
 
         vectorLayer.addVector(area);
+
+        // Also create another vector that uses styleamps styles
+        Area area2 = new Area();
+        Point[] points2 = new Point[points.length];
+        for (int i = 0; i < points2.length; i++) {
+            points2[i] = new Point(points[i].getLon() + 0.02,
+                    points[i].getLat());
+        }
+        area2.setPoints(points2);
+        vectorLayer.addVector(area2);
 
         // Definig a Marker Layer
         MarkerLayer markerLayer = new MarkerLayer();
@@ -273,7 +306,7 @@ public class VolApplication extends Application {
         // map.addComponent(wms);
         map.addLayer(mapTilerLayer);
         map.addLayer(vectorLayer);
-        map.addLayer(markerLayer);
+        // map.addLayer(markerLayer);
 
         controls.addComponent(drawingMode);
         Button moveToTMSExample = new Button("Move to TMS example");

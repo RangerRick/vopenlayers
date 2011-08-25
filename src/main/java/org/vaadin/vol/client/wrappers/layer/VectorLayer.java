@@ -1,6 +1,9 @@
 package org.vaadin.vol.client.wrappers.layer;
 
+import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
+
+import com.google.gwt.core.client.JavaScriptObject;
 
 public class VectorLayer extends Layer {
 
@@ -23,6 +26,15 @@ public class VectorLayer extends Layer {
     	
     }-*/;
 
+    public native final static VectorLayer create(String displayName,
+            JavaScriptObject stylemap)
+    /*-{
+    	_myvector_layer = new $wnd.OpenLayers.Layer.Vector(displayName);
+    	_myvector_layer.styleMap = stylemap;
+    	return _myvector_layer;
+    	
+    }-*/;
+
     public native final void removeFeature(Vector vector)
     /*-{
     	this.removeFeatures(vector);
@@ -36,6 +48,16 @@ public class VectorLayer extends Layer {
     public native final void redraw()
     /*-{
         this.redraw();
+    }-*/;
+
+    public native final void setStyleMap(StyleMap style)
+    /*-{
+    	 this.styleMap = style;
+    }-*/;
+
+    public native final StyleMap getStyleMap(StyleMap style)
+    /*-{
+    	 return this.styleMap;
     }-*/;
 
 }

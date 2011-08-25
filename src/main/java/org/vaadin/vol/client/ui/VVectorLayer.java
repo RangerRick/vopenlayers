@@ -8,6 +8,8 @@ import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.JsObject;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Projection;
+import org.vaadin.vol.client.wrappers.Style;
+import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
 import org.vaadin.vol.client.wrappers.control.Control;
 import org.vaadin.vol.client.wrappers.control.DrawFeature;
@@ -182,7 +184,6 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                                         Projection.get("EPSG:4326"));
                                 points[i] = point.toString();
                             }
-                            VConsole.log("drawing done");
                             client.updateVariable(paintableId, "vertices",
                                     points, false);
                         } else if (drawingMode == "POINT") {
@@ -195,10 +196,13 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                             client.updateVariable(paintableId, "x", x, false);
                             client.updateVariable(paintableId, "y", y, false);
                         }
+                        // VConsole.log("drawing done");
                         // communicate points to server and mark the
                         // new geometry to be removed on next update.
                         client.sendPendingVariableChanges();
-                        lastNewDrawing = feature;
+                        if(drawingMode != "MODIFY") {
+                        	lastNewDrawing = feature;
+                        }
                     }
                 }
             };
@@ -225,6 +229,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
             getLayer().removeFeature(lastNewDrawing);
             lastNewDrawing = null;
         }
+
+        updateStyleMap(layer);
 
         HashSet<Widget> orphaned = new HashSet<Widget>();
         for (Iterator<Widget> iterator = iterator(); iterator.hasNext();) {
@@ -308,6 +314,40 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                 df.activate();
             }
 
+        }
+    }
+
+    public void updateStyleMap(UIDL childUIDL) {
+        if (childUIDL.hasAttribute("olStyleMap")) {
+
+            String[] renderIntents = childUIDL
+                    .getStringArrayAttribute("olStyleMap");
+            StyleMap sm;
+            if (renderIntents.length == 1 && renderIntents[0].equals("default")) {
+                sm = StyleMap.create();
+                sm.setStyle(
+                        "default",
+                        Style.create(childUIDL.getMapAttribute(
+                                "olStyle_" + renderIntents[0]).cast()));
+            } else {
+                sm = StyleMap.create();
+                for (String intent : renderIntents) {
+                    if (intent.startsWith("__")) {
+                        String specialAttribute = intent.replaceAll("__", "");
+                        if (specialAttribute.equals("extendDefault")) {
+                            sm.setExtendDefault(true);
+                        }
+                    } else {
+                        Style style = Style.create(childUIDL
+                                .getMapAttribute("olStyle_" + intent));
+                        sm.setStyle(intent, style);
+                    }
+                }
+            }
+
+            getLayer().setStyleMap(sm);
+        } else {
+            getLayer().setStyleMap(StyleMap.create());
         }
     }
 

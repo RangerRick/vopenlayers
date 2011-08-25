@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
@@ -18,6 +19,8 @@ import com.vaadin.ui.Component;
 
 @ClientWidget(org.vaadin.vol.client.ui.VVectorLayer.class)
 public class VectorLayer extends AbstractComponentContainer implements Layer {
+
+    private StyleMap stylemap;
 
     public enum SelectionMode {
         NONE, SIMPLE
@@ -45,6 +48,10 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         target.addAttribute("name", displayName);
         target.addAttribute("dmode", drawindMode.toString());
         target.addAttribute("smode", selectionMode.toString());
+
+        if (stylemap != null) {
+            stylemap.paint(target);
+        }
 
         for (Vector m : vectors) {
             m.paint(target);
@@ -110,8 +117,13 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
                 newVectorPainted(area);
             } else if (drawindMode == DrawingMode.MODIFY) {
                 Vector vector = (Vector) variables.get("modifiedVector");
-                vector.setPoints(points);
-                vectorModified(vector);
+                if (vector != null) {
+                    vector.setPoints(points);
+                    vectorModified(vector);
+                } else {
+                    Logger.getLogger(getClass().getName())
+                            .severe("Vector modified event didn't provide related vector!?");
+                }
             }
         }
         if (drawindMode == DrawingMode.POINT && variables.containsKey("x")) {
@@ -263,13 +275,29 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
                 VectorSelectedEvent.class, listener);
     }
 
+    /**
+     * @return the stylemap
+     */
+    public StyleMap getStyleMap() {
+        return stylemap;
+    }
+
+    /**
+     * @param stylemap
+     *            the stylemap to set
+     */
+    public void setStyleMap(StyleMap stylemap) {
+        this.stylemap = stylemap;
+        requestRepaint();
+    }
+
     public class VectorSelectedEvent extends Event {
 
         private Vector vector;
 
         public VectorSelectedEvent(Component source, Vector vector) {
             super(source);
-            this.setVector(vector);
+            setVector(vector);
         }
 
         private void setVector(Vector vector) {
@@ -311,7 +339,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 
         public VectorUnSelectedEvent(Component source, Vector vector) {
             super(source);
-            this.setVector(vector);
+            setVector(vector);
         }
 
         private void setVector(Vector vector) {
