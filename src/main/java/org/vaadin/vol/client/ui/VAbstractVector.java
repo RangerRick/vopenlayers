@@ -38,6 +38,9 @@ public abstract class VAbstractVector extends Widget implements Paintable {
             getLayer().removeFeature(vector);
         }
         updateVector(childUIDL, client);
+        if(childUIDL.hasAttribute("style")) {
+            getVector().setRenderIntent(childUIDL.getStringAttribute("style"));
+        }
         updateStyle(childUIDL, client);
 
         getLayer().addFeature(vector);

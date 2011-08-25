@@ -17,6 +17,7 @@ import org.vaadin.vol.MarkerLayer;
 import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.OpenStreetMapLayer;
 import org.vaadin.vol.Point;
+import org.vaadin.vol.PointVector;
 import org.vaadin.vol.Popup;
 import org.vaadin.vol.Popup.CloseEvent;
 import org.vaadin.vol.Popup.CloseListener;
@@ -222,6 +223,28 @@ public class VolApplication extends Application {
         }
         area2.setPoints(points2);
         vectorLayer.addVector(area2);
+        
+        // Add red dots to area corners, styling with styleNames
+        
+        Style style = new Style();
+        style.setFill(true);
+        style.setFillColor("#ff000e");
+        style.setFillOpacity(0.8);
+        style.setStroke(false);
+        style.setPointRadius(30);
+        stylemap.setStyle("red", style);
+        
+        for (int i = 0; i < points.length; i++) {
+            PointVector pointVector = new PointVector(points[i].getLon(), points[i].getLat());
+            pointVector.setStyleName("red");
+            vectorLayer.addVector(pointVector);
+        }
+        
+        
+        
+        
+        
+        
 
         // Definig a Marker Layer
         MarkerLayer markerLayer = new MarkerLayer();

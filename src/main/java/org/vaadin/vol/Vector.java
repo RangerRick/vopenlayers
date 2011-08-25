@@ -56,4 +56,17 @@ public abstract class Vector extends AbstractComponent {
         }
     }
 
+    /**
+     * Vectors styleName does not modify CSS style name as the method does for
+     * standard Components. Instead the style name defines rendered intent that
+     * will be used by OpenLayers to style the Vector. Rendered intents can be
+     * configured with {@link StyleMap}s.
+     * 
+     * @see com.vaadin.ui.AbstractComponent#setStyleName(java.lang.String)
+     */
+    @Override
+    public void setStyleName(String style) {
+        super.setStyleName(style);
+    }
+
 }

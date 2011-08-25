@@ -33,4 +33,9 @@ public abstract class Vector extends AbstractOpenLayersWrapper {
         this.style = style;
     }-*/;
 
+    public native final void setRenderIntent(String styleName) 
+    /*-{
+        this.renderIntent = styleName;
+    }-*/;
+
 }
