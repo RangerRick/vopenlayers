@@ -15,6 +15,7 @@ public abstract class VAbstractVector extends Widget implements Paintable {
 
     protected Vector vector;
     private Projection projection;
+    private String intent;
 
     public VAbstractVector() {
         setElement(Document.get().createDivElement());
@@ -39,7 +40,8 @@ public abstract class VAbstractVector extends Widget implements Paintable {
         }
         updateVector(childUIDL, client);
         if(childUIDL.hasAttribute("style")) {
-            getVector().setRenderIntent(childUIDL.getStringAttribute("style"));
+            intent = childUIDL.getStringAttribute("style");
+            getVector().setRenderIntent(intent);
         }
         updateStyle(childUIDL, client);
 
@@ -75,6 +77,11 @@ public abstract class VAbstractVector extends Widget implements Paintable {
 
     public Vector getVector() {
         return vector;
+    }
+
+    public void revertDefaultIntent() {
+        getVector().setRenderIntent(intent);
+        getVector().redraw();
     }
 
 }
