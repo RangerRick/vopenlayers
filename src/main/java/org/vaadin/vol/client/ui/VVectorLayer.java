@@ -31,7 +31,6 @@ import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.VConsole;
 import com.vaadin.terminal.gwt.client.ValueMap;
 
 public class VVectorLayer extends FlowPanel implements VLayer, Container {
@@ -75,15 +74,18 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 
             vectors.registerHandler("featureunselected", new GwtOlHandler() {
                 public void onEvent(JsArray arguments) {
-                    if (client.hasEventListeners(VVectorLayer.this, "vusel")) {
-                        ValueMap javaScriptObject = arguments.get(0).cast();
-                        Vector vector = javaScriptObject.getValueMap("feature")
-                                .cast();
-                        for (Widget w : getChildren()) {
-                            VAbstractVector v = (VAbstractVector) w;
-                            if (v.getVector() == vector) {
+                    ValueMap javaScriptObject = arguments.get(0).cast();
+                    Vector vector = javaScriptObject.getValueMap("feature")
+                            .cast();
+                    for (Widget w : getChildren()) {
+                        VAbstractVector v = (VAbstractVector) w;
+                        if (v.getVector() == vector) {
+                            v.revertDefaultIntent();
+                            if (client.hasEventListeners(VVectorLayer.this,
+                                    "vusel")) {
                                 client.updateVariable(paintableId, "vusel", v,
                                         true);
+                                break;
                             }
                         }
                     }
@@ -200,8 +202,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                         // communicate points to server and mark the
                         // new geometry to be removed on next update.
                         client.sendPendingVariableChanges();
-                        if(drawingMode != "MODIFY") {
-                        	lastNewDrawing = feature;
+                        if (drawingMode != "MODIFY") {
+                            lastNewDrawing = feature;
                         }
                     }
                 }
