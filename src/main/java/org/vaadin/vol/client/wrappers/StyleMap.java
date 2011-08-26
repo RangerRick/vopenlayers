@@ -1,6 +1,5 @@
 package org.vaadin.vol.client.wrappers;
 
-import com.google.gwt.core.client.JavaScriptObject;
 
 public class StyleMap extends JsObject {
 
@@ -12,13 +11,13 @@ public class StyleMap extends JsObject {
         return new $wnd.OpenLayers.StyleMap();
     }-*/;
 
-    public static native StyleMap create(JavaScriptObject style)
+    public static native StyleMap create(Style style)
     /*-{
         return new $wnd.OpenLayers.StyleMap(style);
     }-*/;
 
-    public static native StyleMap create(JsObject defaultStyle,
-            JsObject selectStyle, JsObject temporaryStyle)
+    public static native StyleMap create(Style defaultStyle, Style selectStyle,
+            Style temporaryStyle)
     /*-{
         return new $wnd.OpenLayers.StyleMap({"default" : defaultStyle,"select" : selectStyle,"temporary" : temporaryStyle});
     }-*/;
