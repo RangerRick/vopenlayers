@@ -4,7 +4,6 @@
 package org.vaadin.vol;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,7 +12,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.vaadin.vol.client.ui.VMapTilerLayer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.vaadin.terminal.PaintException;
@@ -38,9 +36,9 @@ public class MapTilerLayer extends AbstractComponent implements Layer {
 	private int maxZoom = -1;
 
 	public MapTilerLayer(Double[] bounds, int maxZoom, int minZoom) {
-		this.maxZoom = maxZoom;
-		this.minZoom = minZoom;
-		this.bounds = bounds;
+		this.setMaxZoom(maxZoom);
+		this.setMinZoom(minZoom);
+		this.setBounds(bounds);
 	}
 
 	public MapTilerLayer(String url) throws SAXException, IOException,
@@ -60,7 +58,7 @@ public class MapTilerLayer extends AbstractComponent implements Layer {
 				.getNamedItem("maxx").getNodeValue());
 		double right = Double.parseDouble(bbox.getAttributes()
 				.getNamedItem("maxy").getNodeValue());
-		bounds = new Double[] {left-MARGIN,bottom-MARGIN,right+MARGIN,top+MARGIN };
+		setBounds(new Double[] {left-MARGIN,bottom-MARGIN,right+MARGIN,top+MARGIN });
 
 		Node tilesets = doc.getElementsByTagName("TileSets").item(0);
 
@@ -71,12 +69,12 @@ public class MapTilerLayer extends AbstractComponent implements Layer {
 			}
 			int z = Integer.parseInt(item.getAttributes().getNamedItem("order")
 					.getNodeValue());
-			if (maxZoom == -1) {
-				maxZoom = minZoom = z;
-			} else if (z > maxZoom) {
-				maxZoom = z;
-			} else if (z < minZoom) {
-				minZoom = z;
+			if (getMaxZoom() == -1) {
+				setMaxZoom(setMinZoom(z));
+			} else if (z > getMaxZoom()) {
+				setMaxZoom(z);
+			} else if (z < getMinZoom()) {
+				setMinZoom(z);
 			}
 		}
 	}
@@ -88,9 +86,9 @@ public class MapTilerLayer extends AbstractComponent implements Layer {
 		target.addAttribute("isBaseLayer", isBaseLayer);
 		target.addAttribute("opacity", opacity);
 		target.addAttribute("transparent", transparent);
-		target.addAttribute("zoomMax", maxZoom);
-		target.addAttribute("zoomMin", minZoom);
-		target.addAttribute("bounds", bounds);
+		target.addAttribute("zoomMax", getMaxZoom());
+		target.addAttribute("zoomMin", getMinZoom());
+		target.addAttribute("bounds", getBounds());
 	}
 
 	public void setUri(String uri) {
@@ -146,4 +144,29 @@ public class MapTilerLayer extends AbstractComponent implements Layer {
 	public Boolean getTransparent() {
 		return transparent;
 	}
+
+    public void setBounds(Double[] bounds) {
+        this.bounds = bounds;
+    }
+
+    public Double[] getBounds() {
+        return bounds;
+    }
+
+    public int setMinZoom(int minZoom) {
+        this.minZoom = minZoom;
+        return minZoom;
+    }
+
+    public int getMinZoom() {
+        return minZoom;
+    }
+
+    public void setMaxZoom(int maxZoom) {
+        this.maxZoom = maxZoom;
+    }
+
+    public int getMaxZoom() {
+        return maxZoom;
+    }
 }
