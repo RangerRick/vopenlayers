@@ -69,4 +69,18 @@ public abstract class Vector extends AbstractComponent {
         super.setStyleName(style);
     }
 
+    /**
+     * Sets a custom renderer intent that OpenLayers should use to render the
+     * vector. The default is 'default'.
+     * 
+     * 
+     * @see StyleMap
+     * 
+     * @param style
+     *            the name of renderer intent.
+     */
+    public void setRenderIntent(String style) {
+        setStyleName(style);
+    }
+
 }

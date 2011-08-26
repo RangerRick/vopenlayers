@@ -5,6 +5,13 @@ import java.util.HashMap;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 
+/**
+ * StyleMaps are collections of Styles (aka renderer intents). Styles are mapped
+ * with unique style names (aka render intent). The actual style that is used to
+ * render a vector depends on the state (e.g. 'selected', 'temporary') and
+ * possibly overridden style name in the vector.
+ * 
+ */
 public class StyleMap {
 
     private HashMap<String, Style> styles = new HashMap<String, Style>();
