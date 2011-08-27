@@ -20,7 +20,11 @@ public class SelectFeature extends Control {
         o.clickout = clickout;
         o.toggle = toggle;
         o.hover = hover;
-    	return new $wnd.OpenLayers.Control.SelectFeature(targetLayer, o);
+        var h = new $wnd.OpenLayers.Control.SelectFeature(targetLayer, o);
+        // TODO make this configurable, may disturb if there are multiple layers of vectors
+        // Currently it is to enable panning while selection is on
+        h.handlers.feature.stopDown = false;
+    	return h;
     }-*/;
 
     public static SelectFeature create(Layer targetLayer) {
