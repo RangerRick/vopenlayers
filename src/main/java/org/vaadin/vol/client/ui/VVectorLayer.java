@@ -260,7 +260,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
     }
 
     private void setSelectionMode(UIDL layer) {
-        String newSelectionMode = layer.getStringAttribute("smode");
+        String newSelectionMode = layer.getStringAttribute("smode").intern();
         if (currentSelectionMode != newSelectionMode) {
             if (selectFeature != null) {
                 selectFeature.deActivate();
