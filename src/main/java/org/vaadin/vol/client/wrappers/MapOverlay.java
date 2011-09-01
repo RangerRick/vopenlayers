@@ -35,14 +35,14 @@ public class MapOverlay extends AbstractOpenLayersWrapper {
     	        }
     	    } catch(e){};
     	}
-    	var OpenLayers = $wnd.OpenLayers;
+    	eval("var OpenLayers = window.top.OpenLayers");
 
-    	var options;
     	if(optionsJs) {
-       	    eval("options = " +optionsJs+ ";");
+       	    eval("window.top.VOLoptions = " +optionsJs+ ";");
     	} else {
-    	    options = {}
+            eval("window.top.VOLoptions = {}");
     	}
+    	var options = $wnd.VOLoptions;
     	if(!options.controls) {
             options["controls"] = initialControls;
     	}
