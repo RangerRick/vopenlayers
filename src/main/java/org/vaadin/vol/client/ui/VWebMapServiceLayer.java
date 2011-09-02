@@ -18,7 +18,7 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
 
 	@Override
 	WebMapServiceLayer createLayer() {
-		return WebMapServiceLayer.create(display, uri, layers, format,cqlFilter, isBaseLayer, transparent);
+		return WebMapServiceLayer.create(display, uri, layers, format,cqlFilter, isBaseLayer, transparent, opacity);
 	}
 
 	@Override
