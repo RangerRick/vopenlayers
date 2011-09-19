@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.vaadin.vol</groupId>
 	<artifactId>openlayers-wrapper</artifactId>
-	<version>0.8.0-SNAPSHOT</version>
+	<version>0.8.1-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -64,8 +64,8 @@
 					<noServer>true</noServer>
 					<module>org.vaadin.vol.demo.VolExampleAppWidgetset</module>
 					<runTarget>http://localhost:9998/</runTarget>
-					<draftCompile>true</draftCompile>
-					<style>PRETTY</style>
+<!-- 					<draftCompile>true</draftCompile> -->
+<!-- 					<style>PRETTY</style> -->
 				</configuration>
 			</plugin>
 
@@ -78,9 +78,6 @@
 				<directory>src/main/java</directory>
 			</resource>
 			<resource>
-				<directory>src/test/java</directory>
-			</resource>
-			<resource>
 				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
@@ -88,17 +85,6 @@
 	</build>
 
 	<repositories>
-		<repository>
-			<id>vaadin-snapshots</id>
-			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
-			</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
 		<repository>
 			<id>vaadin-addons</id>
 			<url>http://maven.vaadin.com/vaadin-addons</url>
@@ -119,17 +105,6 @@
 		<pluginRepository>
 			<id>codehaus-snapshots</id>
 			<url>http://nexus.codehaus.org/snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</pluginRepository>
-		<pluginRepository>
-			<id>vaadin-snapshots</id>
-			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
-			</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
