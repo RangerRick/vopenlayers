@@ -10,10 +10,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
+import com.vaadin.terminal.gwt.client.ValueMap;
 
 public abstract class VAbstractVector extends Widget implements Paintable {
 
     protected Vector vector;
+    protected ValueMap vectAttributes = null;
     private Projection projection;
     private String intent;
 
@@ -38,14 +40,28 @@ public abstract class VAbstractVector extends Widget implements Paintable {
         if (vector != null) {
             getLayer().removeFeature(vector);
         }
+
+        //
+        updateAttribuets(childUIDL, client);
+
         updateVector(childUIDL, client);
-        if(childUIDL.hasAttribute("style")) {
+        if (childUIDL.hasAttribute("style")) {
             intent = childUIDL.getStringAttribute("style");
             getVector().setRenderIntent(intent);
         }
         updateStyle(childUIDL, client);
 
         getLayer().addFeature(vector);
+    }
+
+    private void updateAttribuets(UIDL childUIDL, ApplicationConnection client) {
+        if (childUIDL.hasAttribute("olVectAttributes")) {
+            vectAttributes = childUIDL.getMapAttribute("olVectAttributes");
+        }
+    }
+
+    protected ValueMap getAttributes() {
+        return vectAttributes;
     }
 
     private void updateStyle(UIDL childUIDL, ApplicationConnection client) {

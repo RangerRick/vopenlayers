@@ -12,6 +12,8 @@ public abstract class Vector extends AbstractComponent {
 
     private Style style;
 
+    private Attributes vectAttributes = null;
+
     public void setPoints(Point... points) {
         this.points = points;
         requestRepaint();
@@ -54,6 +56,10 @@ public abstract class Vector extends AbstractComponent {
         if (style != null) {
             style.paint("olStyle", target);
         }
+
+        if (vectAttributes != null) {
+            vectAttributes.paint("olVectAttributes", target);
+        }
     }
 
     /**
@@ -81,6 +87,21 @@ public abstract class Vector extends AbstractComponent {
      */
     public void setRenderIntent(String style) {
         setStyleName(style);
+    }
+
+    /**
+     * @return the vectAttributes
+     */
+    public Attributes getAttributes() {
+        return vectAttributes;
+    }
+
+    /**
+     * @param vectAttributes
+     *            the vectAttributes to set
+     */
+    public void setAttributes(Attributes attributes) {
+        this.vectAttributes = attributes;
     }
 
 }

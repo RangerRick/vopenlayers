@@ -10,17 +10,17 @@ import com.vaadin.terminal.gwt.client.UIDL;
 
 public class VPointVector extends VAbstractVector {
 
-	@Override
-	protected void updateVector(UIDL childUIDL, ApplicationConnection client) {
-		Projection mapProjection = getMap().getProjection();
+    @Override
+    protected void updateVector(UIDL childUIDL, ApplicationConnection client) {
+        Projection mapProjection = getMap().getProjection();
 
-		Point p = Point.create(childUIDL.getStringArrayAttribute("points")[0]);
-		p.transform(getProjection(), mapProjection);
+        Point p = Point.create(childUIDL.getStringArrayAttribute("points")[0]);
+        p.transform(getProjection(), mapProjection);
 
-		JavaScriptObject style = null;
-		JavaScriptObject attributes = null;
-		vector = Vector.create(p, attributes, style);
+        JavaScriptObject style = null;
+        JavaScriptObject attributes = getAttributes();
+        vector = Vector.create(p, attributes, style);
 
-	}
+    }
 
 }

@@ -55,7 +55,7 @@ import com.vaadin.terminal.PaintTarget;
 //	Opacity of an external graphic.
 //	 
 //	-- graphicXOffset, graphicYOffset 
-//	Where the ‘center’ of an externalGraphic should be.
+//	Where the center of an externalGraphic should be.
 //	 
 //	-- rotation 
 //	The rotation angle in degrees clockwise for a point symbolizer.
@@ -64,7 +64,7 @@ import com.vaadin.terminal.PaintTarget;
 //	Name of a type of symbol to be used for a point mark.
 //	 
 //	-- display 
-//	Can be set to ‘none’ to hide features from rendering.
+//	Can be set to none to hide features from rendering.
 
 public class Style {
 
@@ -101,6 +101,10 @@ public class Style {
         return styleProperty.get(key);
     }
 
+    private void setPropertyByAttribute(String key, String value) {
+        styleProperty.put(key, "${" + value + "}");
+    }
+
     /**
      * Hex fill color. Default is '#ee9900'.
      * 
@@ -109,6 +113,10 @@ public class Style {
      */
     public void setFillColor(String c) {
         setProperty("fillColor", c);
+    }
+
+    public void setFillColorByAttribute(String c) {
+        setPropertyByAttribute("fillColor", c);
     }
 
     /** Hex fill color. */
@@ -121,6 +129,10 @@ public class Style {
         setProperty("fillOpacity", o);
     }
 
+    public void setFillOpacityByAttribute(String o) {
+        setPropertyByAttribute("fillOpacity", o);
+    }
+
     /** Fill opacity (0-1). */
     public double getFillOpacity() {
         double o = (Double) getProperty("fillOpacity");
@@ -130,6 +142,10 @@ public class Style {
     /** Pixel point radius. Default is 6. */
     public void setPointRadius(double r) {
         setProperty("pointRadius", r);
+    }
+
+    public void setPointRadiusByAttribute(String r) {
+        setPropertyByAttribute("pointRadius", r);
     }
 
     /** Pixel point radius. */

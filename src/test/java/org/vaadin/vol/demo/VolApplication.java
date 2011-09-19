@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.vaadin.vol.Area;
+import org.vaadin.vol.Attributes;
 import org.vaadin.vol.Bounds;
 import org.vaadin.vol.Control;
 import org.vaadin.vol.GoogleSatelliteMapLayer;
@@ -22,6 +23,7 @@ import org.vaadin.vol.Popup;
 import org.vaadin.vol.Popup.CloseEvent;
 import org.vaadin.vol.Popup.CloseListener;
 import org.vaadin.vol.Popup.PopupStyle;
+import org.vaadin.vol.RenderIntent;
 import org.vaadin.vol.Style;
 import org.vaadin.vol.StyleMap;
 import org.vaadin.vol.Vector;
@@ -60,7 +62,7 @@ public class VolApplication extends Application {
         final Window mainWindow = new Window("Vol example Application", layout);
         setMainWindow(mainWindow);
 
-        OpenLayersMap map = createTestMap(mainWindow);
+         OpenLayersMap map = createTestMap(mainWindow);
         // OpenLayersMap map = getMapIssue1();
         // OpenLayersMap map = getMapIssue2();
         // OpenLayersMap map = wmsCqlFilter();
@@ -223,44 +225,47 @@ public class VolApplication extends Application {
         }
         area2.setPoints(points2);
         vectorLayer.addVector(area2);
-        
+
         // Add styled PointVectors to area corners, styling with styleNames
-        
         Style style = new Style();
         style.setFill(true);
         style.setFillColor("#ff000e");
         style.setFillOpacity(0.8);
         style.setStroke(false);
-        style.setPointRadius(30);
-        stylemap.setStyle("red", style);
+        // style.setPointRadius(30);
+        style.setPointRadiusByAttribute("pointRadius");
+        stylemap.setStyle(new RenderIntent("red"), style);
         Style markerStyle = new Style();
-        markerStyle.setExternalGraphic(getURL() + "VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker.png");
+        markerStyle
+                .setExternalGraphic(getURL()
+                        + "VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker.png");
         markerStyle.setGraphicZIndex(11);
         markerStyle.setGraphicSize(16, 21);
-        markerStyle.setBackgroundGraphic(getURL() + "VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker_shadow.png");
+        markerStyle
+                .setBackgroundGraphic(getURL()
+                        + "VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker_shadow.png");
         markerStyle.setBackgroundYOffset(-7);
         markerStyle.setBackgroundXOffset(0);
         markerStyle.setBackgroundGraphicZIndex(10);
         markerStyle.setFillOpacity(1);
         markerStyle.setStrokeOpacity(1);
         markerStyle.setPointRadius(10);
-        stylemap.setStyle("marker", markerStyle);
-        
+        stylemap.setStyle(new RenderIntent("marker"), markerStyle);
+
         for (int i = 0; i < points.length; i++) {
-            PointVector pointVector = new PointVector(points[i].getLon(), points[i].getLat());
-            if(i == 0) {
+            PointVector pointVector = new PointVector(points[i].getLon(),
+                    points[i].getLat());
+            if (i == 0) {
                 pointVector.setStyleName("marker");
             } else {
                 pointVector.setStyleName("red");
+                Attributes attr = new Attributes();
+                attr.setProperty("pointRadius", (i + 1) * 10);
+                pointVector.setAttributes(attr);
+
             }
             vectorLayer.addVector(pointVector);
         }
-        
-        
-        
-        
-        
-        
 
         // Definig a Marker Layer
         MarkerLayer markerLayer = new MarkerLayer();
@@ -343,7 +348,7 @@ public class VolApplication extends Application {
         map.addLayer(googleSatellite);
 
         // map.addComponent(wms);
-        map.addLayer(mapTilerLayer);
+        // map.addLayer(mapTilerLayer);
         map.addLayer(vectorLayer);
         // map.addLayer(markerLayer);
 

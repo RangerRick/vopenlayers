@@ -24,7 +24,7 @@ public class StyleMap {
      * temporary)
      */
     public StyleMap(Style style) {
-        setStyle("default", style);
+        setStyle(RenderIntent.DEFAULT, style);
     }
 
     /**
@@ -35,6 +35,14 @@ public class StyleMap {
         styles.put(renderIntent, style);
     }
 
+    /**
+     * @param renderIntent
+     * @param style
+     */
+    public void setStyle(RenderIntent renderIntent, Style style) {
+        styles.put(renderIntent.getValue(), style);
+    }
+    
     private boolean extendDefault = false;
 
     /**
@@ -51,12 +59,12 @@ public class StyleMap {
      *            style to render the feature when it is temporarily selected
      */
     public StyleMap(Style defaultStyle, Style selectStyle, Style temporaryStyle) {
-        setStyle("default", defaultStyle);
+        setStyle(RenderIntent.DEFAULT, defaultStyle);
         if (selectStyle != null) {
-            setStyle("select", selectStyle);
+            setStyle(RenderIntent.SELECT, selectStyle);
         }
         if (temporaryStyle != null) {
-            setStyle("temporary", temporaryStyle);
+            setStyle(RenderIntent.TEMPORARY, temporaryStyle);
         }
     }
 
@@ -88,6 +96,23 @@ public class StyleMap {
 
     public boolean isExtendDefault() {
         return extendDefault;
+    }
+    
+    /**
+     * @param intent
+     *            specifies the desired intent - usually 'default'
+     * @param property
+     *            specifies the property of the feature to check
+     * @param simbolizer_lookup
+     *            specifies the JSON object containing the key:value pairs 
+     *            to use if the rule match
+     * @param context
+     *            optional object to check the property against. 
+     *            If no context is passed in, feature attributes are used by default
+     *                       
+     */
+    public void addUniqueValueRules(RenderIntent intent, String property, String simbolizer_lookup, Object context){
+    	// TODO : not yet implemented
     }
 
 }
