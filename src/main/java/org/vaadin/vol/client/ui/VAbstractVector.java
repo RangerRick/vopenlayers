@@ -35,7 +35,11 @@ public abstract class VAbstractVector extends Widget implements Paintable {
         if (client.updateComponent(this, childUIDL, false)) {
             return;
         }
-        projection = Projection.get(childUIDL.getStringAttribute("projection"));
+        if(childUIDL.hasAttribute("projection")) {
+            projection = Projection.get(childUIDL.getStringAttribute("projection"));
+        } else {
+            projection = null;
+        }
 
         if (vector != null) {
             getLayer().removeFeature(vector);
@@ -71,6 +75,10 @@ public abstract class VAbstractVector extends Widget implements Paintable {
     }
 
     protected Projection getProjection() {
+        if(projection == null) {
+            VVectorLayer parent2 = (VVectorLayer) getParent();
+            return parent2.getProjection();
+        }
         return projection;
     }
 

@@ -121,7 +121,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                                 Point point = allVertices.get(i);
                                 point = point.nativeClone();
                                 point.transform(getMap().getProjection(),
-                                        Projection.get("EPSG:4326"));
+                                        getProjection());
                                 points[i] = point.toString();
                             }
                             // VConsole.log("modified");
@@ -176,6 +176,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                         if (drawingMode == "AREA" || drawingMode == "LINE") {
                             LineString ls = geometry.cast();
                             JsArray<Point> allVertices = ls.getAllVertices();
+                            // TODO this can be removed??
                             client.updateVariable(paintableId,
                                     "newVerticesProj", getMap().getProjection()
                                             .toString(), false);
@@ -183,7 +184,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                             for (int i = 0; i < allVertices.length(); i++) {
                                 Point point = allVertices.get(i);
                                 point.transform(getMap().getProjection(),
-                                        Projection.get("EPSG:4326"));
+                                        getProjection());
                                 points[i] = point.toString();
                             }
                             client.updateVariable(paintableId, "vertices",
@@ -192,7 +193,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                             // point
                             Point point = geometry.cast();
                             point.transform(getMap().getProjection(),
-                                    Projection.get("EPSG:4326"));
+                                    getProjection());
                             double x = point.getX();
                             double y = point.getY();
                             client.updateVariable(paintableId, "x", x, false);
@@ -360,7 +361,15 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
     }
 
     private Map getMap() {
-        return ((VOpenLayersMap) getParent().getParent()).getMap();
+        return getVMap().getMap();
+    }
+
+    private VOpenLayersMap getVMap() {
+        return ((VOpenLayersMap) getParent().getParent());
+    }
+
+    protected Projection getProjection() {
+        return getVMap().getProjection();
     }
 
     public void replaceChildComponent(Widget oldComponent, Widget newComponent) {

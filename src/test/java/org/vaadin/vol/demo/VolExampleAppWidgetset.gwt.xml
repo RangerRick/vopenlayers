@@ -4,14 +4,21 @@
 	<!-- WS Compiler: manually edited -->
 	<!--  USE THIS IF YOU DON'T WANT TO USE THE HOSTED OL API -->
 	<inherits name="org.vaadin.vol.VolWidgetset" />
+
+	<!-- Note, these are not necessary required unless some custom projections 
+		are used -->
+	<script src="proj4js-compressed.js"></script>
+	<!-- Projections used in some tests -->
+	<script src="customprojections.js"></script>
 	
-	<!-- Uncompressed version for debugging -->
+	<!-- Uncompressed version of openlayers for debugging -->
 	<script src="OpenLayers.js"></script>
-<!-- 	<script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script> -->
 	<script src="http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"></script>
 
-	<!-- 
+
+	<!--       
 	<set-property name="user.agent" value="safari"/>
 	 -->
+	 
 
 </module>

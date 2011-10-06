@@ -91,8 +91,8 @@ public class OpenLayersMap extends AbstractComponentContainer {
         layers.add(c);
     }
 
-    public void setCenter(double lon, double lan) {
-        centerLat = lan;
+    public void setCenter(double lon, double lat) {
+        centerLat = lat;
         centerLon = lon;
         setDirty("clat");
     }
@@ -126,6 +126,7 @@ public class OpenLayersMap extends AbstractComponentContainer {
     private String jsMapOptions;
     private Bounds zoomToExtent;
     private Bounds restrictedExtend;
+    private String projection;
 
     private void setDirty(String fieldName) {
         if (!fullRepaint) {
@@ -149,6 +150,9 @@ public class OpenLayersMap extends AbstractComponentContainer {
     @Override
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
+        if (isDirty("projection") && projection != null) {
+            target.addAttribute("projection", projection);
+        }
         if (isDirty("jsMapOptions") && jsMapOptions != null) {
             target.addAttribute("jsMapOptions", jsMapOptions);
         }
@@ -305,6 +309,32 @@ public class OpenLayersMap extends AbstractComponentContainer {
     public void setRestrictedExtent(Bounds bounds) {
         restrictedExtend = bounds;
         setDirty("restrictedExtend");
+    }
+
+    /**
+     * Sets the projection which is used by the user of this map. E.g. values
+     * passed to API like {@link #setCenter(double, double)} should be in the
+     * same projection.
+     * <p>
+     * Note that resetting projection on already rendered map may cause
+     * unexpected results.
+     * 
+     * @param projection
+     */
+    public void setApiProjection(String projection) {
+        this.projection = projection;
+        setDirty("projection");
+    }
+
+    /**
+     * Gets the projection which is used by the user of this map. E.g. values
+     * passed to API like {@link #setCenter(double, double)} should be in the
+     * same projection.
+     * 
+     * @return the projection used, defaults to EPSG:4326
+     */
+    public String getApiProjection() {
+        return projection;
     }
 
 }

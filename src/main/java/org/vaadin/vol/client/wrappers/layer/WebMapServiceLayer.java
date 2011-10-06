@@ -6,12 +6,13 @@ public class WebMapServiceLayer extends Layer {
 	};
 
 	public native final static WebMapServiceLayer create(String display,
-			String url, String layers, String format, String cqlFilter, boolean isBaseLayer, boolean transparent, double opacity)
+			String url, String layers, String format, String cqlFilter, boolean isBaseLayer, boolean transparent, double opacity, String projection)
 	/*-{
 		var params = {};
 		if(layers) params.layers = layers;
 		if(format) params.format = format;
 		if(cqlFilter) params.CQL_FILTER = cqlFilter;
+        if(projection) params.projection = projection;
 		params.transparent = transparent;
 		var options = {};
 		options.isBaseLayer = isBaseLayer;

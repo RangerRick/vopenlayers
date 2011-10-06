@@ -6,7 +6,7 @@ import com.vaadin.ui.AbstractComponent;
 
 public abstract class Vector extends AbstractComponent {
 
-    private String projection = "EPSG:4326";
+    private String projection;
 
     private Point[] points;
 
@@ -28,6 +28,10 @@ public abstract class Vector extends AbstractComponent {
     }
 
     public String getProjection() {
+        if(projection == null && getApplication() != null) {
+            OpenLayersMap parent2 = (OpenLayersMap) getParent().getParent();
+            return parent2.getApiProjection();
+        }
         return projection;
     }
 
@@ -51,8 +55,10 @@ public abstract class Vector extends AbstractComponent {
     @Override
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
-        target.addAttribute("projection", getProjection());
         target.addAttribute("points", getPoints());
+        if(getProjection() != null) {
+            target.addAttribute("projection", getProjection());
+        }
         if (style != null) {
             style.paint("olStyle", target);
         }

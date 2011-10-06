@@ -22,6 +22,7 @@ public class WebMapServiceLayer extends AbstractComponent implements Layer {
 	private Boolean transparent = true;
 	private String feature_id = "";
 	private String format = "image/jpeg";
+	private String projection;
 
 	public WebMapServiceLayer() {
 
@@ -37,6 +38,9 @@ public class WebMapServiceLayer extends AbstractComponent implements Layer {
 		target.addAttribute("featureid", feature_id);
 		target.addAttribute("format", format);
 		target.addAttribute("transparent", transparent);
+		if(projection != null) {
+		    target.addAttribute("projection", projection);
+		}
 		if(cqlFilter != null) {
 			target.addAttribute("cqlFilter", cqlFilter);
 		}
@@ -143,4 +147,14 @@ public class WebMapServiceLayer extends AbstractComponent implements Layer {
 	public String getCqlFilter() {
 		return cqlFilter;
 	}
+
+    public String getProjection() {
+        return projection;
+    }
+
+    public void setProjection(String projection) {
+        this.projection = projection;
+    }
+	
+	
 }
