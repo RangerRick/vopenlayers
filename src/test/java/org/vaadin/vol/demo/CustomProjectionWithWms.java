@@ -43,7 +43,7 @@ public class CustomProjectionWithWms extends AbstractVOLTest {
          * layer, but the third marker should be on same spot (Defined with
          * 2393, projection tested with kansalaisen.karttapaikka.fi). If a base
          * layer is in 2393, 4326 and 2393 align ok, 900913 badly. So apparently
-         * direct transforms 900913 <> 2393 are somewhat broken.
+         * direct transforms 900913 <> 2393 are so broken.
          */
         PointVector pointVector = new PointVector(2482517.039867359,
                 8501187.741456728);
@@ -69,9 +69,9 @@ public class CustomProjectionWithWms extends AbstractVOLTest {
         WebMapServiceLayer webMapServiceLayer = new WebMapServiceLayer();
         webMapServiceLayer.setBaseLayer(true);
         webMapServiceLayer
-                .setUri("http://www.karttakone.fi/wms/ddde5aedeb05b6124a42ac8af7513f62/ykj/logica_ykj");
+                .setUri("http://www.example.fi/wms");
         webMapServiceLayer.setProjection("EPSG:2393");
-        webMapServiceLayer.setLayers("logica_ykj");
+        webMapServiceLayer.setLayers("wms");
         webMapServiceLayer.setFormat("image/png");
         openLayersMap.addLayer(webMapServiceLayer);
     }
