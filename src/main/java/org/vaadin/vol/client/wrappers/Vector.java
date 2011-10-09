@@ -3,6 +3,7 @@ package org.vaadin.vol.client.wrappers;
 import org.vaadin.vol.client.wrappers.geometry.Geometry;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.vaadin.terminal.gwt.client.ValueMap;
 
 public abstract class Vector extends AbstractOpenLayersWrapper {
 
@@ -41,6 +42,16 @@ public abstract class Vector extends AbstractOpenLayersWrapper {
     public native final void redraw()
     /*-{
         this.layer.drawFeature(this);
+    }-*/;
+
+    public native final String getFeatureId() 
+    /*-{
+        return this.fid;
+    }-*/;
+
+    public native final ValueMap getAttributes() 
+    /*-{
+        return this.attributes;
     }-*/;
 
 }

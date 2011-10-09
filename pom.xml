@@ -64,8 +64,8 @@
 					<noServer>true</noServer>
 					<module>org.vaadin.vol.demo.VolExampleAppWidgetset</module>
 					<runTarget>http://localhost:9998/</runTarget>
-<!-- 					<draftCompile>true</draftCompile> -->
-<!-- 					<style>PRETTY</style> -->
+					<draftCompile>true</draftCompile>
+					<style>PRETTY</style>
 				</configuration>
 			</plugin>
 
@@ -151,6 +151,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlets</artifactId>
+			<version>8.0.1.v20110908</version>
+		</dependency>
 	</dependencies>
 
 </project>

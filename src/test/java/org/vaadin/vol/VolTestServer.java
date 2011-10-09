@@ -42,6 +42,9 @@ public class VolTestServer {
         File file = new File("./target/testwebapp");
         context.setWar(file.getPath());
         context.setContextPath("/");
+        
+        ServletHolder servletHolder2 = new ServletHolder(WFSProxyServlet.class);
+        context.addServlet(servletHolder2, "/WFSPROXY/*");
         context.addServlet(servletHolder, "/*");
 
         server.setHandler(context);
