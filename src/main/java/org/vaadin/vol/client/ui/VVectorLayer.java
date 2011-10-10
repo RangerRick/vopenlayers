@@ -320,38 +320,43 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         }
     }
 
-    public void updateStyleMap(UIDL childUIDL) {
-        if (childUIDL.hasAttribute("olStyleMap")) {
+    private void updateStyleMap(UIDL childUIDL) {
+        StyleMap sm = getStyleMap(childUIDL);
+        if (sm == null) {
+            sm = StyleMap.create();
+        }
+        getLayer().setStyleMap(sm);
+    }
 
-            String[] renderIntents = childUIDL
-                    .getStringArrayAttribute("olStyleMap");
-            StyleMap sm;
-            if (renderIntents.length == 1 && renderIntents[0].equals("default")) {
-                sm = StyleMap.create();
-                sm.setStyle(
-                        "default",
-                        Style.create(childUIDL.getMapAttribute(
-                                "olStyle_" + renderIntents[0]).cast()));
-            } else {
-                sm = StyleMap.create();
-                for (String intent : renderIntents) {
-                    if (intent.startsWith("__")) {
-                        String specialAttribute = intent.replaceAll("__", "");
-                        if (specialAttribute.equals("extendDefault")) {
-                            sm.setExtendDefault(true);
-                        }
-                    } else {
-                        Style style = Style.create(childUIDL
-                                .getMapAttribute("olStyle_" + intent));
-                        sm.setStyle(intent, style);
+    public static StyleMap getStyleMap(UIDL childUIDL) {
+        if(!childUIDL.hasAttribute("olStyleMap")) {
+            return null;
+        }
+        String[] renderIntents = childUIDL
+                .getStringArrayAttribute("olStyleMap");
+        StyleMap sm;
+        if (renderIntents.length == 1 && renderIntents[0].equals("default")) {
+            sm = StyleMap.create();
+            sm.setStyle(
+                    "default",
+                    Style.create(childUIDL.getMapAttribute(
+                            "olStyle_" + renderIntents[0]).cast()));
+        } else {
+            sm = StyleMap.create();
+            for (String intent : renderIntents) {
+                if (intent.startsWith("__")) {
+                    String specialAttribute = intent.replaceAll("__", "");
+                    if (specialAttribute.equals("extendDefault")) {
+                        sm.setExtendDefault(true);
                     }
+                } else {
+                    Style style = Style.create(childUIDL
+                            .getMapAttribute("olStyle_" + intent));
+                    sm.setStyle(intent, style);
                 }
             }
-
-            getLayer().setStyleMap(sm);
-        } else {
-            getLayer().setStyleMap(StyleMap.create());
         }
+        return sm;
     }
 
     @Override

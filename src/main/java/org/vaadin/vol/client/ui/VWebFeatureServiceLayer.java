@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
+import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
 import org.vaadin.vol.client.wrappers.control.SelectFeature;
 import org.vaadin.vol.client.wrappers.layer.WebFeatureServiceLayer;
@@ -11,7 +12,6 @@ import org.vaadin.vol.client.wrappers.layer.WebFeatureServiceLayer;
 import com.google.gwt.core.client.JsArray;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.Util;
 import com.vaadin.terminal.gwt.client.ValueMap;
 
 public class VWebFeatureServiceLayer extends
@@ -23,7 +23,6 @@ public class VWebFeatureServiceLayer extends
     private Double opacity;
     private String format;
     private boolean transparent;
-    private String cqlFilter;
     private String projection;
     private String featureType;
     private String ns;
@@ -32,12 +31,13 @@ public class VWebFeatureServiceLayer extends
     private WebFeatureServiceLayer layer;
     private SelectFeature control;
     private String paintableId;
+    private StyleMap styleMap;
 
     @Override
     WebFeatureServiceLayer createLayer() {
         if (layer == null) {
             layer = WebFeatureServiceLayer.create(display, uri, featureType,
-                    ns, projection);
+                    ns, projection, styleMap);
         }
         return layer;
     }
@@ -53,6 +53,7 @@ public class VWebFeatureServiceLayer extends
             ns = uidl.getStringAttribute("featureNS");
             projection = uidl.hasAttribute("projection") ? uidl
                     .getStringAttribute("projection") : null;
+            styleMap = VVectorLayer.getStyleMap(uidl);
         }
         super.updateFromUIDL(uidl, client);
         
@@ -79,7 +80,6 @@ public class VWebFeatureServiceLayer extends
             getMap().addControl(control );
             control.activate();
 
-            
         }
 
 

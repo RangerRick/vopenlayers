@@ -5,6 +5,8 @@ import java.util.Map;
 import org.vaadin.vol.Bounds;
 import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.Point;
+import org.vaadin.vol.Style;
+import org.vaadin.vol.StyleMap;
 import org.vaadin.vol.WebFeatureServiceLayer;
 import org.vaadin.vol.WebMapServiceLayer;
 
@@ -38,6 +40,19 @@ public class WebFeatureServiceLayerTest extends AbstractVOLTest {
                 + "../WFSPROXY/");
         webFeatureServiceLayer.setFeatureType("states");
         webFeatureServiceLayer.setFeatureNS("http://www.openplans.org/topp");
+        
+        
+        /*
+         * Style like a normal web feature server.
+         */
+        
+        Style style = new Style();
+        style.extendCoreStyle("default");
+        style.setFillColor("green");
+        style.setFillOpacity(0.5);
+        StyleMap styleMap = new StyleMap(style);
+        styleMap.setExtendDefault(true);
+        webFeatureServiceLayer.setStyleMap(styleMap );
 
         openLayersMap.addLayer(webFeatureServiceLayer);
 
