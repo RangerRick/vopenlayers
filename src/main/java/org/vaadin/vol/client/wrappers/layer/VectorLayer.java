@@ -60,4 +60,9 @@ public class VectorLayer extends Layer {
     	 return this.styleMap;
     }-*/;
 
+    public native final void removeAllFeatures() 
+    /*-{
+        this.removeAllFeatures();
+    }-*/;
+
 }
