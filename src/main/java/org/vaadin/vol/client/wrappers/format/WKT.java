@@ -13,7 +13,7 @@ public class WKT extends JavaScriptObject {
         return new $wnd.OpenLayers.Format.WKT({'internalProjection' : internalProjection, 'externalProjection' : externalProjection});
     }-*/;
 
-    public native JsArray<Vector> read(String wkt) 
+    public native final JsArray<Vector> read(String wkt) 
     /*-{
         var result = this.read(wkt);
         // ensure array
@@ -22,5 +22,10 @@ public class WKT extends JavaScriptObject {
         }
         return result;
     }-*/;
+
+	public native final String write(Vector vector) 
+	/*-{
+		return this.write(vector);
+	}-*/;
 
 }

@@ -1,7 +1,7 @@
 package org.vaadin.vol.demo;
 
-import java.util.Map;
-
+import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.FeatureSelectedEvent;
+import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.FeatureSelectedListener;
 import org.vaadin.vol.Bounds;
 import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.Point;
@@ -26,15 +26,18 @@ public class WebFeatureServiceLayerTest extends AbstractVOLTest {
         webMapServiceLayer.setDisplayName("Base map");
         openLayersMap.addLayer(webMapServiceLayer);
 
-        WebFeatureServiceLayer webFeatureServiceLayer = new WebFeatureServiceLayer() {
-            @Override
-            protected void featureSelected(String fid, Map<String, Object> attr) {
-                super.featureSelected(fid, attr);
-                Object state = attr.get("STATE_NAME");
-                Object persons = attr.get("PERSONS");
+        WebFeatureServiceLayer webFeatureServiceLayer = new WebFeatureServiceLayer();
+        
+        webFeatureServiceLayer.addListener(new FeatureSelectedListener() {
+			public void featureSelected(FeatureSelectedEvent event) {
+				String featureId = event.getFeatureId();
+				System.err.println("Selected feature id:" + featureId);
+                Object state = event.getAttributes().get("STATE_NAME");
+                Object persons = event.getAttributes().get("PERSONS");
                 showNotification("State: " + state + " (population:" + persons + ")");
-            }
-        };
+			}
+		});
+        
         // proxied to http://demo.opengeo.org/geoserver/wfs
         webFeatureServiceLayer.setUri(getApplication().getURL()
                 + "../WFSPROXY/");

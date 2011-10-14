@@ -205,6 +205,22 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     public String getDisplayName() {
         return displayName;
     }
+    
+    /**
+     * @return the stylemap
+     */
+    public StyleMap getStyleMap() {
+    	return stylemap;
+    }
+    
+    /**
+     * @param stylemap
+     *            the stylemap to set
+     */
+    public void setStyleMap(StyleMap stylemap) {
+    	this.stylemap = stylemap;
+    	requestRepaint();
+    }
 
     public void setSelectionMode(SelectionMode selectionMode) {
         this.selectionMode = selectionMode;
@@ -273,22 +289,6 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     public void removeListener(VectorSelectedListener listener) {
         removeListener(VectorSelectedListener.EVENT_ID,
                 VectorSelectedEvent.class, listener);
-    }
-
-    /**
-     * @return the stylemap
-     */
-    public StyleMap getStyleMap() {
-        return stylemap;
-    }
-
-    /**
-     * @param stylemap
-     *            the stylemap to set
-     */
-    public void setStyleMap(StyleMap stylemap) {
-        this.stylemap = stylemap;
-        requestRepaint();
     }
 
     public class VectorSelectedEvent extends Event {

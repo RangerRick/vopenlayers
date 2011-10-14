@@ -3,8 +3,6 @@
  */
 package org.vaadin.vol;
 
-import java.util.Map;
-
 import org.vaadin.vol.client.ui.VWebFeatureServiceLayer;
 
 import com.vaadin.terminal.PaintException;
@@ -29,18 +27,6 @@ public class WebFeatureServiceLayer extends AbstractAutoPopulatedVectorLayer imp
         target.addAttribute("featureNS", featureNS);
     }
     
-    @Override
-    public void changeVariables(Object source, Map<String, Object> variables) {
-        super.changeVariables(source, variables);
-        String fid = (String) variables.get("fid");
-        Map<String,Object> attr = (Map<String, Object>) variables.get("attr");
-        featureSelected(fid, attr);
-    }
-
-    protected void featureSelected(String fid, Map<String, Object> attr) {
-        // TODO FeatureSelectedEvent
-    }
-
     public void setUri(String uri) {
         this.uri = uri;
         requestRepaint();
