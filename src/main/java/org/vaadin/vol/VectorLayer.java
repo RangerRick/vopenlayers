@@ -315,10 +315,10 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         public final String EVENT_ID = "vusel";
 
         public final Method method = ReflectTools.findMethod(
-                VectorUnSelectedListener.class, "vectorSelected",
+                VectorUnSelectedListener.class, "vectorUnSelected",
                 VectorUnSelectedEvent.class);
 
-        public void vectorSelected(VectorUnSelectedEvent event);
+        public void vectorUnSelected(VectorUnSelectedEvent event);
 
     }
 
