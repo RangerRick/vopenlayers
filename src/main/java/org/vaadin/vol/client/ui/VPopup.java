@@ -118,5 +118,11 @@ public class VPopup extends Widget implements Paintable {
 	public Popup getPopup() {
 		return popup;
 	}
+	
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		popup.hide();
+	}
 
 }
