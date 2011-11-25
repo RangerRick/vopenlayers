@@ -3,7 +3,6 @@
  */
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VWebFeatureServiceLayer;
 import org.vaadin.vol.client.ui.VWellKnownTextLayer;
 
 import com.vaadin.terminal.PaintException;
