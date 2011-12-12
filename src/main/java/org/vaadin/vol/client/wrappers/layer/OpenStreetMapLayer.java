@@ -18,8 +18,7 @@ public class OpenStreetMapLayer extends Layer {
     	}
     	
     	if(!displayName) displayName = "OpenStreetMap";
-    	var OpenLayers = $wnd.OpenLayers;
-    	return new OpenLayers.Layer.OSM(displayName,null,options);
+    	return new $wnd.OpenLayers.Layer.OSM(displayName,null,options);
     	
     }-*/;
 
@@ -32,8 +31,7 @@ public class OpenStreetMapLayer extends Layer {
         }
         
         if(!displayName) displayName = "OpenStreetMap";
-        var OpenLayers = $wnd.OpenLayers;
-        return new OpenLayers.Layer.OSM.CycleMap(displayName,null,options);
+        return new $wnd.OpenLayers.Layer.OSM.CycleMap(displayName,null,options);
     }-*/;
 
     public native final static OpenStreetMapLayer createOsmarenderMap(
@@ -45,8 +43,7 @@ public class OpenStreetMapLayer extends Layer {
         }
         
         if(!displayName) displayName = "OpenStreetMap";
-        var OpenLayers = $wnd.OpenLayers;
-        return new OpenLayers.Layer.OSM.Osmarender(displayName,null,options);
+        return new $wnd.OpenLayers.Layer.OSM.Osmarender(displayName,null,options);
     }-*/;
 
 }
