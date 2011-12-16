@@ -16,6 +16,8 @@ import com.vaadin.ui.Window;
 
 public class VolApplication extends Application {
 
+    private Container testClassess;
+
     @Override
     public Window getWindow(String name) {
         Window window = (Window) super.getWindow(name);
@@ -61,7 +63,10 @@ public class VolApplication extends Application {
     }
 
     private void loadTestClasses(Window window) {
-        Container testClassess = listTestClasses();
+        if(testClassess != null) {
+            return;
+        }
+        testClassess = listTestClasses();
         Table table = new Table("Test cases", testClassess);
         table.addGeneratedColumn("name", new ColumnGenerator() {
             public Object generateCell(Table source, Object itemId,
