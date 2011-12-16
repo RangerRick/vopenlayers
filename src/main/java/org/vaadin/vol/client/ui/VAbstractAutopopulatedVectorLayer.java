@@ -14,7 +14,6 @@ import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 import com.google.gwt.core.client.JsArray;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.Util;
 import com.vaadin.terminal.gwt.client.ValueMap;
 
 public abstract class VAbstractAutopopulatedVectorLayer<T> extends
