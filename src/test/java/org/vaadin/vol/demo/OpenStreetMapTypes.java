@@ -10,6 +10,12 @@ import com.vaadin.ui.Component;
 public class OpenStreetMapTypes extends AbstractVOLTest {
 
     @Override
+    public String getDescription() {
+        return "Demonstrates various OSM types.";
+    }
+
+
+    @Override
     Component getMap() {
         OpenLayersMap map = new OpenLayersMap();
         /*

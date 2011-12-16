@@ -32,6 +32,12 @@ import com.vaadin.ui.VerticalLayout;
 
 public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         VectorLayer.VectorModifiedListener {
+
+    @Override
+    public String getDescription() {
+        return "Tests complex situations with vector editing (both server and client side), selection and vector removal all together.";
+    }
+
     private HorizontalLayout controls;
     VectorLayer vectorLayer = new VectorLayer();
 
@@ -52,10 +58,9 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
 
         OpenStreetMapLayer osm = new OpenStreetMapLayer();
 
-
         vectorLayer.setImmediate(true);
         vectorLayer.setDrawindMode(DrawingMode.MODIFY);
-        
+
         /*
          * Set thicker stroke width so editing the polyline is easier.
          */
@@ -64,7 +69,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         StyleMap styleMap = new StyleMap(style);
         styleMap.setExtendDefault(true);
         vectorLayer.setStyleMap(styleMap);
-        
+
         Point[] pa = new Point[4];
         pa[0] = new Point(12.4109, 41.8092);
         PointVector pvA1 = new PointVector(pa[0].getLon(), pa[0].getLat());
@@ -88,7 +93,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         polyLine.setPoints(pa);
         polyLine.setDebugId("polyline");
         vectors.add(polyLine);
-        
+
         vectorLayer.addVector(polyLine);
 
         vectorLayer.addVector(pvA1);
@@ -102,7 +107,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
 
         vectorLayer.addListener(new VectorLayer.VectorSelectedListener() {
             public void vectorSelected(VectorSelectedEvent event) {
-                if(nativeSelect.getValue() != event.getVector()) {
+                if (nativeSelect.getValue() != event.getVector()) {
                     nativeSelect.setValue(event.getVector());
                 }
             }
@@ -131,55 +136,60 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         map.addLayer(vectorLayer);
 
         controls = new HorizontalLayout();
-        
+
         CheckBox checkBox = new CheckBox("Immediate vector layer");
-        checkBox.setPropertyDataSource(new MethodProperty<VectorLayer>(vectorLayer, "immediate"));
+        checkBox.setPropertyDataSource(new MethodProperty<VectorLayer>(
+                vectorLayer, "immediate"));
         checkBox.setImmediate(true);
         controls.addComponent(checkBox);
-        
-        controls.addComponent(new Button("Toggle editable-plainselectable", new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                if(vectorLayer.getDrawindMode() == DrawingMode.MODIFY) {
-                    vectorLayer.setDrawindMode(DrawingMode.NONE);
-                    vectorLayer.setSelectionMode(SelectionMode.SIMPLE);
-                    vectorLayer.getWindow().showNotification("Selections only");
-                } else {
-                    vectorLayer.setSelectionMode(SelectionMode.NONE);
-                    vectorLayer.setDrawindMode(DrawingMode.MODIFY);
-                    vectorLayer.getWindow().showNotification("Modifications allowed");
-                }
-            }
-        }));
 
-        
-        controls.addComponent(new Button("Sync"));
-        
-        controls.addComponent(new Button("Shift sel component", new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                Vector vector = vectorLayer.getSelectedVector();
-                if(vector != null) {
-                    Bounds extend = map.getExtend();
-                    double toRight = (extend.getRight() - extend.getLeft())/10.0;
-                    Point[] points = vector.getPoints();
-                    for (Point point : points) {
-                        point.setLon(point.getLon() + toRight);
+        controls.addComponent(new Button("Toggle editable-plainselectable",
+                new Button.ClickListener() {
+                    public void buttonClick(ClickEvent event) {
+                        if (vectorLayer.getDrawindMode() == DrawingMode.MODIFY) {
+                            vectorLayer.setDrawindMode(DrawingMode.NONE);
+                            vectorLayer.setSelectionMode(SelectionMode.SIMPLE);
+                            vectorLayer.getWindow().showNotification(
+                                    "Selections only");
+                        } else {
+                            vectorLayer.setSelectionMode(SelectionMode.NONE);
+                            vectorLayer.setDrawindMode(DrawingMode.MODIFY);
+                            vectorLayer.getWindow().showNotification(
+                                    "Modifications allowed");
+                        }
                     }
-                    vector.requestRepaint();
-                }
-            }
-        }));
-        
-        controls.addComponent(new Button("Remove sel component", new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                Vector vector = vectorLayer.getSelectedVector();
-                if(vector != null) {
-                    nativeSelect.removeItem(vector);
-                    vectorLayer.removeComponent(vector);
-                }
-            }
-        }));
+                }));
 
-        
+        controls.addComponent(new Button("Sync"));
+
+        controls.addComponent(new Button("Shift sel component",
+                new Button.ClickListener() {
+                    public void buttonClick(ClickEvent event) {
+                        Vector vector = vectorLayer.getSelectedVector();
+                        if (vector != null) {
+                            Bounds extend = map.getExtend();
+                            double toRight = (extend.getRight() - extend
+                                    .getLeft()) / 10.0;
+                            Point[] points = vector.getPoints();
+                            for (Point point : points) {
+                                point.setLon(point.getLon() + toRight);
+                            }
+                            vector.requestRepaint();
+                        }
+                    }
+                }));
+
+        controls.addComponent(new Button("Remove sel component",
+                new Button.ClickListener() {
+                    public void buttonClick(ClickEvent event) {
+                        Vector vector = vectorLayer.getSelectedVector();
+                        if (vector != null) {
+                            nativeSelect.removeItem(vector);
+                            vectorLayer.removeComponent(vector);
+                        }
+                    }
+                }));
+
         nativeSelect = new NativeSelect();
         nativeSelect.setNullSelectionAllowed(true);
         for (Vector point : vectors) {
@@ -189,7 +199,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         nativeSelect.addListener(new Property.ValueChangeListener() {
             public void valueChange(ValueChangeEvent event) {
                 Object value = event.getProperty().getValue();
-                if(value instanceof Vector) {
+                if (value instanceof Vector) {
                     vectorLayer.setSelectedVector((Vector) value);
                 } else {
                     vectorLayer.setSelectedVector(null);
@@ -198,7 +208,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         });
         nativeSelect.setImmediate(true);
         controls.addComponent(nativeSelect);
-        
+
         return map;
     }
 
@@ -217,5 +227,5 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         vectorLayer.getWindow().showNotification(
                 "Vector modified::" + event.getVector().getDebugId());
     }
-    
+
 }

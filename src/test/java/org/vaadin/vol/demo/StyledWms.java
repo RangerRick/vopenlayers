@@ -8,6 +8,12 @@ import org.vaadin.vol.WebMapServiceLayerStyled;
 import com.vaadin.ui.Component;
 
 public class StyledWms extends AbstractVOLTest {
+    
+    @Override
+    public String getDescription() {
+        return "Demonstrates using SLD to style WMS layer. Nonfunctional, any known public WMS server that could be used for this demo. The current one dont seem to work.";
+    }
+
 
     @Override
     Component getMap() {

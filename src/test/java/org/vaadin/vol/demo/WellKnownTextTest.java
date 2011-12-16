@@ -19,6 +19,12 @@ import com.vaadin.ui.Component;
 public class WellKnownTextTest extends AbstractVOLTest {
 
     @Override
+    public String getDescription() {
+        return "How to use WKT strings to populate a read only vector layer.";
+    }
+
+
+    @Override
     Component getMap() {
         OpenLayersMap openLayersMap = new OpenLayersMap();
         WebMapServiceLayer webMapServiceLayer = new WebMapServiceLayer();

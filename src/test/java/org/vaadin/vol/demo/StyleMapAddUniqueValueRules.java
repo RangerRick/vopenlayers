@@ -51,322 +51,341 @@ import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class StyleMapAddUniqueValueRules extends AbstractVOLTest {
-	private HorizontalLayout controls;
+    private HorizontalLayout controls;
 
-	@Override
-	protected void setup() {
-		super.setup();
-		((VerticalLayout) getContent()).addComponentAsFirst(controls);
-	}
+    @Override
+    public String getDescription() {
+        return "Example how to use complex attribute based styling.";
+    }
 
-	@Override
-	Component getMap() {
-		final OpenLayersMap map = new OpenLayersMap();
-		map.setImmediate(true); // update extent and zoom to server as they
-								// change
+    @Override
+    protected void setup() {
+        super.setup();
+        ((VerticalLayout) getContent()).addComponentAsFirst(controls);
+    }
 
-		/*
-		 * Open street maps layer as a base layer. Note importance of the order,
-		 * OSM layer now sets the projection to Spherical Mercator. If added eg.
-		 * after markers or vectors, they might render with bad values.
-		 */
-		OpenStreetMapLayer osm = new OpenStreetMapLayer();
+    @Override
+    Component getMap() {
+        final OpenLayersMap map = new OpenLayersMap();
+        map.setImmediate(true); // update extent and zoom to server as they
+                                // change
 
-		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
-		GoogleSatelliteMapLayer googleSatellite = new GoogleSatelliteMapLayer();
+        /*
+         * Open street maps layer as a base layer. Note importance of the order,
+         * OSM layer now sets the projection to Spherical Mercator. If added eg.
+         * after markers or vectors, they might render with bad values.
+         */
+        OpenStreetMapLayer osm = new OpenStreetMapLayer();
 
-		MapTilerLayer mapTilerLayer = null;
-		try {
-			// mapTilerLayer = new
-			// MapTilerLayer("http://matti.virtuallypreinstalled.com/tiles/pirttikankare/pirttikankare/");
-			mapTilerLayer = new MapTilerLayer("http://dl.dropbox.com/u/4041822/pirttikankare/");
-			mapTilerLayer.setDisplayName("Pirttikankare");
-			mapTilerLayer.setBaseLayer(false);
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
+        GoogleSatelliteMapLayer googleSatellite = new GoogleSatelliteMapLayer();
 
-		final VectorLayer vectorLayer = new VectorLayer();
+        MapTilerLayer mapTilerLayer = null;
+        try {
+            // mapTilerLayer = new
+            // MapTilerLayer("http://matti.virtuallypreinstalled.com/tiles/pirttikankare/pirttikankare/");
+            mapTilerLayer = new MapTilerLayer(
+                    "http://dl.dropbox.com/u/4041822/pirttikankare/");
+            mapTilerLayer.setDisplayName("Pirttikankare");
+            mapTilerLayer.setBaseLayer(false);
+        } catch (SAXException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		vectorLayer.setSelectionMode(SelectionMode.SIMPLE);
+        final VectorLayer vectorLayer = new VectorLayer();
 
-		vectorLayer.addListener(new VectorSelectedListener() {
-			public void vectorSelected(VectorSelectedEvent event) {
-				Vector vector = event.getVector();
-				Window window = vectorLayer.getWindow();
-				// vectorLayer.getWindow().showNotification(
-				// "Selected vector with points "
-				// + Arrays.deepToString(vector.getPoints()) );
-				vectorLayer.getWindow().showNotification("Selected vector attributes " + (vector.getAttributes().toString()));
-			}
-		});
+        vectorLayer.setSelectionMode(SelectionMode.SIMPLE);
 
-		/*
-		 * Draw triangle over vaadin hq.
-		 */
+        vectorLayer.addListener(new VectorSelectedListener() {
+            public void vectorSelected(VectorSelectedEvent event) {
+                Vector vector = event.getVector();
+                Window window = vectorLayer.getWindow();
+                // vectorLayer.getWindow().showNotification(
+                // "Selected vector with points "
+                // + Arrays.deepToString(vector.getPoints()) );
+                vectorLayer.getWindow().showNotification(
+                        "Selected vector attributes "
+                                + (vector.getAttributes().toString()));
+            }
+        });
 
-		Point[] points = new Point[3];
-		points[0] = new Point(22.29, 60.45);
-		points[1] = new Point(22.30, 60.46);
-		points[2] = new Point(22.31, 60.45);
+        /*
+         * Draw triangle over vaadin hq.
+         */
 
-		Area area = new Area();
-		area.setPoints(points);
+        Point[] points = new Point[3];
+        points[0] = new Point(22.29, 60.45);
+        points[1] = new Point(22.30, 60.46);
+        points[2] = new Point(22.31, 60.45);
 
-		Style vaadinColors = new Style();
-		vaadinColors.setStrokeColor("#1cffff");
-		vaadinColors.setFillColor("#0000ff");
-		vaadinColors.setFillOpacity(0.4);
-		vaadinColors.setStrokeWidth(3);
-		area.setCustomStyle(vaadinColors);
+        Area area = new Area();
+        area.setPoints(points);
 
-		Style defaultstyle = new Style();
-		/* Set stroke color to green, otherwise like default style */
-		defaultstyle.extendCoreStyle("default");
-		defaultstyle.setStrokeColor("#00b963");
-		defaultstyle.setFillColor("#00ff00");
+        Style vaadinColors = new Style();
+        vaadinColors.setStrokeColor("#1cffff");
+        vaadinColors.setFillColor("#0000ff");
+        vaadinColors.setFillOpacity(0.4);
+        vaadinColors.setStrokeWidth(3);
+        area.setCustomStyle(vaadinColors);
 
-		// Make borders of selected graphs bigger
-		Style selectStyle = new Style();
-		selectStyle.setStrokeWidth(5);
+        Style defaultstyle = new Style();
+        /* Set stroke color to green, otherwise like default style */
+        defaultstyle.extendCoreStyle("default");
+        defaultstyle.setStrokeColor("#00b963");
+        defaultstyle.setFillColor("#00ff00");
 
-		StyleMap stylemap = new StyleMap(defaultstyle, selectStyle, null);
-		// make selectStyle inherit attributes not explicitly set
-		stylemap.setExtendDefault(true);
-		vectorLayer.setStyleMap(stylemap);
+        // Make borders of selected graphs bigger
+        Style selectStyle = new Style();
+        selectStyle.setStrokeWidth(5);
 
-		// setRestrictedExtent(map, points);
-		zoomToExtent(map, points);
+        StyleMap stylemap = new StyleMap(defaultstyle, selectStyle, null);
+        // make selectStyle inherit attributes not explicitly set
+        stylemap.setExtendDefault(true);
+        vectorLayer.setStyleMap(stylemap);
 
-		vectorLayer.addVector(area);
+        // setRestrictedExtent(map, points);
+        zoomToExtent(map, points);
 
-		// Also create another vector that uses styleamps styles
-		Area area2 = new Area();
-		Point[] points2 = new Point[points.length];
-		for (int i = 0; i < points2.length; i++) {
-			points2[i] = new Point(points[i].getLon() + 0.02, points[i].getLat());
-		}
-		area2.setPoints(points2);
-		vectorLayer.addVector(area2);
+        vectorLayer.addVector(area);
 
-		// Add styled PointVectors to area corners, styling with styleNames
-		Style style = new Style();
-		style.setFill(true);
-		// style.setFillColor("#0000ff"); //
-		style.setFillOpacity(0.8);
-		style.setStroke(false);
-		// style.setPointRadius(30);
-		// style.setPointRadiusByAttribute("pointRadius"); //
-		stylemap.setStyle(new RenderIntent("red"), style);
-		Style markerStyle = new Style();
-		// markerStyle
-		// .setExternalGraphic(getURL()
-		// +
-		// "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker.png");
-		markerStyle.setGraphicZIndex(11);
-		markerStyle.setGraphicSize(16, 21);
-		// markerStyle
-		// .setBackgroundGraphic(getURL()
-		// +
-		// "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker_shadow.png");
-		markerStyle.setBackgroundYOffset(-7);
-		markerStyle.setBackgroundXOffset(0);
-		markerStyle.setBackgroundGraphicZIndex(10);
-		markerStyle.setFillOpacity(1);
-		markerStyle.setStrokeOpacity(1);
-		markerStyle.setPointRadius(10);
-		stylemap.setStyle(new RenderIntent("marker"), markerStyle);
+        // Also create another vector that uses styleamps styles
+        Area area2 = new Area();
+        Point[] points2 = new Point[points.length];
+        for (int i = 0; i < points2.length; i++) {
+            points2[i] = new Point(points[i].getLon() + 0.02,
+                    points[i].getLat());
+        }
+        area2.setPoints(points2);
+        vectorLayer.addVector(area2);
 
-		Symbolizer symbolizer_lookup = new Symbolizer();
-		Symbolizer symb = new Symbolizer();
-		symb.setProperty("pointRadius", 20);
-		symb.setProperty("fillColor", "#ff0000");
-		symbolizer_lookup.setProperty("size0", symb);
-		//symbolizer_lookup.setProperty("0", symb);
-		
-		symb = new Symbolizer();
-		symb.setProperty("pointRadius", 40);
-		symb.setProperty("fillColor", "#ffff00");
-		symbolizer_lookup.setProperty("size1", symb);
-//		symbolizer_lookup.setProperty("1", symb);
-		
-		symb = new Symbolizer();
-		symb.setProperty("pointRadius", 10);
-		symb.setProperty("fillColor", "#ff00ff");
-		symbolizer_lookup.setProperty("size2", symb);
-		//symbolizer_lookup.setProperty("2", symb);
-		
-		
-		stylemap.addUniqueValueRules(new RenderIntent("red"), "size", symbolizer_lookup, null);
-		stylemap.addUniqueValueRules(new RenderIntent("marker"), "size", symbolizer_lookup, null);
+        // Add styled PointVectors to area corners, styling with styleNames
+        Style style = new Style();
+        style.setFill(true);
+        // style.setFillColor("#0000ff"); //
+        style.setFillOpacity(0.8);
+        style.setStroke(false);
+        // style.setPointRadius(30);
+        // style.setPointRadiusByAttribute("pointRadius"); //
+        stylemap.setStyle(new RenderIntent("red"), style);
+        Style markerStyle = new Style();
+        // markerStyle
+        // .setExternalGraphic(getURL()
+        // +
+        // "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker.png");
+        markerStyle.setGraphicZIndex(11);
+        markerStyle.setGraphicSize(16, 21);
+        // markerStyle
+        // .setBackgroundGraphic(getURL()
+        // +
+        // "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker_shadow.png");
+        markerStyle.setBackgroundYOffset(-7);
+        markerStyle.setBackgroundXOffset(0);
+        markerStyle.setBackgroundGraphicZIndex(10);
+        markerStyle.setFillOpacity(1);
+        markerStyle.setStrokeOpacity(1);
+        markerStyle.setPointRadius(10);
+        stylemap.setStyle(new RenderIntent("marker"), markerStyle);
 
-		for (int i = 0; i < points.length; i++) {
-			PointVector pointVector = new PointVector(points[i].getLon(), points[i].getLat());
-			Attributes attr = new Attributes();
+        Symbolizer symbolizer_lookup = new Symbolizer();
+        Symbolizer symb = new Symbolizer();
+        symb.setProperty("pointRadius", 20);
+        symb.setProperty("fillColor", "#ff0000");
+        symbolizer_lookup.setProperty("size0", symb);
+        // symbolizer_lookup.setProperty("0", symb);
 
-			attr.setProperty("size",  "size"+String.valueOf(i));
-			//attr.setProperty("size",  i);
-			pointVector.setAttributes(attr);
+        symb = new Symbolizer();
+        symb.setProperty("pointRadius", 40);
+        symb.setProperty("fillColor", "#ffff00");
+        symbolizer_lookup.setProperty("size1", symb);
+        // symbolizer_lookup.setProperty("1", symb);
 
-			if (i == 0) {
-				pointVector.setStyleName("marker");
-			} else {
-				pointVector.setStyleName("red");
-			}
+        symb = new Symbolizer();
+        symb.setProperty("pointRadius", 10);
+        symb.setProperty("fillColor", "#ff00ff");
+        symbolizer_lookup.setProperty("size2", symb);
+        // symbolizer_lookup.setProperty("2", symb);
 
-			vectorLayer.addVector(pointVector);
-		}
+        stylemap.addUniqueValueRules(new RenderIntent("red"), "size",
+                symbolizer_lookup, null);
+        stylemap.addUniqueValueRules(new RenderIntent("marker"), "size",
+                symbolizer_lookup, null);
 
-		// Definig a Marker Layer
-		MarkerLayer markerLayer = new MarkerLayer();
+        for (int i = 0; i < points.length; i++) {
+            PointVector pointVector = new PointVector(points[i].getLon(),
+                    points[i].getLat());
+            Attributes attr = new Attributes();
 
-		// Defining a new Marker
+            attr.setProperty("size", "size" + String.valueOf(i));
+            // attr.setProperty("size", i);
+            pointVector.setAttributes(attr);
 
-		final Marker marker = new Marker(22.30083, 60.452541);
-		// URL of marker Icon
-		marker.setIcon("http://dev.vaadin.com/chrome/site/vaadin-trac.png", 60, 20);
+            if (i == 0) {
+                pointVector.setStyleName("marker");
+            } else {
+                pointVector.setStyleName("red");
+            }
 
-		// Add some server side integration when clicking a marker
-		marker.addClickListener(new ClickListener() {
-			public void click(ClickEvent event) {
-				final Popup popup = new Popup(marker.getLon(), marker.getLat(), "Vaadin HQ is <em>here</em>!");
-				popup.setAnchor(marker);
-				popup.setPopupStyle(PopupStyle.FRAMED_CLOUD);
-				popup.addListener(new Popup.CloseListener() {
+            vectorLayer.addVector(pointVector);
+        }
 
-					public void onClose(org.vaadin.vol.Popup.CloseEvent event) {
-						System.err.println("Closed");
-						map.removeComponent(popup);
-					}
-				});
-				map.addPopup(popup);
-			}
-		});
+        // Definig a Marker Layer
+        MarkerLayer markerLayer = new MarkerLayer();
 
-		// Add the marker to the marker Layer
-		markerLayer.addMarker(marker);
-		map.setCenter(22.30, 60.452);
-		map.setZoom(15);
+        // Defining a new Marker
 
-		// map.setSizeFull();
-		map.setWidth("800px");
-		map.setHeight("600px");
+        final Marker marker = new Marker(22.30083, 60.452541);
+        // URL of marker Icon
+        marker.setIcon("http://dev.vaadin.com/chrome/site/vaadin-trac.png", 60,
+                20);
 
-		OptionGroup drawingMode = new OptionGroup();
-		for (DrawingMode l : VectorLayer.DrawingMode.values()) {
-			drawingMode.addItem(l);
-		}
-		drawingMode.addListener(new Property.ValueChangeListener() {
-			public void valueChange(ValueChangeEvent event) {
-				DrawingMode mode = (DrawingMode) event.getProperty().getValue();
-				if (mode == DrawingMode.MODIFY || mode == DrawingMode.AREA || mode == DrawingMode.LINE || mode == DrawingMode.POINT
-						|| mode == DrawingMode.NONE) {
-					vectorLayer.setDrawindMode(mode);
-				} else {
-					showNotification("Sorry, feature is on TODO list. Try area.");
-				}
-			}
-		});
-		drawingMode.setValue(DrawingMode.NONE);
-		drawingMode.setImmediate(true);
+        // Add some server side integration when clicking a marker
+        marker.addClickListener(new ClickListener() {
+            public void click(ClickEvent event) {
+                final Popup popup = new Popup(marker.getLon(), marker.getLat(),
+                        "Vaadin HQ is <em>here</em>!");
+                popup.setAnchor(marker);
+                popup.setPopupStyle(PopupStyle.FRAMED_CLOUD);
+                popup.addListener(new Popup.CloseListener() {
 
-		vectorLayer.addListener(new VectorDrawnListener() {
-			public void vectorDrawn(VectorDrawnEvent event) {
-				Vector vector = event.getVector();
-				vectorLayer.addVector(vector);
-				vectorLayer.getWindow().showNotification("Vector drawn:" + vector);
-			}
-		});
+                    public void onClose(org.vaadin.vol.Popup.CloseEvent event) {
+                        System.err.println("Closed");
+                        map.removeComponent(popup);
+                    }
+                });
+                map.addPopup(popup);
+            }
+        });
 
-		vectorLayer.addListener(new VectorLayer.VectorModifiedListener() {
-			public void vectorModified(VectorModifiedEvent event) {
-				vectorLayer.getWindow().showNotification("Vector modified:" + event.getVector());
-			}
-		});
+        // Add the marker to the marker Layer
+        markerLayer.addMarker(marker);
+        map.setCenter(22.30, 60.452);
+        map.setZoom(15);
 
-		// add layers
+        // map.setSizeFull();
+        map.setWidth("800px");
+        map.setHeight("600px");
 
-		// base layers
-		map.addLayer(osm);
-		map.addLayer(googleStreets);
-		map.addLayer(googleSatellite);
+        OptionGroup drawingMode = new OptionGroup();
+        for (DrawingMode l : VectorLayer.DrawingMode.values()) {
+            drawingMode.addItem(l);
+        }
+        drawingMode.addListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                DrawingMode mode = (DrawingMode) event.getProperty().getValue();
+                if (mode == DrawingMode.MODIFY || mode == DrawingMode.AREA
+                        || mode == DrawingMode.LINE
+                        || mode == DrawingMode.POINT
+                        || mode == DrawingMode.NONE) {
+                    vectorLayer.setDrawindMode(mode);
+                } else {
+                    showNotification("Sorry, feature is on TODO list. Try area.");
+                }
+            }
+        });
+        drawingMode.setValue(DrawingMode.NONE);
+        drawingMode.setImmediate(true);
 
-		// map.addComponent(wms);
-		// map.addLayer(mapTilerLayer);
-		map.addLayer(vectorLayer);
-		// map.addLayer(markerLayer);
+        vectorLayer.addListener(new VectorDrawnListener() {
+            public void vectorDrawn(VectorDrawnEvent event) {
+                Vector vector = event.getVector();
+                vectorLayer.addVector(vector);
+                vectorLayer.getWindow().showNotification(
+                        "Vector drawn:" + vector);
+            }
+        });
 
-		controls = new HorizontalLayout();
-		controls.addComponent(drawingMode);
-		Button moveToTMSExample = new Button("Move to TMS example");
-		moveToTMSExample.addListener(new Button.ClickListener() {
-			public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
-				map.setCenter(22.805, 60.447);
-				map.setZoom(15);
-			}
-		});
+        vectorLayer.addListener(new VectorLayer.VectorModifiedListener() {
+            public void vectorModified(VectorModifiedEvent event) {
+                vectorLayer.getWindow().showNotification(
+                        "Vector modified:" + event.getVector());
+            }
+        });
 
-		Panel panel = new Panel(new CssLayout());
-		OptionGroup mapcontrols = new OptionGroup();
-		mapcontrols.setMultiSelect(true);
-		mapcontrols.setImmediate(true);
-		Control[] values = Control.values();
-		for (int i = 0; i < values.length; i++) {
-			mapcontrols.addItem(values[i]);
-		}
-		mapcontrols.setValue(map.getControls());
-		mapcontrols.addListener(new ValueChangeListener() {
-			public void valueChange(ValueChangeEvent event) {
-				Control[] controls3 = map.getControls().toArray(new Control[map.getControls().size()]);
-				for (int i = 0; i < controls3.length; i++) {
-					Control control = controls3[i];
-					map.removeControl(control);
-				}
-				Collection<Control> value = (Collection<Control>) event.getProperty().getValue();
-				for (Control control : value) {
-					map.addControl(control);
-				}
-			}
-		});
-		panel.setHeight("100px");
-		panel.setWidth("200px");
-		panel.addComponent(mapcontrols);
+        // add layers
 
-		controls.addComponent(panel);
+        // base layers
+        map.addLayer(osm);
+        map.addLayer(googleStreets);
+        map.addLayer(googleSatellite);
 
-		controls.addComponent(moveToTMSExample);
+        // map.addComponent(wms);
+        // map.addLayer(mapTilerLayer);
+        map.addLayer(vectorLayer);
+        // map.addLayer(markerLayer);
 
-		return map;
-	}
+        controls = new HorizontalLayout();
+        controls.addComponent(drawingMode);
+        Button moveToTMSExample = new Button("Move to TMS example");
+        moveToTMSExample.addListener(new Button.ClickListener() {
+            public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
+                map.setCenter(22.805, 60.447);
+                map.setZoom(15);
+            }
+        });
 
-	/**
-	 * An example how to zoom the map so that it covers given points.
-	 * 
-	 * @param map
-	 * @param points
-	 */
-	private void zoomToExtent(OpenLayersMap map, Point[] points) {
-		Bounds bounds = new Bounds(points);
-		map.zoomToExtent(bounds);
-	}
+        Panel panel = new Panel(new CssLayout());
+        OptionGroup mapcontrols = new OptionGroup();
+        mapcontrols.setMultiSelect(true);
+        mapcontrols.setImmediate(true);
+        Control[] values = Control.values();
+        for (int i = 0; i < values.length; i++) {
+            mapcontrols.addItem(values[i]);
+        }
+        mapcontrols.setValue(map.getControls());
+        mapcontrols.addListener(new ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                Control[] controls3 = map.getControls().toArray(
+                        new Control[map.getControls().size()]);
+                for (int i = 0; i < controls3.length; i++) {
+                    Control control = controls3[i];
+                    map.removeControl(control);
+                }
+                Collection<Control> value = (Collection<Control>) event
+                        .getProperty().getValue();
+                for (Control control : value) {
+                    map.addControl(control);
+                }
+            }
+        });
+        panel.setHeight("100px");
+        panel.setWidth("200px");
+        panel.addComponent(mapcontrols);
 
-	/**
-	 * An example how to restrict the displayed map so that it covers minimal
-	 * rectangular area that contains given points.
-	 * 
-	 * @param map
-	 * @param points
-	 */
-	private void setRestrictedExtent(OpenLayersMap map, Point[] points) {
-		Bounds bounds = new Bounds(points);
-		map.setRestrictedExtent(bounds);
-	}
+        controls.addComponent(panel);
+
+        controls.addComponent(moveToTMSExample);
+
+        return map;
+    }
+
+    /**
+     * An example how to zoom the map so that it covers given points.
+     * 
+     * @param map
+     * @param points
+     */
+    private void zoomToExtent(OpenLayersMap map, Point[] points) {
+        Bounds bounds = new Bounds(points);
+        map.zoomToExtent(bounds);
+    }
+
+    /**
+     * An example how to restrict the displayed map so that it covers minimal
+     * rectangular area that contains given points.
+     * 
+     * @param map
+     * @param points
+     */
+    private void setRestrictedExtent(OpenLayersMap map, Point[] points) {
+        Bounds bounds = new Bounds(points);
+        map.setRestrictedExtent(bounds);
+    }
 
 }

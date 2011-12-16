@@ -53,6 +53,11 @@ public class Demo extends AbstractVOLTest {
     private HorizontalLayout controls;
     
     @Override
+    public String getDescription() {
+        return "Simple example demonstrating some base layers and basic vector usage.";
+    }
+    
+    @Override
     protected void setup() {
         super.setup();
         ((VerticalLayout)getContent()).addComponentAsFirst(controls);

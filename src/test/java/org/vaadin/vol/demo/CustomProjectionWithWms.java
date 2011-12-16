@@ -17,6 +17,11 @@ import com.vaadin.ui.Component;
 public class CustomProjectionWithWms extends AbstractVOLTest {
 
     @Override
+    public String getDescription() {
+        return "How to use WMS layer with non standard projection. Demo does not work (no public WMS server suitable known for this purpose).";
+    }
+
+    @Override
     Component getMap() {
         OpenLayersMap openLayersMap = new OpenLayersMap();
         // KKJ / Finland Uniform Coordinate System
@@ -68,8 +73,7 @@ public class CustomProjectionWithWms extends AbstractVOLTest {
                 .setJsMapOptions("{ maxExtent: new OpenLayers.Bounds(0,0,3750000,7850000), units: 'm', resolutions: [3172.931125, 794.034895, 264.639239, 132.291931, 52.9167724, 26.458386, 13.229193, 6.614597, 4.234905, 2.116577, 1],projection: \"EPSG:2393\"}");
         WebMapServiceLayer webMapServiceLayer = new WebMapServiceLayer();
         webMapServiceLayer.setBaseLayer(true);
-        webMapServiceLayer
-                .setUri("http://www.example.fi/wms");
+        webMapServiceLayer.setUri("http://www.example.fi/wms");
         webMapServiceLayer.setProjection("EPSG:2393");
         webMapServiceLayer.setLayers("wms");
         webMapServiceLayer.setFormat("image/png");

@@ -16,6 +16,11 @@ import com.vaadin.ui.Component;
  * http://openlayers.org/dev/examples/wfs-states.js
  */
 public class WebFeatureServiceLayerTest extends AbstractVOLTest {
+    
+    @Override
+    public String getDescription() {
+        return "Simple WFS example. The base map seems to be inaccessible. Should be changed to some public service that works.";
+    }
 
     @Override
     Component getMap() {

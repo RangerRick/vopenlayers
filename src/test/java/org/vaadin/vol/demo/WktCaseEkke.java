@@ -14,6 +14,11 @@ import com.vaadin.ui.Component;
 public class WktCaseEkke extends AbstractVOLTest {
 
     @Override
+    public String getDescription() {
+        return "Another simple WKT case from Ekke";
+    }
+
+    @Override
     Component getMap() {
         OpenLayersMap openLayersMap = new OpenLayersMap();
         openLayersMap.addLayer(new OpenStreetMapLayer());
@@ -23,7 +28,9 @@ public class WktCaseEkke extends AbstractVOLTest {
         wktLayer.setWellKnownText(wktText);
         openLayersMap.addLayer(wktLayer);
         Bounds bounds = new Bounds();
-        bounds.extend(new Point(8.887336,50.055967), new  Point(8.888376,50.057001), new Point(8.888543, 50.057247), new Point(8.888193, 50.057068));
+        bounds.extend(new Point(8.887336, 50.055967), new Point(8.888376,
+                50.057001), new Point(8.888543, 50.057247), new Point(8.888193,
+                50.057068));
         openLayersMap.zoomToExtent(bounds);
         openLayersMap.setSizeFull();
         return openLayersMap;

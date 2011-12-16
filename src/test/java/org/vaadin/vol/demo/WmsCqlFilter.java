@@ -6,6 +6,11 @@ import org.vaadin.vol.WebMapServiceLayer;
 import com.vaadin.ui.Component;
 
 public class WmsCqlFilter extends AbstractVOLTest {
+    
+    @Override
+    public String getDescription() {
+        return "Usage example of CQL queries for a WMS layer. Nonfuncitonal: no compatible public wms service.";
+    }
 
     @Override
     Component getMap() {
