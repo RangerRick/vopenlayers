@@ -15,10 +15,11 @@ public class WellKnownTextLayer extends AbstractAutoPopulatedVectorLayer impleme
 
 
     public WellKnownTextLayer() {
-
+        setDisplayName("WKT");
     }
     
     public WellKnownTextLayer(String wkt) {
+        this();
         setWellKnownText(wkt);
     }
     
