@@ -30,7 +30,8 @@ public class VectorLayer extends Layer {
             JavaScriptObject stylemap)
     /*-{
     	_myvector_layer = new $wnd.OpenLayers.Layer.Vector(displayName);
-    	_myvector_layer.styleMap = stylemap;
+    	if(stylemap) 
+    		_myvector_layer.styleMap = stylemap;
     	return _myvector_layer;
     	
     }-*/;
