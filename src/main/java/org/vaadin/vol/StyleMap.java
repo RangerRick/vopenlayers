@@ -2,6 +2,8 @@ package org.vaadin.vol;
 
 import java.util.HashMap;
 
+import org.vaadin.vol.client.Costants;
+
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 
@@ -15,6 +17,8 @@ import com.vaadin.terminal.PaintTarget;
 public class StyleMap {
 
     private HashMap<String, Style> styles = new HashMap<String, Style>();
+
+    private HashMap<String, UniqueValueRule> uniqueValueRules = new HashMap<String, UniqueValueRule>();
 
     /**
      * Creates a StyleMap setting the same style for all renderer intents.
@@ -42,7 +46,7 @@ public class StyleMap {
     public void setStyle(RenderIntent renderIntent, Style style) {
         styles.put(renderIntent.getValue(), style);
     }
-    
+
     private boolean extendDefault = false;
 
     /**
@@ -83,6 +87,43 @@ public class StyleMap {
                 styles.get(object).paint("olStyle_" + object, target);
             }
         }
+        if (uniqueValueRules.size() > 0) {
+            target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES, true);
+
+            String[] uvrKeysArray = uniqueValueRules.keySet().toArray(
+                    new String[uniqueValueRules.size()]);
+            target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_KEYS,
+                    uvrKeysArray);
+
+            for (String uvrkey : uvrKeysArray) {
+                UniqueValueRule uvr = uniqueValueRules.get(uvrkey);
+
+                target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                        + uvrkey
+                        + Costants.STYLEMAP_UNIQUEVALUERULES_INTENT_SUFFIX, uvr
+                        .getIntent().getValue());
+                target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                        + uvrkey
+                        + Costants.STYLEMAP_UNIQUEVALUERULES_PROPERTY_SUFFIX,
+                        uvr.getProperty());
+                // target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX+uvrkey+Costants.STYLEMAP_UNIQUEVALUERULES_CONTEXT_SUFFIX,
+                // uvr.getContext());
+
+                String[] lookup_keys = uvr.getLookup().keyArray();
+                target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                        + uvrkey
+                        + Costants.STYLEMAP_UNIQUEVALUERULES_LOOKUPKEYS_SUFFIX,
+                        lookup_keys);
+                for (String key : lookup_keys) {
+                    target.addAttribute(
+                            Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                                    + uvrkey
+                                    + Costants.STYLEMAP_UNIQUEVALUERULES_LOOKUPITEM_SUFFIX
+                                    + key, ((Symbolizer) uvr.getLookup()
+                                    .getProperty(key)).getKeyValueMap());
+                }
+            }
+        }
     }
 
     /**
@@ -97,22 +138,83 @@ public class StyleMap {
     public boolean isExtendDefault() {
         return extendDefault;
     }
-    
+
     /**
      * @param intent
      *            specifies the desired intent - usually 'default'
      * @param property
      *            specifies the property of the feature to check
-     * @param simbolizer_lookup
-     *            specifies the JSON object containing the key:value pairs 
-     *            to use if the rule match
+     * @param symbolizer_lookup
+     *            specifies the JSON object containing the key:value pairs to
+     *            use if the rule match
      * @param context
-     *            optional object to check the property against. 
-     *            If no context is passed in, feature attributes are used by default
-     *                       
+     *            optional object to check the property against. If no context
+     *            is passed in, feature attributes are used by default
+     * 
      */
-    public void addUniqueValueRules(RenderIntent intent, String property, String simbolizer_lookup, Object context){
-    	// TODO : not yet implemented
+    public void addUniqueValueRules(RenderIntent intent, String property,
+            Symbolizer lookup, Object context) {
+        // reset the rules setting property or simbolozer_lookup to null or
+        // empty
+        //
+
+        if ((property != null) && (lookup != null)) {
+            if (!("".equals(property)) && (lookup.size() > 0)) {
+                UniqueValueRule uvr = new UniqueValueRule(intent, property,
+                        lookup, context);
+                uniqueValueRules.put(intent.getValue(), uvr);
+            }
+        } else {
+            uniqueValueRules.remove(intent.getValue());
+        }
     }
 
+}
+
+/**
+ * UniqueValueRule class is a wrapper class used to store the the parameter of
+ * addUniqueValueRules
+ * 
+ */
+class UniqueValueRule {
+    RenderIntent intent;
+    String property;
+    Symbolizer lookup;
+    Object context;
+
+    public UniqueValueRule(RenderIntent intent, String property,
+            Symbolizer lookup, Object context) {
+        this.intent = intent;
+        this.property = property;
+        this.lookup = lookup;
+        this.context = context;
+    }
+
+    /**
+     * @return the intent
+     */
+    public RenderIntent getIntent() {
+        return intent;
+    }
+
+    /**
+     * @return the property
+     */
+    public String getProperty() {
+        return property;
+    }
+
+    /**
+     * @return the lookup
+     */
+    public Symbolizer getLookup() {
+        return lookup;
+    }
+
+    /**
+     * @return the context
+     */
+    public Object getContext() {
+        return context;
+    }
 }

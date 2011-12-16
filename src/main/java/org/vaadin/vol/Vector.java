@@ -15,8 +15,12 @@ public abstract class Vector extends AbstractComponent {
     private Attributes vectAttributes = null;
 
     public void setPoints(Point... points) {
-        this.points = points;
+        setPointsWithoutRepaint(points);
         requestRepaint();
+    }
+    
+    protected void setPointsWithoutRepaint(Point... points) {
+        this.points = points;
     }
 
     public Point[] getPoints() {
@@ -62,12 +66,17 @@ public abstract class Vector extends AbstractComponent {
         if (style != null) {
             style.paint("olStyle", target);
         }
-
         if (vectAttributes != null) {
             vectAttributes.paint("olVectAttributes", target);
         }
     }
-
+    
+    public void select() {
+        if(getParent() != null) {
+            ((VectorLayer) getParent()).setSelectedVector(this);
+        }
+    }
+    
     /**
      * Vectors styleName does not modify CSS style name as the method does for
      * standard Components. Instead the style name defines rendered intent that

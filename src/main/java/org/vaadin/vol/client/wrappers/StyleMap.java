@@ -1,5 +1,6 @@
 package org.vaadin.vol.client.wrappers;
 
+import com.google.gwt.core.client.JavaScriptObject;
 
 public class StyleMap extends JsObject {
 
@@ -30,5 +31,11 @@ public class StyleMap extends JsObject {
     public native final void setExtendDefault(boolean b)
     /*-{
         this.extendDefault = b;
+    }-*/;
+
+    public native final void addUniqueValueRules(String intent,
+            String property, JavaScriptObject lookup, Object object)
+    /*-{
+    	this.addUniqueValueRules(intent, property, lookup);
     }-*/;
 }

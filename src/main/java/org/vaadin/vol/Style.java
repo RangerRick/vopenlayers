@@ -1,8 +1,5 @@
 package org.vaadin.vol;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 
@@ -75,18 +72,24 @@ public class Style {
     public static final String STROKE_DASHSTYLE_LONGDASH = "longdash";
     public static final String STROKE_DASHSTYLE_LONGDASHDOT = "longdashdor";
 
+    public static final String STROKE_LINECAP_BUTT = "butt";
+    public static final String STROKE_LINECAP_ROUND = "round";
+    public static final String STROKE_LINECAP_SQUARE = "square";
+
     private static long idx = 0;
     private String name;
-    private Map<String, Object> styleProperty;
+    private JsObject styleProperty;
 
     public Style() {
         name = "Style" + String.valueOf(++idx);
-        styleProperty = new HashMap<String, Object>();
+        styleProperty = new JsObject();
+        init();
     }
 
     public Style(String string) {
         name = string;
-        styleProperty = new HashMap<String, Object>();
+        styleProperty = new JsObject();
+        init();
     }
 
     public String getName() {
@@ -94,15 +97,15 @@ public class Style {
     }
 
     private void setProperty(String key, Object value) {
-        styleProperty.put(key, value);
+        styleProperty.setProperty(key, value);
     }
 
     private Object getProperty(String key) {
-        return styleProperty.get(key);
+        return styleProperty.getProperty(key);
     }
 
     private void setPropertyByAttribute(String key, String value) {
-        styleProperty.put(key, "${" + value + "}");
+        styleProperty.setProperty(key, "${" + value + "}");
     }
 
     /**
@@ -183,6 +186,10 @@ public class Style {
         setProperty("externalGraphic", graphicURL);
     }
 
+    public void setExternalGraphicByAttribute(String graphicURL) {
+        setPropertyByAttribute("externalGraphic", graphicURL);
+    }
+
     /** Url to an external graphic that will be used for rendering points. */
     public String getExternalGraphic() {
         return (String) getProperty("externalGraphic");
@@ -206,8 +213,16 @@ public class Style {
         setProperty("graphicWidth", width);
     }
 
+    public void setGraphicWidthByAttribute(String widthAttr) {
+        setPropertyByAttribute("graphicWidth", widthAttr);
+    }
+
     public void setGraphicHeight(int height) {
         setProperty("graphicHeight", height);
+    }
+
+    public void setGraphicHeightByAttribute(String heightAttr) {
+        setPropertyByAttribute("graphicHeight", heightAttr);
     }
 
     /** Pixel width for sizing an external graphic. */
@@ -236,12 +251,26 @@ public class Style {
         setGraphicYOffset(yOffset);
     }
 
+    public void setGraphicOffsetByAttribute(String xOffsetAttr,
+            String yOffsetAttr) {
+        setGraphicXOffsetByAttribute(xOffsetAttr);
+        setGraphicYOffsetByAttribute(yOffsetAttr);
+    }
+
     public void setGraphicXOffset(int xOffset) {
         setProperty("graphicXOffset", xOffset);
     }
 
+    public void setGraphicXOffsetByAttribute(String xOffsetAttr) {
+        setPropertyByAttribute("graphicXOffset", xOffsetAttr);
+    }
+
     public void setGraphicYOffset(int yOffset) {
         setProperty("graphicYOffset", yOffset);
+    }
+
+    public void setGraphicYOffsetByAttribute(String yOffsetAttr) {
+        setPropertyByAttribute("graphicYOffset", yOffsetAttr);
     }
 
     /**
@@ -520,7 +549,7 @@ public class Style {
     }
 
     public void paint(String string, PaintTarget target) throws PaintException {
-        target.addAttribute(string, styleProperty);
+        target.addAttribute(string, styleProperty.getKeyValueMap());
     }
 
     /**
@@ -530,6 +559,10 @@ public class Style {
      */
     public void extendCoreStyle(String coreStyleName) {
         setProperty("__VOL_INHERIT", coreStyleName);
+    }
+
+    private void init() {
+        extendCoreStyle("default");
     }
 
 }

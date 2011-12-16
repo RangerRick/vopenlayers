@@ -9,11 +9,12 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.UIDL;
+import com.vaadin.terminal.gwt.client.ValueMap;
 
 public class VPolyLine extends VAbstractVector {
 
     @Override
-    protected void updateVector(UIDL childUIDL, ApplicationConnection client) {
+    protected void createOrUpdateVector(UIDL childUIDL, ApplicationConnection client) {
         Projection mapProjection = getMap().getProjection();
         String[] stringArrayAttribute = childUIDL
                 .getStringArrayAttribute("points");
@@ -30,8 +31,14 @@ public class VPolyLine extends VAbstractVector {
         LineString lr = LineString.create(points);
 
         JavaScriptObject style = null;
-        JavaScriptObject attributes = getAttributes();
-        vector = Vector.create(lr, attributes, style);
+        ValueMap attributes = getAttributes();
+        if (vector == null) {
+            vector = Vector.create(lr, attributes, style);
+        } else {
+            vector.setGeometry(lr);
+            vector.setStyle(style);
+            vector.setAttributes(attributes);
+        }
 
     }
 

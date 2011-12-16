@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.vaadin.vol.client.Costants;
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.JsObject;
 import org.vaadin.vol.client.wrappers.Map;
@@ -31,6 +32,7 @@ import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
+import com.vaadin.terminal.gwt.client.VConsole;
 import com.vaadin.terminal.gwt.client.ValueMap;
 
 public class VVectorLayer extends FlowPanel implements VLayer, Container {
@@ -44,6 +46,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
     private String displayName;
     private GwtOlHandler _fModifiedListener;
 
+    private boolean immediate;
+
     public VectorLayer getLayer() {
         if (vectors == null) {
             vectors = VectorLayer.create(displayName);
@@ -52,11 +56,23 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                     getFeatureModifiedListener());
             vectors.registerHandler("afterfeaturemodified", new GwtOlHandler() {
                 public void onEvent(JsArray arguments) {
+                    if (updating) {
+                        // ignore selections that happend during update, those
+                        // should be already known and notified by the server
+                        // side
+                        return;
+                    }
                     client.sendPendingVariableChanges();
                 }
             });
             vectors.registerHandler("featureselected", new GwtOlHandler() {
                 public void onEvent(JsArray arguments) {
+                    if (updating) {
+                        // ignore selections that happend during update, those
+                        // should be already known and notified by the server
+                        // side
+                        return;
+                    }
                     if (client.hasEventListeners(VVectorLayer.this, "vsel")) {
                         ValueMap javaScriptObject = arguments.get(0).cast();
                         Vector vector = javaScriptObject.getValueMap("feature")
@@ -74,6 +90,12 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 
             vectors.registerHandler("featureunselected", new GwtOlHandler() {
                 public void onEvent(JsArray arguments) {
+                    if (updating) {
+                        // ignore selections that happend during update, those
+                        // should be already known and notified by the server
+                        // side
+                        return;
+                    }
                     ValueMap javaScriptObject = arguments.get(0).cast();
                     Vector vector = javaScriptObject.getValueMap("feature")
                             .cast();
@@ -139,7 +161,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                                 Vector vector = next.getVector();
                                 if (vector == modifiedFeature) {
                                     client.updateVariable(paintableId,
-                                            "modifiedVector", next, false);
+                                            "modifiedVector", next, immediate);
                                     break;
                                 }
                             }
@@ -221,6 +243,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         paintableId = layer.getId();
         updating = true;
         displayName = layer.getStringAttribute("name");
+        immediate = layer.getBooleanAttribute("immediate");
         if (!added) {
             getMap().addLayer(getLayer());
             added = true;
@@ -234,6 +257,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         }
 
         updateStyleMap(layer);
+        setDrawingMode(layer.getStringAttribute("dmode"));
+        setSelectionMode(layer);
 
         HashSet<Widget> orphaned = new HashSet<Widget>();
         for (Iterator<Widget> iterator = iterator(); iterator.hasNext();) {
@@ -255,8 +280,6 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         for (Widget widget : orphaned) {
             widget.removeFromParent();
         }
-        setDrawingMode(layer.getStringAttribute("dmode"));
-        setSelectionMode(layer);
         updating = false;
     }
 
@@ -277,16 +300,32 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 
             currentSelectionMode = newSelectionMode;
         }
-        if (selectFeature != null) {
-
-            selectFeature.unselectAll();
-
-            if (layer.hasAttribute("selectedVectors")) {
-                int c = layer.getIntAttribute("selectedVectors");
-                for (int i = 0; i < c; i++) {
-                    VAbstractVector p = (VAbstractVector) layer
-                            .getPaintableAttribute("s" + i, client);
-                    selectFeature.select(p.getVector());
+        if (currentSelectionMode != "NONE" || drawingMode == "MODIFY") {
+            if (layer.hasAttribute("svector")) {
+                VAbstractVector selectedVector = (VAbstractVector) layer
+                        .getPaintableAttribute("svector", client);
+                if (selectedVector != null) {
+                    // ensure selection
+                    if (drawingMode == "MODIFY") {
+                        ModifyFeature mf = (ModifyFeature) df.cast();
+                        if(mf.getModifiedFeature() != null) {
+                            mf.unselect(mf.getModifiedFeature());
+                        }
+                        mf.select(selectedVector.getVector());
+                    } else {
+                        selectFeature.select(selectedVector.getVector());
+                    }
+                }
+            } else {
+                // remove selection
+                if (drawingMode == "MODIFY") {
+                    ModifyFeature modifyFeature = (ModifyFeature) df.cast();
+                    if (modifyFeature.getModifiedFeature() != null) {
+                        modifyFeature.unselect(modifyFeature
+                                .getModifiedFeature());
+                    }
+                } else {
+                    selectFeature.unselectAll();
                 }
             }
         }
@@ -297,6 +336,12 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         if (drawingMode != newDrawingMode) {
             if (drawingMode != "NONE") {
                 // remove old drawing feature
+                if(drawingMode == "MODIFY") {
+                    ModifyFeature mf = df.cast();
+                    if(mf.getModifiedFeature() != null) {
+                        mf.unselect(mf.getModifiedFeature());
+                    }
+                }
                 df.deActivate();
                 getMap().removeControl(df);
             }
@@ -325,11 +370,12 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         if (sm == null) {
             sm = StyleMap.create();
         }
+
         getLayer().setStyleMap(sm);
     }
 
     public static StyleMap getStyleMap(UIDL childUIDL) {
-        if(!childUIDL.hasAttribute("olStyleMap")) {
+        if (!childUIDL.hasAttribute("olStyleMap")) {
             return null;
         }
         String[] renderIntents = childUIDL
@@ -356,7 +402,61 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                 }
             }
         }
+
+        if (childUIDL.hasAttribute(Costants.STYLEMAP_UNIQUEVALUERULES)) {
+            addUniqueValueRules(sm, childUIDL);
+        }
         return sm;
+    }
+
+    private static void addUniqueValueRules(StyleMap sm, UIDL childUIDL) {
+
+        if (childUIDL.hasAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_KEYS)) {
+            String[] uvrKeysArray = childUIDL
+                    .getStringArrayAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_KEYS);
+
+            for (String uvrkey : uvrKeysArray) {
+
+                String property = childUIDL
+                        .getStringAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                                + uvrkey
+                                + Costants.STYLEMAP_UNIQUEVALUERULES_PROPERTY_SUFFIX);
+                String intent = childUIDL
+                        .getStringAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                                + uvrkey
+                                + Costants.STYLEMAP_UNIQUEVALUERULES_INTENT_SUFFIX);
+                // Object context =
+                // childUIDL.getStringAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX+uvrkey+Costants.STYLEMAP_UNIQUEVALUERULES_CONTEXT_SUFFIX);
+
+                if (childUIDL
+                        .hasAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                                + uvrkey + "_lookupkeys")) {
+                    String[] lookup_keys = childUIDL
+                            .getStringArrayAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                                    + uvrkey
+                                    + Costants.STYLEMAP_UNIQUEVALUERULES_LOOKUPKEYS_SUFFIX);
+
+                    JsObject symbolizer_lookup_js = JsObject.createObject();
+
+                    for (String key : lookup_keys) {
+
+                        ValueMap symbolizer = childUIDL
+                                .getMapAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                                        + uvrkey
+                                        + Costants.STYLEMAP_UNIQUEVALUERULES_LOOKUPITEM_SUFFIX
+                                        + key);
+                        symbolizer_lookup_js
+                                .setProperty(key, symbolizer.cast());
+                    }
+
+                    sm.addUniqueValueRules(intent, property,
+                            symbolizer_lookup_js.cast(), null);
+                }
+            }
+
+        }
+
+        return;
     }
 
     @Override
@@ -399,6 +499,25 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
     public RenderSpace getAllocatedSpace(Widget child) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public void vectorUpdated(VAbstractVector vAbstractVector) {
+        // redraw
+        getLayer().drawFeature(vAbstractVector.getVector());
+        if (df != null) {
+            String id = df.getId();
+            if (id.contains("ModifyFeature")) {
+                ModifyFeature mf = df.cast();
+                Vector modifiedFeature = mf.getModifiedFeature();
+                if (modifiedFeature == vAbstractVector.getVector()) {
+                    // VConsole.log("Whoops, modified on the server side " +
+                    // "while currently being modified on the client side. " +
+                    // "This may cause issues for OL unleass we notify " +
+                    // "the ModifyFeature about the change.");
+                    mf.resetVertices();
+                }
+            }
+        }
     }
 
 }

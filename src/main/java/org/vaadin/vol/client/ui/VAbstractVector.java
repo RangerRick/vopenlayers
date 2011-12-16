@@ -35,30 +35,37 @@ public abstract class VAbstractVector extends Widget implements Paintable {
         if (client.updateComponent(this, childUIDL, false)) {
             return;
         }
-        if(childUIDL.hasAttribute("projection")) {
-            projection = Projection.get(childUIDL.getStringAttribute("projection"));
+        if (childUIDL.hasAttribute("projection")) {
+            projection = Projection.get(childUIDL
+                    .getStringAttribute("projection"));
         } else {
             projection = null;
         }
 
-        if (vector != null) {
-            getLayer().removeFeature(vector);
+        boolean update = vector != null;
+        if(update) {
+            // temporary remove erase the vector 
+            getLayer().eraseFeature(vector);
         }
+        
+        updateAttributes(childUIDL, client);
 
-        //
-        updateAttribuets(childUIDL, client);
-
-        updateVector(childUIDL, client);
+        createOrUpdateVector(childUIDL, client);
         if (childUIDL.hasAttribute("style")) {
             intent = childUIDL.getStringAttribute("style");
             getVector().setRenderIntent(intent);
         }
         updateStyle(childUIDL, client);
 
-        getLayer().addFeature(vector);
+        if (update) {
+            ((VVectorLayer) getParent()).vectorUpdated(this);
+        } else {
+            getLayer().addFeature(vector);
+        }
+        
     }
 
-    private void updateAttribuets(UIDL childUIDL, ApplicationConnection client) {
+    private void updateAttributes(UIDL childUIDL, ApplicationConnection client) {
         if (childUIDL.hasAttribute("olVectAttributes")) {
             vectAttributes = childUIDL.getMapAttribute("olVectAttributes");
         }
@@ -75,14 +82,14 @@ public abstract class VAbstractVector extends Widget implements Paintable {
     }
 
     protected Projection getProjection() {
-        if(projection == null) {
+        if (projection == null) {
             VVectorLayer parent2 = (VVectorLayer) getParent();
             return parent2.getProjection();
         }
         return projection;
     }
 
-    protected abstract void updateVector(UIDL childUIDL,
+    protected abstract void createOrUpdateVector(UIDL childUIDL,
             ApplicationConnection client);
 
     private VectorLayer getLayer() {

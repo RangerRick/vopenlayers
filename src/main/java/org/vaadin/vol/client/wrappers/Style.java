@@ -9,12 +9,14 @@ public class Style extends JsObject {
 
     public static native Style create()
     /*-{
-         return  $wnd.OpenLayers.Util.extend({}, $wnd.OpenLayers.Feature.Vector.style['default']);
+         var _style = $wnd.OpenLayers.Util.extend({}, $wnd.OpenLayers.Feature.Vector.style['default']);
+         return  _style
     }-*/;
 
     public static native Style create(String string)
     /*-{
-        return new $wnd.OpenLayers.Style(string);
+         var _style = new $wnd.OpenLayers.Style(string);
+         return  _style
     }-*/;
 
     public static native Style create(JavaScriptObject symbolizer)
@@ -24,7 +26,8 @@ public class Style extends JsObject {
             delete symbolizer['__VOL_INHERIT'];
             $wnd.OpenLayers.Util.applyDefaults(symbolizer, parent);
         }
-        return new $wnd.OpenLayers.Style(symbolizer);
+         var _style = new $wnd.OpenLayers.Style(symbolizer);
+         return  _style
     }-*/;
 
     public native final String getId()

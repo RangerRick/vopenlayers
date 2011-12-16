@@ -28,6 +28,11 @@ public abstract class Vector extends AbstractOpenLayersWrapper {
     /*-{
     	return this.geometry;
     }-*/;
+    
+    public native final void setGeometry(Geometry geom)
+    /*-{
+    	this.geometry = geom;
+    }-*/;
 
     public native final void setStyle(JavaScriptObject style)
     /*-{
@@ -53,5 +58,9 @@ public abstract class Vector extends AbstractOpenLayersWrapper {
     /*-{
         return this.attributes;
     }-*/;
-
+    
+    public native final void setAttributes(ValueMap attrs) 
+    /*-{
+        this.attributes = attrs;
+    }-*/;
 }

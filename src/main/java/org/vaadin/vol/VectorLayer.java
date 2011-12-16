@@ -26,6 +26,8 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         NONE, SIMPLE
         // MULTI, MULTI_WITH_AREA_SELECTION etc
     }
+    
+    private Vector selectedVector;
 
     private String displayName = "Vector layer";
 
@@ -48,6 +50,9 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         target.addAttribute("name", displayName);
         target.addAttribute("dmode", drawindMode.toString());
         target.addAttribute("smode", selectionMode.toString());
+        if(selectedVector != null) {
+            target.addAttribute("svector", selectedVector);
+        }
 
         if (stylemap != null) {
             stylemap.paint(target);
@@ -83,6 +88,10 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     public void removeComponent(Component c) {
         vectors.remove(c);
         super.removeComponent(c);
+        if(selectedVector == c) {
+            selectedVector = null;
+            fireEvent(new VectorUnSelectedEvent(this, (Vector) c));
+        }
         requestRepaint();
     }
 
@@ -118,7 +127,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
             } else if (drawindMode == DrawingMode.MODIFY) {
                 Vector vector = (Vector) variables.get("modifiedVector");
                 if (vector != null) {
-                    vector.setPoints(points);
+                    vector.setPointsWithoutRepaint(points);
                     vectorModified(vector);
                 } else {
                     Logger.getLogger(getClass().getName())
@@ -132,15 +141,19 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
             PointVector point = new PointVector(x, y);
             newVectorPainted(point);
         }
-        if (variables.containsKey("vsel")) {
-            Vector object = (Vector) variables.get("vsel");
-            VectorSelectedEvent vectorSelectedEvent = new VectorSelectedEvent(
+        if (variables.containsKey("vusel")) {
+            Vector object = (Vector) variables.get("vusel");
+            if(selectedVector == object) {
+                selectedVector = null;
+            }
+            VectorUnSelectedEvent vectorSelectedEvent = new VectorUnSelectedEvent(
                     this, object);
             fireEvent(vectorSelectedEvent);
         }
-        if (variables.containsKey("vusel")) {
-            Vector object = (Vector) variables.get("vusel");
-            VectorUnSelectedEvent vectorSelectedEvent = new VectorUnSelectedEvent(
+        if (variables.containsKey("vsel")) {
+            Vector object = (Vector) variables.get("vsel");
+            selectedVector = object;
+            VectorSelectedEvent vectorSelectedEvent = new VectorSelectedEvent(
                     this, object);
             fireEvent(vectorSelectedEvent);
         }
@@ -331,6 +344,23 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     public void removeListener(VectorUnSelectedListener listener) {
         removeListener(VectorUnSelectedListener.EVENT_ID,
                 VectorUnSelectedEvent.class, listener);
+    }
+
+    public Vector getSelectedVector() {
+        return selectedVector;
+    }
+
+    public void setSelectedVector(Vector selectedVector) {
+        if(this.selectedVector != selectedVector) {
+            if(this.selectedVector != null) {
+                fireEvent(new VectorUnSelectedEvent(this, this.selectedVector));
+            }
+            this.selectedVector = selectedVector;
+            if(selectedVector != null) {
+                fireEvent(new VectorSelectedEvent(this, selectedVector));
+            }
+            requestRepaint();
+        }
     }
 
     public class VectorUnSelectedEvent extends Event {
