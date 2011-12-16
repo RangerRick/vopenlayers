@@ -59,7 +59,7 @@
 				<version>2.3.0-1</version>
 				<configuration>
 					<webappDirectory>${project.build.directory}/testwebapp/VAADIN/widgetsets</webappDirectory>
-					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+					<extraJvmArgs>-Xmx1024M -Xss1024k</extraJvmArgs>
 					<hostedWebapp>${project.build.directory}/testwebapp</hostedWebapp>
 					<noServer>true</noServer>
 					<module>org.vaadin.vol.demo.VolExampleAppWidgetset</module>
@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin</artifactId>
-			<version>6.6.4</version>
+			<version>6.7.3</version>
 		</dependency>
 		<!-- This is also used by gwt-maven-plugin to deduce GWT version number. -->
 		<dependency>
@@ -154,7 +154,7 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlets</artifactId>
-			<version>8.0.1.v20110908</version>
+			<version>LATEST</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
