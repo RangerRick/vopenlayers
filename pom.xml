@@ -30,7 +30,7 @@
 						<index>true</index>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<!-- Implementation-Title and Implementation-Version come from the 
+							<!-- Implementation-Title and Implementation-Version come from the
 								POM by default -->
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
@@ -40,7 +40,7 @@
 
 							<!-- Add-on specific fields to update -->
 
-							<!-- Implementation-Title and Implementation-Version come from the 
+							<!-- Implementation-Title and Implementation-Version come from the
 								POM by default -->
 							<Implementation-Title>OpenLayers Wrapper</Implementation-Title>
 
@@ -51,7 +51,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- Compile custom GWT components or widget dependencies with the GWT 
+			<!-- Compile custom GWT components or widget dependencies with the GWT
 				compiler -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -71,7 +71,7 @@
 
 		</plugins>
 
-		<!-- This is needed for the sources required by the GWT compiler to be 
+		<!-- This is needed for the sources required by the GWT compiler to be
 			included in the produced JARs -->
 		<resources>
 			<resource>
@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin</artifactId>
-			<version>6.7.3</version>
+			<version>6.7.4</version>
 		</dependency>
 		<!-- This is also used by gwt-maven-plugin to deduce GWT version number. -->
 		<dependency>
