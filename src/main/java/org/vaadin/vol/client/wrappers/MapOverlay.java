@@ -135,4 +135,9 @@ public class MapOverlay extends AbstractOpenLayersWrapper {
     	return this.controls;
     }-*/;
 
+    public final native LonLat getLonLatFromPixel(Pixel pixel)
+    /*-{
+        return this.getLonLatFromPixel(pixel);
+    }-*/;
+
 }

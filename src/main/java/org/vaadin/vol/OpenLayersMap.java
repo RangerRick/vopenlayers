@@ -1,13 +1,18 @@
 package org.vaadin.vol;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
+import com.vaadin.event.Action;
+import com.vaadin.terminal.KeyMapper;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.AbstractComponentContainer;
@@ -18,8 +23,11 @@ import com.vaadin.ui.Component;
  */
 @SuppressWarnings("serial")
 @com.vaadin.ui.ClientWidget(org.vaadin.vol.client.ui.VOpenLayersMap.class)
-public class OpenLayersMap extends AbstractComponentContainer {
+public class OpenLayersMap extends AbstractComponentContainer implements
+        Action.Container {
 
+    private final Set<Action.Handler> actionHandlers = new LinkedHashSet<Action.Handler>();
+    private final KeyMapper actionMapper = new KeyMapper();
     private List<Component> layers = new LinkedList<Component>();
     private double centerLon = 0;
     private double centerLat = 0;
@@ -31,10 +39,16 @@ public class OpenLayersMap extends AbstractComponentContainer {
             Control.Attribution));
 
     public OpenLayersMap() {
+        this(false);
+    }
+
+    public OpenLayersMap(boolean skipControls) {
         setWidth("500px");
         setHeight("350px");
-        addControl(Control.PanZoom);
-        addControl(Control.LayerSwitcher);
+        if (!skipControls) {
+            addControl(Control.PanZoom);
+            addControl(Control.LayerSwitcher);
+        }
     }
 
     public void addControl(Control control) {
@@ -182,6 +196,9 @@ public class OpenLayersMap extends AbstractComponentContainer {
         if (isDirty("controls")) {
             target.addAttribute("controls", controls.toArray());
         }
+
+        paintActions(target, findAndPaintBodyActions(target));
+
         clearPartialPaintFlags();
         fullRepaint = false;
     }
@@ -196,6 +213,25 @@ public class OpenLayersMap extends AbstractComponentContainer {
         super.changeVariables(source, variables);
         if (variables.containsKey("top")) {
             updateExtent(variables);
+        }
+
+        // Actions
+        if (variables.containsKey("action")) {
+            String string = (String) variables.get("action");
+            final StringTokenizer st = new StringTokenizer(string, ",");
+            if (st.countTokens() == 2) {
+                final String coords = st.nextToken();
+                String[] split = coords.split(":");
+                Point point = new Point(Double.parseDouble(split[0]),
+                        Double.parseDouble(split[1]));
+                final Action action = (Action) actionMapper.get(st.nextToken());
+
+                if (action != null && actionHandlers != null) {
+                    for (Action.Handler ah : actionHandlers) {
+                        ah.handleAction(action, this, point);
+                    }
+                }
+            }
         }
     }
 
@@ -337,4 +373,126 @@ public class OpenLayersMap extends AbstractComponentContainer {
         return projection;
     }
 
+    /**
+     * Calculates an array of resolutions for use in OpenLayers map creation
+     */
+    protected double[] calculateResolutions(Bounds bounds, int tileSize,
+            int zoomLevels) {
+        double gridWidth = bounds.getRight() - bounds.getLeft();
+        double gridHeight = bounds.getTop() - bounds.getBottom();
+        double gridY = -1d;
+        double ratio = gridWidth / gridHeight;
+
+        // Allow 2.5% slack
+        if (Math.abs(ratio - 1.0) < 0.025) {
+            gridY = 1d;
+        }
+
+        // Otherwise we'll try to expand it to an integer grid,
+        // failing that we'll just increase the smaller bounds
+        // to make the box square
+        if (ratio > 1.0) {
+            // Wider than tall
+            if (Math.abs(ratio - Math.round(ratio)) < 0.025) {
+                gridY = 1d;
+            } else {
+                // I give up, expanding Y bounds
+                gridY = 1d;
+                gridHeight = gridWidth;
+            }
+        } else {
+            // Taller than wide
+            ratio = gridHeight / gridWidth;
+            if (Math.abs(ratio - Math.round(ratio)) < 0.025) {
+                gridY = Math.round(ratio);
+            } else {
+                // I give up, expanding X bounds
+                gridY = 1d;
+                gridWidth = gridHeight;
+            }
+        }
+
+        double baseRes;
+        if (gridY == 1) {
+            baseRes = gridHeight / tileSize;
+        } else {
+            baseRes = gridWidth / tileSize;
+        }
+
+        double[] myResolutions = new double[zoomLevels + 1];
+        myResolutions[0] = baseRes;
+        for (int q = 1; q < myResolutions.length; q++) {
+            baseRes = baseRes / 2;
+            myResolutions[q] = baseRes;
+        }
+
+        return myResolutions;
+    }
+
+    private void paintActions(PaintTarget target, final Set<Action> actionSet)
+            throws PaintException {
+        if (!actionSet.isEmpty()) {
+            target.addVariable(this, "action", "");
+            target.startTag("actions");
+            for (Action a : actionSet) {
+                target.startTag("action");
+                if (a.getCaption() != null) {
+                    target.addAttribute("caption", a.getCaption());
+                }
+                if (a.getIcon() != null) {
+                    target.addAttribute("icon", a.getIcon());
+                }
+                target.addAttribute("key", actionMapper.key(a));
+                target.endTag("action");
+            }
+            target.endTag("actions");
+        }
+    }
+
+    private Set<Action> findAndPaintBodyActions(PaintTarget target) {
+        Set<Action> actionSet = new LinkedHashSet<Action>();
+        if (actionHandlers != null) {
+            final ArrayList<String> keys = new ArrayList<String>();
+            for (Action.Handler ah : actionHandlers) {
+                // Getting actions for the null item, which in this case means
+                // the body item
+                final Action[] actions = ah.getActions(this, this);
+                if (actions != null) {
+                    for (Action action : actions) {
+                        actionSet.add(action);
+                        keys.add(actionMapper.key(action));
+                    }
+                }
+            }
+            target.addAttribute("alb", keys.toArray());
+        }
+        return actionSet;
+    }
+
+    /**
+     * Registers a new action handler for this container
+     * 
+     * @see com.vaadin.event.Action.Container#addActionHandler(Action.Handler)
+     */
+    public void addActionHandler(Action.Handler actionHandler) {
+        if (actionHandler != null) {
+            if (!actionHandlers.contains(actionHandler)) {
+                actionHandlers.add(actionHandler);
+                requestRepaint();
+            }
+        }
+    }
+
+    /**
+     * Removes a previously registered action handler for the contents of this
+     * container.
+     * 
+     * @see com.vaadin.event.Action.Container#removeActionHandler(Action.Handler)
+     */
+    public void removeActionHandler(Action.Handler actionHandler) {
+        if (actionHandlers != null && actionHandlers.contains(actionHandler)) {
+            actionHandlers.remove(actionHandler);
+            requestRepaint();
+        }
+    }
 }

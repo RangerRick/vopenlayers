@@ -9,10 +9,16 @@ import org.vaadin.vol.client.wrappers.Bounds;
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
+import org.vaadin.vol.client.wrappers.MapOverlay;
+import org.vaadin.vol.client.wrappers.Pixel;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.control.Control;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
@@ -20,24 +26,26 @@ import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
+import com.vaadin.terminal.gwt.client.Util;
 import com.vaadin.terminal.gwt.client.VConsole;
+import com.vaadin.terminal.gwt.client.ui.Action;
+import com.vaadin.terminal.gwt.client.ui.ActionOwner;
+import com.vaadin.terminal.gwt.client.ui.TreeAction;
 
 /**
  * Client side widget which communicates with the server. Messages from the
  * server are shown as HTML and mouse clicks are sent to the server.
  */
-public class VOpenLayersMap extends FlowPanel implements Container {
+public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner {
 
     /** Set the CSS class name to allow styling. */
     public static final String CLASSNAME = "v-openlayersmap";
 
-    
     /**
      * Projection of coordinates passed from the serverside
      */
-    private Projection serverSideProjection = Projection
-            .get("EPSG:4326");
-    
+    private Projection serverSideProjection = Projection.get("EPSG:4326");
+
     /** The client side widget identifier */
     protected String paintableId;
 
@@ -60,6 +68,12 @@ public class VOpenLayersMap extends FlowPanel implements Container {
 
     private HashMap<String, Control> myControls = new HashMap<String, Control>();
 
+    private String[] bodyActionKeys;
+
+    private final HashMap<Object, String> actionMap = new HashMap<Object, String>();
+
+    private LonLat clickedLonLat;
+
     /**
      * The constructor should first call super() to initialize the component and
      * then handle any initialization relevant to Vaadin.
@@ -74,6 +88,31 @@ public class VOpenLayersMap extends FlowPanel implements Container {
         // This method call of the Paintable interface sets the component
         // style name in DOM tree
         setStyleName(CLASSNAME);
+
+        sinkEvents(Event.ONCONTEXTMENU);
+        addDomHandler(new ContextMenuHandler() {
+            public void onContextMenu(ContextMenuEvent event) {
+                handleBodyContextMenu(event);
+            }
+        }, ContextMenuEvent.getType());
+    }
+
+    protected void handleBodyContextMenu(ContextMenuEvent event) {
+        if (bodyActionKeys != null) {
+            int left = Util.getTouchOrMouseClientX(event.getNativeEvent());
+            int top = Util.getTouchOrMouseClientY(event.getNativeEvent());
+            final MapOverlay map = getMap().getBaseLayer().getMap();
+            clickedLonLat = getMap()
+                    .getLonLatFromPixel(Pixel.create(left, top));
+            Projection projection = getMap().getBaseLayer().getProjection();
+            Projection apiProjection = getProjection();
+            clickedLonLat.transform(projection, apiProjection);
+            top += Window.getScrollTop();
+            left += Window.getScrollLeft();
+            client.getContextMenu().showAt(this, left, top);
+            event.stopPropagation();
+            event.preventDefault();
+        }
     }
 
     /**
@@ -91,9 +130,10 @@ public class VOpenLayersMap extends FlowPanel implements Container {
         }
 
         immediate = uidl.hasAttribute("immediate");
-        
-        if(uidl.hasAttribute("projection")) {
-            serverSideProjection = Projection.get(uidl.getStringAttribute("projection"));
+
+        if (uidl.hasAttribute("projection")) {
+            serverSideProjection = Projection.get(uidl
+                    .getStringAttribute("projection"));
         }
 
         if (uidl.hasAttribute("jsMapOptions")) {
@@ -146,6 +186,9 @@ public class VOpenLayersMap extends FlowPanel implements Container {
             Iterator<Object> childIterator = uidl.getChildIterator();
             while (childIterator.hasNext()) {
                 UIDL layerUidl = (UIDL) childIterator.next();
+                if (layerUidl.getTag().equals("actions")) {
+                    continue;
+                }
                 orphanedcomponents.remove(layerUidl.getId());
                 Paintable paintable = client.getPaintable(layerUidl);
                 if (!components.containsKey(layerUidl.getId())) {
@@ -175,6 +218,60 @@ public class VOpenLayersMap extends FlowPanel implements Container {
             }
         }
 
+        if (uidl.hasAttribute("alb")) {
+            bodyActionKeys = uidl.getStringArrayAttribute("alb");
+        } else {
+            // Need to clear the actions if the action handlers have been
+            // removed
+            bodyActionKeys = null;
+        }
+
+        updateActionMap(uidl);
+    }
+
+    private void updateActionMap(UIDL mainUidl) {
+        UIDL actionsUidl = mainUidl.getChildByTagName("actions");
+        if (actionsUidl == null) {
+            return;
+        }
+
+        final Iterator<?> it = actionsUidl.getChildIterator();
+        while (it.hasNext()) {
+            final UIDL action = (UIDL) it.next();
+            final String key = action.getStringAttribute("key");
+            final String caption = action.getStringAttribute("caption");
+            actionMap.put(key + "_c", caption);
+            if (action.hasAttribute("icon")) {
+                actionMap.put(key + "_i", client.translateVaadinUri(action
+                        .getStringAttribute("icon")));
+            } else {
+                actionMap.remove(key + "_i");
+            }
+        }
+    }
+
+    public Action[] getActions() {
+        if (bodyActionKeys == null) {
+            return new Action[] {};
+        }
+        final Action[] actions = new Action[bodyActionKeys.length];
+        for (int i = 0; i < actions.length; i++) {
+            final String actionKey = bodyActionKeys[i];
+            Action bodyAction = new TreeAction(this, clickedLonLat.getLon()
+                    + ":" + clickedLonLat.getLat(), actionKey);
+            bodyAction.setCaption(actionMap.get(actionKey + "_c"));
+            bodyAction.setIconUrl(actionMap.get(actionKey + "_i"));
+            actions[i] = bodyAction;
+        }
+        return actions;
+    }
+
+    public ApplicationConnection getClient() {
+        return client;
+    }
+
+    public String getPaintableId() {
+        return paintableId;
     }
 
     private void updateControls(UIDL uidl) {
@@ -280,6 +377,6 @@ public class VOpenLayersMap extends FlowPanel implements Container {
     }
 
     public void setProjection(Projection projection) {
-        this.serverSideProjection = projection;
+        serverSideProjection = projection;
     }
 }

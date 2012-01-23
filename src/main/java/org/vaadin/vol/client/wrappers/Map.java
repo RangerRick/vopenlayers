@@ -138,4 +138,8 @@ public class Map extends Widget {
         return getMap().getControls();
     }
 
+    public LonLat getLonLatFromPixel(Pixel pixel) {
+        return getMap().getLonLatFromPixel(pixel);
+    }
+
 }
