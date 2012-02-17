@@ -72,7 +72,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * A typed alias for {@link #addComponent(Component)}.
-     * 
+     *
      * @param layer
      */
     public void addLayer(Layer layer) {
@@ -91,10 +91,10 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * certain types of Components.
      * <p>
      * Developers are encouraged to use better typed methods instead:
-     * 
+     *
      * @see #addLayer(Layer)
      * @see #addPopup(Popup)
-     * 
+     *
      * @see com.vaadin.ui.AbstractComponentContainer#addComponent(com.vaadin.ui.Component)
      */
     @Override
@@ -113,7 +113,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Set the center of map to the center of a bounds
-     * 
+     *
      */
     public void setCenter(Bounds bounds) {
         centerLat = (bounds.getBottom() + bounds.getTop()) / 2.0;
@@ -205,7 +205,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Receive and handle events and other variable changes from the client.
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -246,7 +246,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Note, this does not work until the map is rendered.
-     * 
+     *
      * @return
      */
     public Bounds getExtend() {
@@ -301,7 +301,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * <p>
      * Also note that init options only take effect if they are set before the
      * map gets rendered.
-     * 
+     *
      * @param jsMapOptions
      */
     public void setJsMapOptions(String jsMapOptions) {
@@ -314,10 +314,10 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Zooms the map to display given bounds.
-     * 
+     *
      * <p>
      * Note that this method overrides possibly set center and zoom levels.
-     * 
+     *
      * @param bounds
      */
     public void zoomToExtent(Bounds bounds) {
@@ -339,7 +339,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * ensure about this by either using a base layer that only contains the
      * desired area or by "masking" out the undesired area with e.g. a vector
      * layer.
-     * 
+     *
      * @param bounds
      */
     public void setRestrictedExtent(Bounds bounds) {
@@ -354,7 +354,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * <p>
      * Note that resetting projection on already rendered map may cause
      * unexpected results.
-     * 
+     *
      * @param projection
      */
     public void setApiProjection(String projection) {
@@ -366,7 +366,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * Gets the projection which is used by the user of this map. E.g. values
      * passed to API like {@link #setCenter(double, double)} should be in the
      * same projection.
-     * 
+     *
      * @return the projection used, defaults to EPSG:4326
      */
     public String getApiProjection() {
@@ -377,56 +377,39 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * Calculates an array of resolutions for use in OpenLayers map creation
      */
     protected double[] calculateResolutions(Bounds bounds, int tileSize,
-            int zoomLevels) {
-        double gridWidth = bounds.getRight() - bounds.getLeft();
-        double gridHeight = bounds.getTop() - bounds.getBottom();
-        double gridY = -1d;
-        double ratio = gridWidth / gridHeight;
+      int zoomLevels) {
 
-        // Allow 2.5% slack
-        if (Math.abs(ratio - 1.0) < 0.025) {
-            gridY = 1d;
-        }
+        final double extentWidth = bounds.getRight() - bounds.getLeft();
+        final double extentHeight = bounds.getTop() - bounds.getBottom();
 
-        // Otherwise we'll try to expand it to an integer grid,
-        // failing that we'll just increase the smaller bounds
-        // to make the box square
-        if (ratio > 1.0) {
-            // Wider than tall
-            if (Math.abs(ratio - Math.round(ratio)) < 0.025) {
-                gridY = 1d;
-            } else {
-                // I give up, expanding Y bounds
-                gridY = 1d;
-                gridHeight = gridWidth;
-            }
+        double resX = extentWidth / tileSize;
+        double resY = extentHeight / tileSize;
+
+        if (resX <= resY) {
+            // use one tile wide by N tiles high
+            int tilesHigh = (int) Math.round(resY / resX);
+            // previous resY was assuming 1 tile high, recompute with the actual number of tiles
+            // high
+            resY = resY / tilesHigh;
         } else {
-            // Taller than wide
-            ratio = gridHeight / gridWidth;
-            if (Math.abs(ratio - Math.round(ratio)) < 0.025) {
-                gridY = Math.round(ratio);
-            } else {
-                // I give up, expanding X bounds
-                gridY = 1d;
-                gridWidth = gridHeight;
-            }
+            // use one tile high by N tiles wide
+            int tilesWide = (int) Math.round(resX / resY);
+            // previous resX was assuming 1 tile wide, recompute with the actual number of tiles
+            // wide
+            resX = resX / tilesWide;
         }
 
-        double baseRes;
-        if (gridY == 1) {
-            baseRes = gridHeight / tileSize;
-        } else {
-            baseRes = gridWidth / tileSize;
+        // the maximum of resX and resY is the one that adjusts better
+        final double res = Math.max(resX, resY);
+
+        double[] resolutions = new double[zoomLevels];
+        resolutions[0] = res;
+
+        for (int i = 1; i < zoomLevels; i++) {
+            resolutions[i] = resolutions[i - 1] / 2;
         }
 
-        double[] myResolutions = new double[zoomLevels + 1];
-        myResolutions[0] = baseRes;
-        for (int q = 1; q < myResolutions.length; q++) {
-            baseRes = baseRes / 2;
-            myResolutions[q] = baseRes;
-        }
-
-        return myResolutions;
+        return resolutions;
     }
 
     private void paintActions(PaintTarget target, final Set<Action> actionSet)
@@ -471,7 +454,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Registers a new action handler for this container
-     * 
+     *
      * @see com.vaadin.event.Action.Container#addActionHandler(Action.Handler)
      */
     public void addActionHandler(Action.Handler actionHandler) {
@@ -486,7 +469,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     /**
      * Removes a previously registered action handler for the contents of this
      * container.
-     * 
+     *
      * @see com.vaadin.event.Action.Container#removeActionHandler(Action.Handler)
      */
     public void removeActionHandler(Action.Handler actionHandler) {
