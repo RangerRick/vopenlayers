@@ -166,27 +166,21 @@
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>LATEST</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
-			<version>LATEST</version>
+			<version>7.2.2.v20101205</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-			<version>LATEST</version>
+			<version>7.2.2.v20101205</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlets</artifactId>
-			<version>LATEST</version>
+			<version>7.2.2.v20101205</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
