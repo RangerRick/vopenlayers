@@ -18,7 +18,7 @@ import com.vaadin.ui.Component;
  * 
  */
 public class UsHighWaysOnTopOfSpherialMercator extends AbstractVOLTest {
-    
+
     @Override
     public String getDescription() {
         return "Using EPSG:102113 (Google mercator alias) below WMS layer. Arcgis compatibel example.";
@@ -55,6 +55,11 @@ public class UsHighWaysOnTopOfSpherialMercator extends AbstractVOLTest {
         map.setSizeFull();
 
         return map;
+    }
+
+    @Override
+    public boolean isSuitebleOnlineDemo() {
+        return true;
     }
 
 }

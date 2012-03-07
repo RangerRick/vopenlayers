@@ -81,4 +81,8 @@ public class ActionHandlers extends AbstractVOLTest implements Handler {
         return openLayersMap;
     }
 
+    @Override
+    public boolean isSuitebleOnlineDemo() {
+        return true;
+    }
 }

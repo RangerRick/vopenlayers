@@ -1,5 +1,18 @@
 package org.vaadin.vol.client.ui;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.vaadin.vol.client.wrappers.Bounds;
+import org.vaadin.vol.client.wrappers.GwtOlHandler;
+import org.vaadin.vol.client.wrappers.LonLat;
+import org.vaadin.vol.client.wrappers.Map;
+import org.vaadin.vol.client.wrappers.Pixel;
+import org.vaadin.vol.client.wrappers.Projection;
+import org.vaadin.vol.client.wrappers.control.Control;
+
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
@@ -17,19 +30,6 @@ import com.vaadin.terminal.gwt.client.VConsole;
 import com.vaadin.terminal.gwt.client.ui.Action;
 import com.vaadin.terminal.gwt.client.ui.ActionOwner;
 import com.vaadin.terminal.gwt.client.ui.TreeAction;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.vaadin.vol.client.wrappers.Bounds;
-import org.vaadin.vol.client.wrappers.GwtOlHandler;
-import org.vaadin.vol.client.wrappers.LonLat;
-import org.vaadin.vol.client.wrappers.Map;
-import org.vaadin.vol.client.wrappers.Pixel;
-import org.vaadin.vol.client.wrappers.Projection;
-import org.vaadin.vol.client.wrappers.control.Control;
 
 /**
  * Client side widget which communicates with the server. Messages from the
@@ -99,14 +99,14 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
     protected void handleBodyContextMenu(ContextMenuEvent event) {
         if (bodyActionKeys != null) {
             clickedLonLat = getMap().getLonLatFromPixel(
-              Pixel.create(getMapClickLeftPosition(event),
-                getMapClickTopPosition(event)));
+                    Pixel.create(getMapClickLeftPosition(event),
+                            getMapClickTopPosition(event)));
             Projection projection = getMap().getBaseLayer().getProjection();
             Projection apiProjection = getProjection();
             clickedLonLat.transform(projection, apiProjection);
             client.getContextMenu().showAt(this,
-              getWindowClickLeftPosition(event),
-              getWindowClickTopPosition(event));
+                    getWindowClickLeftPosition(event),
+                    getWindowClickTopPosition(event));
             event.stopPropagation();
             event.preventDefault();
         }
@@ -114,22 +114,22 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
 
     private int getWindowClickTopPosition(ContextMenuEvent event) {
         return Util.getTouchOrMouseClientY(event.getNativeEvent())
-          + Window.getScrollTop();
+                + Window.getScrollTop();
     }
 
     private int getWindowClickLeftPosition(ContextMenuEvent event) {
         return Util.getTouchOrMouseClientX(event.getNativeEvent())
-          + Window.getScrollLeft();
+                + Window.getScrollLeft();
     }
 
     private double getMapClickTopPosition(ContextMenuEvent event) {
         return Util.getTouchOrMouseClientY(event.getNativeEvent())
-          - getMap().getAbsoluteTop();
+                - getMap().getAbsoluteTop();
     }
 
     private double getMapClickLeftPosition(ContextMenuEvent event) {
         return Util.getTouchOrMouseClientX(event.getNativeEvent())
-          - getMap().getAbsoluteLeft();
+                - getMap().getAbsoluteLeft();
     }
 
     /**
@@ -389,10 +389,17 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
         return map;
     }
 
+    /**
+     * @return the projection this map widget uses on the server side
+     */
     public Projection getProjection() {
         return serverSideProjection;
     }
 
+    /**
+     * @param projection
+     *            the projection this map widget uses on the server side
+     */
     public void setProjection(Projection projection) {
         serverSideProjection = projection;
     }

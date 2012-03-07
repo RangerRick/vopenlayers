@@ -260,4 +260,10 @@ public class VectorAnimation extends AbstractVOLTest implements ClickListener {
             return new Point(lon, lat);
         }
     }
+
+    @Override
+    public boolean isSuitebleOnlineDemo() {
+        return true;
+    }
+
 }

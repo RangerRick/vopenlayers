@@ -90,4 +90,9 @@ public class MarkerAddingAndRemoving extends AbstractVOLTest implements Handler 
 
     }
 
+    @Override
+    public boolean isSuitebleOnlineDemo() {
+        return true;
+    }
+
 }

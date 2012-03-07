@@ -16,7 +16,7 @@ import com.vaadin.ui.Component;
  * http://openlayers.org/dev/examples/wfs-states.js
  */
 public class WebFeatureServiceLayerTest extends AbstractVOLTest {
-    
+
     @Override
     public String getDescription() {
         return "Simple WFS example. The base map seems to be inaccessible. Should be changed to some public service that works.";
@@ -32,35 +32,35 @@ public class WebFeatureServiceLayerTest extends AbstractVOLTest {
         openLayersMap.addLayer(webMapServiceLayer);
 
         WebFeatureServiceLayer webFeatureServiceLayer = new WebFeatureServiceLayer();
-        
+
         webFeatureServiceLayer.addListener(new FeatureSelectedListener() {
-			public void featureSelected(FeatureSelectedEvent event) {
-				String featureId = event.getFeatureId();
-				System.err.println("Selected feature id:" + featureId);
+            public void featureSelected(FeatureSelectedEvent event) {
+                String featureId = event.getFeatureId();
+                System.err.println("Selected feature id:" + featureId);
                 Object state = event.getAttributes().get("STATE_NAME");
                 Object persons = event.getAttributes().get("PERSONS");
-                showNotification("State: " + state + " (population:" + persons + ")");
-			}
-		});
-        
+                showNotification("State: " + state + " (population:" + persons
+                        + ")");
+            }
+        });
+
         // proxied to http://demo.opengeo.org/geoserver/wfs
         webFeatureServiceLayer.setUri(getApplication().getURL()
                 + "../WFSPROXY/");
         webFeatureServiceLayer.setFeatureType("states");
         webFeatureServiceLayer.setFeatureNS("http://www.openplans.org/topp");
-        
-        
+
         /*
          * Style like a normal web feature server.
          */
-        
+
         Style style = new Style();
         style.extendCoreStyle("default");
         style.setFillColor("green");
         style.setFillOpacity(0.5);
         StyleMap styleMap = new StyleMap(style);
         styleMap.setExtendDefault(true);
-        webFeatureServiceLayer.setStyleMap(styleMap );
+        webFeatureServiceLayer.setStyleMap(styleMap);
 
         openLayersMap.addLayer(webFeatureServiceLayer);
 
@@ -71,6 +71,11 @@ public class WebFeatureServiceLayerTest extends AbstractVOLTest {
         openLayersMap.setSizeFull();
 
         return openLayersMap;
+    }
+
+    @Override
+    public boolean isSuitebleOnlineDemo() {
+        return true;
     }
 
 }

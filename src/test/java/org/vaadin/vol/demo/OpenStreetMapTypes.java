@@ -14,7 +14,6 @@ public class OpenStreetMapTypes extends AbstractVOLTest {
         return "Demonstrates various OSM types.";
     }
 
-
     @Override
     Component getMap() {
         OpenLayersMap map = new OpenLayersMap();
@@ -35,6 +34,11 @@ public class OpenStreetMapTypes extends AbstractVOLTest {
         map.setSizeFull();
 
         return map;
+    }
+
+    @Override
+    public boolean isSuitebleOnlineDemo() {
+        return true;
     }
 
 }

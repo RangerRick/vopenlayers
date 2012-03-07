@@ -35,4 +35,10 @@ public class BingMapTypes extends AbstractVOLTest {
 
         return map;
     }
+
+    @Override
+    public boolean isSuitebleOnlineDemo() {
+        return true;
+    }
+
 }

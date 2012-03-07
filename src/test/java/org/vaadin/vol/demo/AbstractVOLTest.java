@@ -5,14 +5,14 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 public abstract class AbstractVOLTest extends Window {
-    
+
     private VerticalLayout content;
 
     public AbstractVOLTest() {
         content = new VerticalLayout();
         setContent(content);
     }
-    
+
     @Override
     public void attach() {
         super.attach();
@@ -27,5 +27,9 @@ public abstract class AbstractVOLTest extends Window {
     }
 
     abstract Component getMap();
+
+    public boolean isSuitebleOnlineDemo() {
+        return false;
+    }
 
 }

@@ -11,8 +11,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
-import com.vaadin.ui.Window.ResizeEvent;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.ResizeEvent;
 
 public class VolApplication extends Application {
 
@@ -20,7 +20,7 @@ public class VolApplication extends Application {
 
     @Override
     public Window getWindow(String name) {
-        Window window = (Window) super.getWindow(name);
+        Window window = super.getWindow(name);
         if (window == null && name != null && !"".equals(name)
                 && !name.contains(".ico") && name.matches("[A-Z][a-z].*")) {
             try {
@@ -63,7 +63,13 @@ public class VolApplication extends Application {
     }
 
     private void loadTestClasses(Window window) {
-        if(testClassess != null) {
+        window.addComponent(new Label(
+                "Note, all selections below will not work! "
+                        + "They are mostly code examples and tests that might e.g."
+                        + " require a local or some custom configured map server. "
+                        + "Those marked suitable have worked at least at some point"
+                        + " online."));
+        if (testClassess != null) {
             return;
         }
         testClassess = listTestClasses();
@@ -96,6 +102,8 @@ public class VolApplication extends Application {
         IndexedContainer indexedContainer = new IndexedContainer();
         indexedContainer.addContainerProperty("name", String.class, "");
         indexedContainer.addContainerProperty("description", String.class, "");
+        indexedContainer.addContainerProperty("Suitble as online demo",
+                Boolean.class, Boolean.FALSE);
 
         File file = new File("./src/test/java/org/vaadin/vol/demo");
         File[] listFiles = file.listFiles();
@@ -106,12 +114,16 @@ public class VolApplication extends Application {
                 String fullname = "org.vaadin.vol.demo." + simpleName;
                 Class<?> forName = Class.forName(fullname);
                 if (AbstractVOLTest.class.isAssignableFrom(forName)) {
-                    AbstractVOLTest newInstance = (AbstractVOLTest) forName.newInstance();
+                    AbstractVOLTest newInstance = (AbstractVOLTest) forName
+                            .newInstance();
                     Object id = indexedContainer.addItem();
                     Item item = indexedContainer.getItem(id);
                     item.getItemProperty("name").setValue(simpleName);
                     // TODO load class and add description (also to test cases)
-                    item.getItemProperty("description").setValue(newInstance.getDescription());
+                    item.getItemProperty("description").setValue(
+                            newInstance.getDescription());
+                    item.getItemProperty("Suitble as online demo").setValue(
+                            newInstance.isSuitebleOnlineDemo());
                 }
             } catch (Exception e) {
                 // e.printStackTrace();

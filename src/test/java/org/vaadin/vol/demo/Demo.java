@@ -51,16 +51,16 @@ import com.vaadin.ui.Window;
 
 public class Demo extends AbstractVOLTest {
     private HorizontalLayout controls;
-    
+
     @Override
     public String getDescription() {
         return "Simple example demonstrating some base layers and basic vector usage.";
     }
-    
+
     @Override
     protected void setup() {
         super.setup();
-        ((VerticalLayout)getContent()).addComponentAsFirst(controls);
+        ((VerticalLayout) getContent()).addComponentAsFirst(controls);
     }
 
     @Override
@@ -315,7 +315,7 @@ public class Demo extends AbstractVOLTest {
         // map.addComponent(wms);
         // map.addLayer(mapTilerLayer);
         map.addLayer(vectorLayer);
-//         map.addLayer(markerLayer);
+        // map.addLayer(markerLayer);
 
         controls = new HorizontalLayout();
         controls.addComponent(drawingMode);
@@ -359,8 +359,9 @@ public class Demo extends AbstractVOLTest {
 
         controls.addComponent(moveToTMSExample);
 
-        return map;    }
-    
+        return map;
+    }
+
     /**
      * An example how to zoom the map so that it covers given points.
      * 
@@ -384,5 +385,9 @@ public class Demo extends AbstractVOLTest {
         map.setRestrictedExtent(bounds);
     }
 
+    @Override
+    public boolean isSuitebleOnlineDemo() {
+        return true;
+    }
 
 }
