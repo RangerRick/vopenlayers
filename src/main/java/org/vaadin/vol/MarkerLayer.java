@@ -66,4 +66,8 @@ public class MarkerLayer extends AbstractComponentContainer implements Layer {
     public String getDisplayName() {
         return displayName;
     }
+
+    public void removeMarker(Marker marker) {
+        removeComponent(marker);
+    }
 }
