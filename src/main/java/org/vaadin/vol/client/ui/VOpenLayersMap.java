@@ -159,6 +159,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
 
         if (extentChangeListener == null) {
             extentChangeListener = new GwtOlHandler() {
+                @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
                     int zoom = map.getZoom();
                     client.updateVariable(paintableId, "zoom", zoom, false);

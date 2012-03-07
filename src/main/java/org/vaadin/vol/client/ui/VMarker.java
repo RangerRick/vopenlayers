@@ -82,6 +82,7 @@ public class VMarker extends Widget implements VMarkable {
         final VMarkable paintable = this;
         if (this.client.hasEventListeners(this, "click")) {
             this.marker.addClickHandler(new GwtOlHandler() {
+                @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
                     client.updateVariable(client.getPid(paintable), "click",
                             "", true);

@@ -10,12 +10,8 @@ import com.vaadin.terminal.gwt.client.UIDL;
 public class VImageLayer extends VAbstracMapLayer<ImageLayer> {
 
     private String uri;
-    private String layers;
     private String displayName;
     private Boolean isBaseLayer;
-    private Double opacity;
-    private String format;
-    private boolean transparent;
     private Bounds mapBounds;
     private int width;
     private int height;

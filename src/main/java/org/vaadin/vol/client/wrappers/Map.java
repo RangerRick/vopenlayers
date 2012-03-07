@@ -25,6 +25,7 @@ public class Map extends Widget {
 
     private String mapInitOptions;
 
+    @SuppressWarnings("unchecked")
     private JsArray<Control> initialControls = (JsArray<Control>) JsArray
             .createArray();
 

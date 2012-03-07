@@ -13,6 +13,7 @@ import com.vaadin.terminal.gwt.client.ValueMap;
 
 public class VArea extends VAbstractVector {
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void createOrUpdateVector(UIDL childUIDL, ApplicationConnection client) {
         Projection mapProjection = getMap().getProjection();

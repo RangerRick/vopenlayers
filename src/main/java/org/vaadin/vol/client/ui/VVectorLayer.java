@@ -32,7 +32,6 @@ import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.VConsole;
 import com.vaadin.terminal.gwt.client.ValueMap;
 
 public class VVectorLayer extends FlowPanel implements VLayer, Container {
@@ -55,6 +54,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
             vectors.registerHandler("featuremodified",
                     getFeatureModifiedListener());
             vectors.registerHandler("afterfeaturemodified", new GwtOlHandler() {
+                @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
                     if (updating) {
                         // ignore selections that happend during update, those
@@ -66,6 +66,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                 }
             });
             vectors.registerHandler("featureselected", new GwtOlHandler() {
+                @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
                     if (updating) {
                         // ignore selections that happend during update, those
@@ -89,6 +90,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
             });
 
             vectors.registerHandler("featureunselected", new GwtOlHandler() {
+                @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
                     if (updating) {
                         // ignore selections that happend during update, those
@@ -122,6 +124,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         if (_fModifiedListener == null) {
             _fModifiedListener = new GwtOlHandler() {
 
+                @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
                     if (!updating && drawingMode != "NONE") {
                         // use vaadin js object helper to get the actual feature
@@ -186,6 +189,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         if (_fAddedListener == null) {
             _fAddedListener = new GwtOlHandler() {
 
+                @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
                     if (!updating && drawingMode != "NONE") {
                         // use vaadin js object helper to get the actual feature

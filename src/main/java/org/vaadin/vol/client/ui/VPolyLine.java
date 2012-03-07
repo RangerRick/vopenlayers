@@ -13,8 +13,10 @@ import com.vaadin.terminal.gwt.client.ValueMap;
 
 public class VPolyLine extends VAbstractVector {
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected void createOrUpdateVector(UIDL childUIDL, ApplicationConnection client) {
+    protected void createOrUpdateVector(UIDL childUIDL,
+            ApplicationConnection client) {
         Projection mapProjection = getMap().getProjection();
         String[] stringArrayAttribute = childUIDL
                 .getStringArrayAttribute("points");
