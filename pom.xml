@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.vaadin.vol</groupId>
 	<artifactId>openlayers-wrapper</artifactId>
-	<version>0.9.2-SNAPSHOT</version>
+	<version>0.9.5-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,7 +30,7 @@
 						<index>true</index>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<!-- Implementation-Title and Implementation-Version come from the
+							<!-- Implementation-Title and Implementation-Version come from the 
 								POM by default -->
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
@@ -40,7 +40,7 @@
 
 							<!-- Add-on specific fields to update -->
 
-							<!-- Implementation-Title and Implementation-Version come from the
+							<!-- Implementation-Title and Implementation-Version come from the 
 								POM by default -->
 							<Implementation-Title>OpenLayers Wrapper</Implementation-Title>
 
@@ -51,7 +51,9 @@
 				</configuration>
 			</plugin>
 
-			<!-- Compile custom GWT components or widget dependencies with the GWT
+
+
+			<!-- Compile custom GWT components or widget dependencies with the GWT 
 				compiler -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -69,9 +71,39 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- This creates a zip file of jar and sources jar. Makes sources available 
+				to maven users automatically?! We could also use this to package required 
+				dependecies for those poor developer souls that still dont know how to use 
+				a build system that supports transient dependencies... -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<finalName>openlayers-wrapper-${project.version}</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
+
 		</plugins>
 
-		<!-- This is needed for the sources required by the GWT compiler to be
+		<!-- This is needed for the sources required by the GWT compiler to be 
 			included in the produced JARs -->
 		<resources>
 			<resource>

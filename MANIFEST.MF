@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Vaadin-Package-Version: 1
+Vaadin-Addon: openlayers-wrapper-${project.version}.jar
+Implementation-Vendor: OpenLayer wrapper for Vaadin community
+Implementation-Title: OpenLayers Wrapper
+Implementation-Version: ${project.version}
