@@ -72,7 +72,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * A typed alias for {@link #addComponent(Component)}.
-     *
+     * 
      * @param layer
      */
     public void addLayer(Layer layer) {
@@ -91,10 +91,10 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * certain types of Components.
      * <p>
      * Developers are encouraged to use better typed methods instead:
-     *
+     * 
      * @see #addLayer(Layer)
      * @see #addPopup(Popup)
-     *
+     * 
      * @see com.vaadin.ui.AbstractComponentContainer#addComponent(com.vaadin.ui.Component)
      */
     @Override
@@ -113,7 +113,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Set the center of map to the center of a bounds
-     *
+     * 
      */
     public void setCenter(Bounds bounds) {
         centerLat = (bounds.getBottom() + bounds.getTop()) / 2.0;
@@ -205,7 +205,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Receive and handle events and other variable changes from the client.
-     *
+     * 
      * {@inheritDoc}
      */
     @Override
@@ -246,7 +246,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Note, this does not work until the map is rendered.
-     *
+     * 
      * @return
      */
     public Bounds getExtend() {
@@ -301,7 +301,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * <p>
      * Also note that init options only take effect if they are set before the
      * map gets rendered.
-     *
+     * 
      * @param jsMapOptions
      */
     public void setJsMapOptions(String jsMapOptions) {
@@ -314,10 +314,10 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Zooms the map to display given bounds.
-     *
+     * 
      * <p>
      * Note that this method overrides possibly set center and zoom levels.
-     *
+     * 
      * @param bounds
      */
     public void zoomToExtent(Bounds bounds) {
@@ -339,7 +339,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * ensure about this by either using a base layer that only contains the
      * desired area or by "masking" out the undesired area with e.g. a vector
      * layer.
-     *
+     * 
      * @param bounds
      */
     public void setRestrictedExtent(Bounds bounds) {
@@ -354,7 +354,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * <p>
      * Note that resetting projection on already rendered map may cause
      * unexpected results.
-     *
+     * 
      * @param projection
      */
     public void setApiProjection(String projection) {
@@ -366,7 +366,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * Gets the projection which is used by the user of this map. E.g. values
      * passed to API like {@link #setCenter(double, double)} should be in the
      * same projection.
-     *
+     * 
      * @return the projection used, defaults to EPSG:4326
      */
     public String getApiProjection() {
@@ -377,7 +377,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * Calculates an array of resolutions for use in OpenLayers map creation
      */
     protected double[] calculateResolutions(Bounds bounds, int tileSize,
-      int zoomLevels) {
+            int zoomLevels) {
 
         final double extentWidth = bounds.getRight() - bounds.getLeft();
         final double extentHeight = bounds.getTop() - bounds.getBottom();
@@ -388,13 +388,15 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         if (resX <= resY) {
             // use one tile wide by N tiles high
             int tilesHigh = (int) Math.round(resY / resX);
-            // previous resY was assuming 1 tile high, recompute with the actual number of tiles
+            // previous resY was assuming 1 tile high, recompute with the actual
+            // number of tiles
             // high
             resY = resY / tilesHigh;
         } else {
             // use one tile high by N tiles wide
             int tilesWide = (int) Math.round(resX / resY);
-            // previous resX was assuming 1 tile wide, recompute with the actual number of tiles
+            // previous resX was assuming 1 tile wide, recompute with the actual
+            // number of tiles
             // wide
             resX = resX / tilesWide;
         }
@@ -454,7 +456,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Registers a new action handler for this container
-     *
+     * 
      * @see com.vaadin.event.Action.Container#addActionHandler(Action.Handler)
      */
     public void addActionHandler(Action.Handler actionHandler) {
@@ -469,7 +471,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     /**
      * Removes a previously registered action handler for the contents of this
      * container.
-     *
+     * 
      * @see com.vaadin.event.Action.Container#removeActionHandler(Action.Handler)
      */
     public void removeActionHandler(Action.Handler actionHandler) {
@@ -477,5 +479,9 @@ public class OpenLayersMap extends AbstractComponentContainer implements
             actionHandlers.remove(actionHandler);
             requestRepaint();
         }
+    }
+
+    public void removeLayer(Layer layer) {
+        removeComponent(layer);
     }
 }

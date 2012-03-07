@@ -14,17 +14,20 @@ import com.vaadin.ui.Component;
 
 public class MarkerAddingAndRemoving extends AbstractVOLTest implements Handler {
 
-    private static final Action[] ACTIONS = new Action[] { new Action("ADD") };
+    private static final Action ADD = new Action("ADD MARKER");
+    private static final Action TOGGLE = new Action("TOGGLE LAYER");
+    private static final Action[] ACTIONS = new Action[] { ADD, TOGGLE };
     private MarkerLayer markerLayer;
+    private OpenLayersMap map;
 
     @Override
     public String getDescription() {
-        return "In this example markers can be added with context menu. When marker is clicked, it gets removed.";
+        return "In this example markers can be added with context menu. When marker is clicked, it gets removed. Also one can toggle marker layer via context menu.";
     }
 
     @Override
     Component getMap() {
-        OpenLayersMap map = new OpenLayersMap();
+        map = new OpenLayersMap();
         /*
          * Open street maps layer as a base layer. Note importance of the order,
          * OSM layer now sets the projection to Spherical Mercator. If added eg.
@@ -72,8 +75,19 @@ public class MarkerAddingAndRemoving extends AbstractVOLTest implements Handler 
     }
 
     public void handleAction(Action action, Object sender, Object target) {
-        Point point = (Point) target;
-        addMarker(point.getLon(), point.getLat());
+        if (action == ADD) {
+            Point point = (Point) target;
+            addMarker(point.getLon(), point.getLat());
+        } else if (action == TOGGLE) {
+            if (markerLayer.getParent() == null) {
+                // add layer
+                map.addLayer(markerLayer);
+            } else {
+                // remove layer
+                map.removeLayer(markerLayer);
+            }
+        }
+
     }
 
 }
