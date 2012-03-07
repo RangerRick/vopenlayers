@@ -261,9 +261,4 @@ public class VectorAnimation extends AbstractVOLTest implements ClickListener {
         }
     }
 
-    @Override
-    public boolean isSuitebleOnlineDemo() {
-        return true;
-    }
-
 }

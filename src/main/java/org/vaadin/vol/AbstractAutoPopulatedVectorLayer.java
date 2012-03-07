@@ -4,17 +4,12 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.vaadin.vol.VectorLayer.SelectionMode;
-import org.vaadin.vol.VectorLayer.VectorSelectedEvent;
-import org.vaadin.vol.VectorLayer.VectorSelectedListener;
-import org.vaadin.vol.VectorLayer.VectorUnSelectedEvent;
-import org.vaadin.vol.VectorLayer.VectorUnSelectedListener;
 
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Component.Event;
 
 /**
  * An abstract implementation (based on client side vector layer) that populates
@@ -34,6 +29,7 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
         super();
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         super.changeVariables(source, variables);

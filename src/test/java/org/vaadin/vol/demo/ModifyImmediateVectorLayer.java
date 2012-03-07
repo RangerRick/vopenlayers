@@ -115,7 +115,6 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
 
         vectorLayer.addListener(new VectorLayer.VectorUnSelectedListener() {
             public void vectorUnSelected(VectorUnSelectedEvent event) {
-                Vector vector = event.getVector();
                 nativeSelect.setValue(null);
             }
 

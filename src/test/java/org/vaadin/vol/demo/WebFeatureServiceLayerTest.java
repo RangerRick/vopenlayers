@@ -73,9 +73,4 @@ public class WebFeatureServiceLayerTest extends AbstractVOLTest {
         return openLayersMap;
     }
 
-    @Override
-    public boolean isSuitebleOnlineDemo() {
-        return true;
-    }
-
 }

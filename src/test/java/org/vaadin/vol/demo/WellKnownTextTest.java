@@ -69,9 +69,4 @@ public class WellKnownTextTest extends AbstractVOLTest {
         return openLayersMap;
     }
 
-    @Override
-    public boolean isSuitebleOnlineDemo() {
-        return true;
-    }
-
 }

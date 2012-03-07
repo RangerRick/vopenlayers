@@ -47,7 +47,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
 public class Demo extends AbstractVOLTest {
     private HorizontalLayout controls;
@@ -136,7 +135,6 @@ public class Demo extends AbstractVOLTest {
         vectorLayer.addListener(new VectorSelectedListener() {
             public void vectorSelected(VectorSelectedEvent event) {
                 Vector vector = event.getVector();
-                Window window = vectorLayer.getWindow();
                 vectorLayer.getWindow().showNotification(
                         "Selected vector with points "
                                 + Arrays.deepToString(vector.getPoints()));
@@ -337,6 +335,7 @@ public class Demo extends AbstractVOLTest {
         }
         mapcontrols.setValue(map.getControls());
         mapcontrols.addListener(new ValueChangeListener() {
+            @SuppressWarnings("unchecked")
             public void valueChange(ValueChangeEvent event) {
                 Control[] controls3 = map.getControls().toArray(
                         new Control[map.getControls().size()]);
@@ -380,14 +379,10 @@ public class Demo extends AbstractVOLTest {
      * @param map
      * @param points
      */
+    @SuppressWarnings("unused")
     private void setRestrictedExtent(OpenLayersMap map, Point[] points) {
         Bounds bounds = new Bounds(points);
         map.setRestrictedExtent(bounds);
-    }
-
-    @Override
-    public boolean isSuitebleOnlineDemo() {
-        return true;
     }
 
 }
