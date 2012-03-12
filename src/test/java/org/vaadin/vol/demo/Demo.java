@@ -53,7 +53,7 @@ public class Demo extends AbstractVOLTest {
 
     @Override
     public String getDescription() {
-        return "Simple example demonstrating some base layers and basic vector usage.";
+        return "An example demonstrating some base layers, basic vector usage, vector editing and various OL controls.";
     }
 
     @Override

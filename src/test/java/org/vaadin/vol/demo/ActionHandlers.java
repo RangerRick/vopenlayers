@@ -34,7 +34,7 @@ public class ActionHandlers extends AbstractVOLTest implements Handler {
 
     @Override
     public String getDescription() {
-        return "Example where one can drag points or squares with context menu";
+        return "Example where one can add points or squares with context menu";
     }
 
     private static final Action POINT = new Action("Add Point");

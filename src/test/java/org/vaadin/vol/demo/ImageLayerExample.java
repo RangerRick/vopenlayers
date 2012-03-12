@@ -17,7 +17,7 @@ public class ImageLayerExample extends AbstractVOLTest {
 
     @Override
     public String getDescription() {
-        return "Demonstrates various Bing map types. Note that bing maps need API key from bingmapportal.com !";
+        return "Demonstrates usage of ImageLayer.";
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.vaadin.vol.demo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +23,8 @@ public abstract class AbstractVOLTest extends Window {
     public void attach() {
         super.attach();
         setup();
+        showNotification(getClass().getSimpleName(), getDescription(),
+                Notification.TYPE_WARNING_MESSAGE);
     }
 
     protected void setup() {
@@ -33,17 +36,27 @@ public abstract class AbstractVOLTest extends Window {
 
     abstract Component getMap();
 
+    /*
+     * This set of classes is used when a public demo app is built
+     */
     @SuppressWarnings("unchecked")
-    static Class<? extends AbstractVOLTest>[] a = new Class[] {
-            Demo.class, ActionHandlers.class, BingMapTypes.class,
+    static Class<? extends AbstractVOLTest>[] a = new Class[] { Demo.class,
+            ActionHandlers.class, BingMapTypes.class, ImageLayerExample.class,
             MarkerAddingAndRemoving.class, OpenStreetMapTypes.class,
-            WebFeatureServiceLayerTest.class };
+            StyleMapAddUniqueValueRules.class,
+            UsHighWaysOnTopOfSpherialMercator.class, VectorAnimation.class,
+            WellKnownTextTest.class };
     static Collection<Class<? extends AbstractVOLTest>> suitableOnlineDemos = Collections
             .synchronizedSet(new HashSet<Class<? extends AbstractVOLTest>>(
                     Arrays.asList(a)));
 
     public boolean isSuitebleOnlineDemo() {
         return suitableOnlineDemos.contains(getClass());
+    }
+
+    public static ArrayList<Class<? extends AbstractVOLTest>> getDemoClasses() {
+        return new ArrayList<Class<? extends AbstractVOLTest>>(
+                suitableOnlineDemos);
     }
 
 }

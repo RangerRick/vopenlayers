@@ -9,7 +9,7 @@ public class BingMapTypes extends AbstractVOLTest {
 
     @Override
     public String getDescription() {
-        return "Demonstrates various Bing map types. Note that bing maps need API key from bingmapportal.com !";
+        return "Demonstrates various Bing map types. Note that bing maps need API key from bingmapsportal.com !";
     }
 
     @Override

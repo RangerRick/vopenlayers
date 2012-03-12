@@ -74,7 +74,7 @@ public class VectorAnimation extends AbstractVOLTest implements ClickListener {
 
     @Override
     public String getDescription() {
-        return "Example how to use animate vector.";
+        return "Example how to use animate vector (server side thread).";
     }
 
     @Override
