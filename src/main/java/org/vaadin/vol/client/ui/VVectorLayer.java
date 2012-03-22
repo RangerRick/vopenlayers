@@ -329,7 +329,11 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                                 .getModifiedFeature());
                     }
                 } else {
-                    selectFeature.unselectAll();
+                    try {
+                        selectFeature.unselectAll();
+                    } catch (Exception e) {
+                        // NOP, may throw exception if selected vector gets deleted
+                    }
                 }
             }
         }
