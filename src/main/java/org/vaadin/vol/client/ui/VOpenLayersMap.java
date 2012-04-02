@@ -328,37 +328,41 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
 
     private void updateZoomAndCenter(UIDL uidl) {
 
-        if (uidl.hasAttribute("ze_top")) {
-            /*
-             * Zoom to extent
-             */
-            double top = uidl.getDoubleAttribute("ze_top");
-            double right = uidl.getDoubleAttribute("ze_right");
-            double bottom = uidl.getDoubleAttribute("ze_bottom");
-            double left = uidl.getDoubleAttribute("ze_left");
-            Bounds bounds = Bounds.create(left, bottom, right, top);
-            bounds.transform(getProjection(), getMap().getProjection());
-            getMap().zoomToExtent(bounds);
-            return;
-        }
+        // Skip for empty map
+        if (getMap().getProjection() != null) {
 
-        int zoom = map.getZoom();
-        if (uidl.hasAttribute("zoom")) {
-            zoom = uidl.getIntAttribute("zoom");
-            if (!uidl.hasAttribute("clat")) {
-                // just set zoom, no center position
-                map.setZoom(zoom);
+            if (uidl.hasAttribute("ze_top")) {
+                /*
+                 * Zoom to extent
+                 */
+                double top = uidl.getDoubleAttribute("ze_top");
+                double right = uidl.getDoubleAttribute("ze_right");
+                double bottom = uidl.getDoubleAttribute("ze_bottom");
+                double left = uidl.getDoubleAttribute("ze_left");
+                Bounds bounds = Bounds.create(left, bottom, right, top);
+                bounds.transform(getProjection(), getMap().getProjection());
+                getMap().zoomToExtent(bounds);
+                return;
             }
-        }
 
-        if (uidl.hasAttribute("clat")) {
-            double lat = uidl.getDoubleAttribute("clat");
-            double lon = uidl.getDoubleAttribute("clon");
-            LonLat lonLat = LonLat.create(lon, lat);
-            // expect center point to be in WSG84
-            Projection projection = map.getProjection();
-            lonLat.transform(getProjection(), projection);
-            map.setCenter(lonLat, zoom);
+            int zoom = map.getZoom();
+            if (uidl.hasAttribute("zoom")) {
+                zoom = uidl.getIntAttribute("zoom");
+                if (!uidl.hasAttribute("clat")) {
+                    // just set zoom, no center position
+                    map.setZoom(zoom);
+                }
+            }
+
+            if (uidl.hasAttribute("clat")) {
+                double lat = uidl.getDoubleAttribute("clat");
+                double lon = uidl.getDoubleAttribute("clon");
+                LonLat lonLat = LonLat.create(lon, lat);
+                // expect center point to be in WSG84
+                Projection projection = map.getProjection();
+                lonLat.transform(getProjection(), projection);
+                map.setCenter(lonLat, zoom);
+            }
         }
     }
 
