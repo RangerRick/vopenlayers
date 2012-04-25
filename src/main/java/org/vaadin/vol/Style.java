@@ -96,7 +96,7 @@ public class Style {
         return name;
     }
 
-    private void setProperty(String key, Object value) {
+    public void setProperty(String key, Object value) {
         styleProperty.setProperty(key, value);
     }
 
@@ -174,6 +174,10 @@ public class Style {
     /** Pixel stroke width. Default is 1. */
     public void setStrokeWidth(double w) {
         setProperty("strokeWidth", w);
+    }
+    
+    public void setStrokeWidthByAttribute(String w) {
+        setPropertyByAttribute("strokeWidth", w);
     }
 
     /** Pixel stroke width. */
@@ -400,6 +404,11 @@ public class Style {
     public void setLabel(String label) {
         setProperty("label", label);
     }
+    
+    public void setLabelByAttribute(String label) {
+        setPropertyByAttribute("label", label);
+    }
+
 
     /** The font color for the label, to be provided like CSS. */
     public void setFontColor(String fontColor) {
@@ -563,6 +572,10 @@ public class Style {
 
     private void init() {
         extendCoreStyle("default");
+    }
+
+    public void setContextJs(String js) {
+        setProperty("__VOL_CONTEXT", js);
     }
 
 }

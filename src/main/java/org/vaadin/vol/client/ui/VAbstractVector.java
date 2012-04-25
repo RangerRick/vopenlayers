@@ -92,7 +92,7 @@ public abstract class VAbstractVector extends Widget implements Paintable {
     protected abstract void createOrUpdateVector(UIDL childUIDL,
             ApplicationConnection client);
 
-    private VectorLayer getLayer() {
+    protected VectorLayer getLayer() {
         return ((VVectorLayer) getParent()).getLayer();
     }
 

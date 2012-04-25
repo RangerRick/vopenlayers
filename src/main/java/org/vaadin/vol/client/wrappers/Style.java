@@ -26,7 +26,15 @@ public class Style extends JsObject {
             delete symbolizer['__VOL_INHERIT'];
             $wnd.OpenLayers.Util.applyDefaults(symbolizer, parent);
         }
-         var _style = new $wnd.OpenLayers.Style(symbolizer);
+        var options;
+        if(symbolizer['__VOL_CONTEXT']) {
+            var contextstr = symbolizer['__VOL_CONTEXT'];
+            delete symbolizer['__VOL_CONTEXT'];
+            context = $wnd.eval('(' + contextstr + ')');
+            options = {};
+            options.context = context;
+        }
+         var _style = new $wnd.OpenLayers.Style(symbolizer,options);
          return  _style
     }-*/;
 
