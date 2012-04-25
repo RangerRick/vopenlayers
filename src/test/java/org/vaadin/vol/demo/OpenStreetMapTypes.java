@@ -3,7 +3,6 @@ package org.vaadin.vol.demo;
 import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.OpenStreetMapCycleLayer;
 import org.vaadin.vol.OpenStreetMapLayer;
-import org.vaadin.vol.OpenStreetMapOsmarenderLayer;
 
 import com.vaadin.ui.Component;
 
@@ -29,7 +28,6 @@ public class OpenStreetMapTypes extends AbstractVOLTest {
         // base layers
         map.addLayer(new OpenStreetMapLayer());
         map.addLayer(new OpenStreetMapCycleLayer());
-        map.addLayer(new OpenStreetMapOsmarenderLayer());
 
         map.setSizeFull();
 

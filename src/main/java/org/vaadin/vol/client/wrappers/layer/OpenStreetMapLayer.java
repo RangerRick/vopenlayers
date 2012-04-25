@@ -34,16 +34,4 @@ public class OpenStreetMapLayer extends Layer {
         return new $wnd.OpenLayers.Layer.OSM.CycleMap(displayName,null,options);
     }-*/;
 
-    public native final static OpenStreetMapLayer createOsmarenderMap(
-            String displayName, String projection)
-    /*-{
-        var options = {transitionEffect: 'resize'};
-        if(projection) {
-                options.projection = projection;
-        }
-        
-        if(!displayName) displayName = "OpenStreetMap";
-        return new $wnd.OpenLayers.Layer.OSM.Osmarender(displayName,null,options);
-    }-*/;
-
 }
