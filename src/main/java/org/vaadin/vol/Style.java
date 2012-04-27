@@ -166,6 +166,10 @@ public class Style {
         setProperty("strokeColor", c);
     }
 
+    public void setStrokeColorByAttribute(String c) {
+        setPropertyByAttribute("strokeColor", c);
+    }
+
     /** Hex stroke html color. */
     public String getStrokeColor() {
         return (String) getProperty("strokeColor");
