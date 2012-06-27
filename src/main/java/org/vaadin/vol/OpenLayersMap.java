@@ -1,5 +1,6 @@
 package org.vaadin.vol;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,6 +16,8 @@ import com.vaadin.event.Action;
 import com.vaadin.terminal.KeyMapper;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
+import com.vaadin.terminal.gwt.client.ApplicationConnection;
+import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
 
@@ -24,464 +27,529 @@ import com.vaadin.ui.Component;
 @SuppressWarnings("serial")
 @com.vaadin.ui.ClientWidget(org.vaadin.vol.client.ui.VOpenLayersMap.class)
 public class OpenLayersMap extends AbstractComponentContainer implements
-        Action.Container {
+		Action.Container {
 
-    private final Set<Action.Handler> actionHandlers = new LinkedHashSet<Action.Handler>();
-    private final KeyMapper actionMapper = new KeyMapper();
-    private List<Component> layers = new LinkedList<Component>();
-    private double centerLon = 0;
-    private double centerLat = 0;
-    private int zoom = 3;
-    private boolean partialRepaint;
+	private final Set<Action.Handler> actionHandlers = new LinkedHashSet<Action.Handler>();
+	private final KeyMapper actionMapper = new KeyMapper();
+	private List<Component> layers = new LinkedList<Component>();
+	private double centerLon = 0;
+	private double centerLat = 0;
+	private int zoom = 3;
+	private boolean partialRepaint;
 
-    private HashSet<Control> controls = new HashSet<Control>(Arrays.asList(
-            Control.ArgParser, Control.Navigation, Control.TouchNavigation,
-            Control.Attribution));
+	private HashSet<Control> controls = new HashSet<Control>(Arrays.asList(
+			Control.ArgParser, Control.Navigation, Control.TouchNavigation,
+			Control.Attribution));
 
-    public OpenLayersMap() {
-        this(false);
-    }
+	public OpenLayersMap() {
+		this(false);
+	}
 
-    public OpenLayersMap(boolean skipControls) {
-        setWidth("500px");
-        setHeight("350px");
-        if (!skipControls) {
-            addControl(Control.PanZoom);
-            addControl(Control.LayerSwitcher);
-        }
-    }
+	public OpenLayersMap(boolean skipControls) {
+		setWidth("500px");
+		setHeight("350px");
+		if (!skipControls) {
+			addControl(Control.PanZoom);
+			addControl(Control.LayerSwitcher);
+		}
+	}
 
-    public void addControl(Control control) {
-        controls.add(control);
-        setDirty("controls");
-    }
+	public void addControl(Control control) {
+		controls.add(control);
+		setDirty("controls");
+	}
 
-    public void removeControl(Control control) {
-        controls.remove(control);
-        setDirty("controls");
-    }
+	public void removeControl(Control control) {
+		controls.remove(control);
+		setDirty("controls");
+	}
 
-    /**
-     * @return set of current controls used by this map. Note that returns
-     *         reference to internal data structure. If you modify the set
-     *         directly, call requestRepaint for the map to force repaint.
-     */
-    public Set<Control> getControls() {
-        return controls;
-    }
+	/**
+	 * @return set of current controls used by this map. Note that returns
+	 *         reference to internal data structure. If you modify the set
+	 *         directly, call requestRepaint for the map to force repaint.
+	 */
+	public Set<Control> getControls() {
+		return controls;
+	}
 
-    /**
-     * A typed alias for {@link #addComponent(Component)}.
-     * 
-     * @param layer
-     */
-    public void addLayer(Layer layer) {
-        addComponent(layer);
-    }
+	/**
+	 * A typed alias for {@link #addComponent(Component)}.
+	 * 
+	 * @param layer
+	 */
+	public void addLayer(Layer layer) {
+		addComponent(layer);
+	}
 
-    @Override
-    public void removeComponent(Component c) {
-        super.removeComponent(c);
-        layers.remove(c);
-        setDirty("components");
-    }
+	@Override
+	public void removeComponent(Component c) {
+		super.removeComponent(c);
+		layers.remove(c);
+		setDirty("components");
+	}
 
-    /**
-     * Adds component into the OpenLayers Map. Note that the map only supports
-     * certain types of Components.
-     * <p>
-     * Developers are encouraged to use better typed methods instead:
-     * 
-     * @see #addLayer(Layer)
-     * @see #addPopup(Popup)
-     * 
-     * @see com.vaadin.ui.AbstractComponentContainer#addComponent(com.vaadin.ui.Component)
-     */
-    @Override
-    public void addComponent(Component c) {
-        setDirty("components");
-        super.addComponent(c);
-        layers.remove(c);
-        layers.add(c);
-    }
+	/**
+	 * Adds component into the OpenLayers Map. Note that the map only supports
+	 * certain types of Components.
+	 * <p>
+	 * Developers are encouraged to use better typed methods instead:
+	 * 
+	 * @see #addLayer(Layer)
+	 * @see #addPopup(Popup)
+	 * 
+	 * @see com.vaadin.ui.AbstractComponentContainer#addComponent(com.vaadin.ui.Component)
+	 */
+	@Override
+	public void addComponent(Component c) {
+		setDirty("components");
+		super.addComponent(c);
+		layers.remove(c);
+		layers.add(c);
+	}
 
-    public void setCenter(double lon, double lat) {
-        centerLat = lat;
-        centerLon = lon;
-        setDirty("clat");
-    }
+	public void setCenter(double lon, double lat) {
+		centerLat = lat;
+		centerLon = lon;
+		setDirty("clat");
+	}
 
-    /**
-     * Set the center of map to the center of a bounds
-     * 
-     */
-    public void setCenter(Bounds bounds) {
-        centerLat = (bounds.getBottom() + bounds.getTop()) / 2.0;
-        centerLon = (bounds.getRight() + bounds.getLeft()) / 2.0;
-        setDirty("clat");
-    }
+	/**
+	 * Set the center of map to the center of a bounds
+	 * 
+	 */
+	public void setCenter(Bounds bounds) {
+		centerLat = (bounds.getBottom() + bounds.getTop()) / 2.0;
+		centerLon = (bounds.getRight() + bounds.getLeft()) / 2.0;
+		setDirty("clat");
+	}
 
-    public void setZoom(int zoomLevel) {
-        zoom = zoomLevel;
-        setDirty("zoom");
-    }
+	public void setZoom(int zoomLevel) {
+		zoom = zoomLevel;
+		setDirty("zoom");
+	}
 
-    public int getZoom() {
-        return zoom;
-    }
+	public int getZoom() {
+		return zoom;
+	}
 
-    private HashSet<String> dirtyFields = new HashSet<String>();
-    private boolean fullRepaint = true;
-    private double top;
-    private double right;
-    private double bottom;
-    private double left;
+	private HashSet<String> dirtyFields = new HashSet<String>();
+	private boolean fullRepaint = true;
+	private double top;
+	private double right;
+	private double bottom;
+	private double left;
 
-    private String jsMapOptions;
-    private Bounds zoomToExtent;
-    private Bounds restrictedExtend;
-    private String projection;
+	private String jsMapOptions;
+	private Bounds zoomToExtent;
+	private Bounds restrictedExtend;
+	private String projection;
 
-    private void setDirty(String fieldName) {
-        if (!fullRepaint) {
-            dirtyFields.add(fieldName);
-            partialPaint();
-        }
-    }
+	private void setDirty(String fieldName) {
+		if (!fullRepaint) {
+			dirtyFields.add(fieldName);
+			partialPaint();
+		}
+	}
 
-    private boolean isDirty(String fieldName) {
-        /*
-         * If full repaint if request repaint called directly or painted without
-         * repaint.
-         */
-        if (fullRepaint || dirtyFields.isEmpty()) {
-            return true;
-        } else {
-            return dirtyFields.contains(fieldName);
-        }
-    }
+	private boolean isDirty(String fieldName) {
+		/*
+		 * If full repaint if request repaint called directly or painted without
+		 * repaint.
+		 */
+		if (fullRepaint || dirtyFields.isEmpty()) {
+			return true;
+		} else {
+			return dirtyFields.contains(fieldName);
+		}
+	}
 
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        super.paintContent(target);
-        if (isDirty("projection") && projection != null) {
-            target.addAttribute("projection", projection);
-        }
-        if (isDirty("jsMapOptions") && jsMapOptions != null) {
-            target.addAttribute("jsMapOptions", jsMapOptions);
-        }
+	@Override
+	public void paintContent(PaintTarget target) throws PaintException {
+		super.paintContent(target);
+		if (isDirty("projection") && projection != null) {
+			target.addAttribute("projection", projection);
+		}
+		if (isDirty("jsMapOptions") && jsMapOptions != null) {
+			target.addAttribute("jsMapOptions", jsMapOptions);
+		}
 
-        if (isDirty("restrictedExtend") && restrictedExtend != null) {
-            restrictedExtend.paint("re", target);
-        }
+		if (isDirty("restrictedExtend") && restrictedExtend != null) {
+			restrictedExtend.paint("re", target);
+		}
 
-        if (isDirty("zoomToExtent") && zoomToExtent != null) {
-            zoomToExtent.paint("ze", target);
-            zoomToExtent = null;
-        } else {
-            if (isDirty("clat")) {
-                target.addAttribute("clon", centerLon);
-                target.addAttribute("clat", centerLat);
-            }
-            if (isDirty("zoom")) {
-                target.addAttribute("zoom", zoom);
-            }
-        }
-        if (isDirty("components")) {
-            target.addAttribute("componentsPainted", true);
-            for (Component component : layers) {
-                component.paint(target);
-            }
-        }
-        if (isDirty("controls")) {
-            target.addAttribute("controls", controls.toArray());
-        }
+		if (isDirty("zoomToExtent") && zoomToExtent != null) {
+			zoomToExtent.paint("ze", target);
+			zoomToExtent = null;
+		} else {
+			if (isDirty("clat")) {
+				target.addAttribute("clon", centerLon);
+				target.addAttribute("clat", centerLat);
+			}
+			if (isDirty("zoom")) {
+				target.addAttribute("zoom", zoom);
+			}
+		}
+		if (isDirty("components")) {
+			target.addAttribute("componentsPainted", true);
+			for (Component component : layers) {
+				component.paint(target);
+			}
+		}
+		if (isDirty("controls")) {
+			target.addAttribute("controls", controls.toArray());
+		}
 
-        paintActions(target, findAndPaintBodyActions(target));
+		paintActions(target, findAndPaintBodyActions(target));
 
-        clearPartialPaintFlags();
-        fullRepaint = false;
-    }
+		clearPartialPaintFlags();
+		fullRepaint = false;
+	}
 
-    /**
-     * Receive and handle events and other variable changes from the client.
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void changeVariables(Object source, Map<String, Object> variables) {
-        super.changeVariables(source, variables);
-        if (variables.containsKey("top")) {
-            updateExtent(variables);
-        }
+	/**
+	 * Receive and handle events and other variable changes from the client.
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void changeVariables(Object source, Map<String, Object> variables) {
+		super.changeVariables(source, variables);
+		if (variables.containsKey("top")) {
+			updateExtent(variables);
+		}
 
-        // Actions
-        if (variables.containsKey("action")) {
-            String string = (String) variables.get("action");
-            final StringTokenizer st = new StringTokenizer(string, ",");
-            if (st.countTokens() == 2) {
-                final String coords = st.nextToken();
-                String[] split = coords.split(":");
-                Point point = new Point(Double.parseDouble(split[0]),
-                        Double.parseDouble(split[1]));
-                final Action action = (Action) actionMapper.get(st.nextToken());
+		// Actions
+		if (variables.containsKey("action")) {
+			String string = (String) variables.get("action");
+			final StringTokenizer st = new StringTokenizer(string, ",");
+			if (st.countTokens() == 2) {
+				final String coords = st.nextToken();
+				String[] split = coords.split(":");
+				Point point = new Point(Double.parseDouble(split[0]),
+						Double.parseDouble(split[1]));
+				final Action action = (Action) actionMapper.get(st.nextToken());
 
-                if (action != null && actionHandlers != null) {
-                    for (Action.Handler ah : actionHandlers) {
-                        ah.handleAction(action, this, point);
-                    }
-                }
-            }
-        }
-    }
+				if (action != null && actionHandlers != null) {
+					for (Action.Handler ah : actionHandlers) {
+						ah.handleAction(action, this, point);
+					}
+				}
+			}
+		}
 
-    protected void updateExtent(Map<String, Object> variables) {
-        int zoom = (Integer) variables.get("zoom");
-        this.zoom = zoom;
-        top = (Double) variables.get("top");
-        right = (Double) variables.get("right");
-        bottom = (Double) variables.get("bottom");
-        left = (Double) variables.get("left");
-    }
+		if (variables.containsKey("clicked")) {
+			double lon = (Double) variables.get("lon");
+			double lat = (Double) variables.get("lat");
+			int x = (Integer) variables.get("x");
+			int y = (Integer) variables.get("y");
+			int width = (Integer) variables.get("width");
+			int height = (Integer) variables.get("height");
+			PointInformation pointInformation = new PointInformation();
+			pointInformation.setLon(lon);
+			pointInformation.setLat(lat);
+			pointInformation.setX(x);
+			pointInformation.setY(y);
+			pointInformation.setWidth(width);
+			pointInformation.setHeight(height);
+			pointInformation.setBounds(getExtend());
+			mapClicked(pointInformation);
+		}
+	}
 
-    /**
-     * Note, this does not work until the map is rendered.
-     * 
-     * @return
-     */
-    public Bounds getExtend() {
-        Bounds bounds = new Bounds();
-        bounds.setTop(top);
-        bounds.setLeft(left);
-        bounds.setRight(right);
-        bounds.setBottom(bottom);
-        return bounds;
-    }
+	protected void updateExtent(Map<String, Object> variables) {
+		int zoom = (Integer) variables.get("zoom");
+		this.zoom = zoom;
+		top = (Double) variables.get("top");
+		right = (Double) variables.get("right");
+		bottom = (Double) variables.get("bottom");
+		left = (Double) variables.get("left");
+	}
 
-    public void replaceComponent(Component oldComponent, Component newComponent) {
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * Note, this does not work until the map is rendered.
+	 * 
+	 * @return
+	 */
+	public Bounds getExtend() {
+		Bounds bounds = new Bounds();
+		bounds.setTop(top);
+		bounds.setLeft(left);
+		bounds.setRight(right);
+		bounds.setBottom(bottom);
+		return bounds;
+	}
 
-    public Iterator<Component> getComponentIterator() {
-        return new LinkedList<Component>(layers).iterator();
-    }
+	public void replaceComponent(Component oldComponent, Component newComponent) {
+		throw new UnsupportedOperationException();
+	}
 
-    public void addPopup(Popup popup) {
-        addComponent(popup);
-    }
+	public Iterator<Component> getComponentIterator() {
+		return new LinkedList<Component>(layers).iterator();
+	}
 
-    @Override
-    public void requestRepaint() {
-        if (!partialRepaint) {
-            clearPartialPaintFlags();
-            fullRepaint = true;
-        }
-        super.requestRepaint();
-    }
+	public void addPopup(Popup popup) {
+		addComponent(popup);
+	}
 
-    private void partialPaint() {
-        partialRepaint = true;
-        try {
-            requestRepaint();
-        } finally {
-            partialRepaint = false;
-        }
-    }
+	@Override
+	public void requestRepaint() {
+		if (!partialRepaint) {
+			clearPartialPaintFlags();
+			fullRepaint = true;
+		}
+		super.requestRepaint();
+	}
 
-    private void clearPartialPaintFlags() {
-        dirtyFields.clear();
-    }
+	private void partialPaint() {
+		partialRepaint = true;
+		try {
+			requestRepaint();
+		} finally {
+			partialRepaint = false;
+		}
+	}
 
-    /**
-     * Sets the js snippet that will be evaluated as maps custom options. See
-     * OpenLayers JS api for more details.
-     * <p>
-     * Note, that the string will be executed as javascript on the client side.
-     * VALIDATE content in case you accept input from the client.
-     * <p>
-     * Also note that init options only take effect if they are set before the
-     * map gets rendered.
-     * 
-     * @param jsMapOptions
-     */
-    public void setJsMapOptions(String jsMapOptions) {
-        this.jsMapOptions = jsMapOptions;
-    }
+	private void clearPartialPaintFlags() {
+		dirtyFields.clear();
+	}
 
-    public String getJsMapOptions() {
-        return jsMapOptions;
-    }
+	/**
+	 * Sets the js snippet that will be evaluated as maps custom options. See
+	 * OpenLayers JS api for more details.
+	 * <p>
+	 * Note, that the string will be executed as javascript on the client side.
+	 * VALIDATE content in case you accept input from the client.
+	 * <p>
+	 * Also note that init options only take effect if they are set before the
+	 * map gets rendered.
+	 * 
+	 * @param jsMapOptions
+	 */
+	public void setJsMapOptions(String jsMapOptions) {
+		this.jsMapOptions = jsMapOptions;
+	}
 
-    /**
-     * Zooms the map to display given bounds.
-     * 
-     * <p>
-     * Note that this method overrides possibly set center and zoom levels.
-     * 
-     * @param bounds
-     */
-    public void zoomToExtent(Bounds bounds) {
-        zoomToExtent = bounds;
-        // also save center point for refreshes
-        centerLon = (zoomToExtent.getMinLon() + zoomToExtent.getMaxLon()) / 2;
-        centerLat = (zoomToExtent.getMinLat() + zoomToExtent.getMaxLat()) / 2;
-        setDirty("zoomToExtent");
-    }
+	public String getJsMapOptions() {
+		return jsMapOptions;
+	}
 
-    /**
-     * Sets the area within the panning and zooming is restricted. With this
-     * method developer can "limit" the area that is shown for the end user.
-     * <p>
-     * Note, that due the fact that open layers supports just zoom levels, the
-     * displayed area might be slightly larger if the size of the component
-     * don't match with the size of restricted area on minimum zoom level. If
-     * area outside restricted extent may not be displayed at all, one must
-     * ensure about this by either using a base layer that only contains the
-     * desired area or by "masking" out the undesired area with e.g. a vector
-     * layer.
-     * 
-     * @param bounds
-     */
-    public void setRestrictedExtent(Bounds bounds) {
-        restrictedExtend = bounds;
-        setDirty("restrictedExtend");
-    }
+	/**
+	 * Zooms the map to display given bounds.
+	 * 
+	 * <p>
+	 * Note that this method overrides possibly set center and zoom levels.
+	 * 
+	 * @param bounds
+	 */
+	public void zoomToExtent(Bounds bounds) {
+		zoomToExtent = bounds;
+		// also save center point for refreshes
+		centerLon = (zoomToExtent.getMinLon() + zoomToExtent.getMaxLon()) / 2;
+		centerLat = (zoomToExtent.getMinLat() + zoomToExtent.getMaxLat()) / 2;
+		setDirty("zoomToExtent");
+	}
 
-    /**
-     * Sets the projection which is used by the user of this map. E.g. values
-     * passed to API like {@link #setCenter(double, double)} should be in the
-     * same projection.
-     * <p>
-     * Note that resetting projection on already rendered map may cause
-     * unexpected results.
-     * 
-     * @param projection
-     */
-    public void setApiProjection(String projection) {
-        this.projection = projection;
-        setDirty("projection");
-    }
+	/**
+	 * Sets the area within the panning and zooming is restricted. With this
+	 * method developer can "limit" the area that is shown for the end user.
+	 * <p>
+	 * Note, that due the fact that open layers supports just zoom levels, the
+	 * displayed area might be slightly larger if the size of the component
+	 * don't match with the size of restricted area on minimum zoom level. If
+	 * area outside restricted extent may not be displayed at all, one must
+	 * ensure about this by either using a base layer that only contains the
+	 * desired area or by "masking" out the undesired area with e.g. a vector
+	 * layer.
+	 * 
+	 * @param bounds
+	 */
+	public void setRestrictedExtent(Bounds bounds) {
+		restrictedExtend = bounds;
+		setDirty("restrictedExtend");
+	}
 
-    /**
-     * Gets the projection which is used by the user of this map. E.g. values
-     * passed to API like {@link #setCenter(double, double)} should be in the
-     * same projection.
-     * 
-     * @return the projection used, defaults to EPSG:4326
-     */
-    public String getApiProjection() {
-        return projection;
-    }
+	/**
+	 * Sets the projection which is used by the user of this map. E.g. values
+	 * passed to API like {@link #setCenter(double, double)} should be in the
+	 * same projection.
+	 * <p>
+	 * Note that resetting projection on already rendered map may cause
+	 * unexpected results.
+	 * 
+	 * @param projection
+	 */
+	public void setApiProjection(String projection) {
+		this.projection = projection;
+		setDirty("projection");
+	}
 
-    /**
-     * Calculates an array of resolutions for use in OpenLayers map creation
-     */
-    protected double[] calculateResolutions(Bounds bounds, int tileSize,
-            int zoomLevels) {
+	/**
+	 * Gets the projection which is used by the user of this map. E.g. values
+	 * passed to API like {@link #setCenter(double, double)} should be in the
+	 * same projection.
+	 * 
+	 * @return the projection used, defaults to EPSG:4326
+	 */
+	public String getApiProjection() {
+		return projection;
+	}
 
-        final double extentWidth = bounds.getRight() - bounds.getLeft();
-        final double extentHeight = bounds.getTop() - bounds.getBottom();
+	/**
+	 * Calculates an array of resolutions for use in OpenLayers map creation
+	 */
+	protected double[] calculateResolutions(Bounds bounds, int tileSize,
+			int zoomLevels) {
 
-        double resX = extentWidth / tileSize;
-        double resY = extentHeight / tileSize;
+		final double extentWidth = bounds.getRight() - bounds.getLeft();
+		final double extentHeight = bounds.getTop() - bounds.getBottom();
 
-        if (resX <= resY) {
-            // use one tile wide by N tiles high
-            int tilesHigh = (int) Math.round(resY / resX);
-            // previous resY was assuming 1 tile high, recompute with the actual
-            // number of tiles
-            // high
-            resY = resY / tilesHigh;
-        } else {
-            // use one tile high by N tiles wide
-            int tilesWide = (int) Math.round(resX / resY);
-            // previous resX was assuming 1 tile wide, recompute with the actual
-            // number of tiles
-            // wide
-            resX = resX / tilesWide;
-        }
+		double resX = extentWidth / tileSize;
+		double resY = extentHeight / tileSize;
 
-        // the maximum of resX and resY is the one that adjusts better
-        final double res = Math.max(resX, resY);
+		if (resX <= resY) {
+			// use one tile wide by N tiles high
+			int tilesHigh = (int) Math.round(resY / resX);
+			// previous resY was assuming 1 tile high, recompute with the actual
+			// number of tiles
+			// high
+			resY = resY / tilesHigh;
+		} else {
+			// use one tile high by N tiles wide
+			int tilesWide = (int) Math.round(resX / resY);
+			// previous resX was assuming 1 tile wide, recompute with the actual
+			// number of tiles
+			// wide
+			resX = resX / tilesWide;
+		}
 
-        double[] resolutions = new double[zoomLevels];
-        resolutions[0] = res;
+		// the maximum of resX and resY is the one that adjusts better
+		final double res = Math.max(resX, resY);
 
-        for (int i = 1; i < zoomLevels; i++) {
-            resolutions[i] = resolutions[i - 1] / 2;
-        }
+		double[] resolutions = new double[zoomLevels];
+		resolutions[0] = res;
 
-        return resolutions;
-    }
+		for (int i = 1; i < zoomLevels; i++) {
+			resolutions[i] = resolutions[i - 1] / 2;
+		}
 
-    private void paintActions(PaintTarget target, final Set<Action> actionSet)
-            throws PaintException {
-        if (!actionSet.isEmpty()) {
-            target.addVariable(this, "action", "");
-            target.startTag("actions");
-            for (Action a : actionSet) {
-                target.startTag("action");
-                if (a.getCaption() != null) {
-                    target.addAttribute("caption", a.getCaption());
-                }
-                if (a.getIcon() != null) {
-                    target.addAttribute("icon", a.getIcon());
-                }
-                target.addAttribute("key", actionMapper.key(a));
-                target.endTag("action");
-            }
-            target.endTag("actions");
-        }
-    }
+		return resolutions;
+	}
 
-    private Set<Action> findAndPaintBodyActions(PaintTarget target) {
-        Set<Action> actionSet = new LinkedHashSet<Action>();
-        if (actionHandlers != null) {
-            final ArrayList<String> keys = new ArrayList<String>();
-            for (Action.Handler ah : actionHandlers) {
-                // Getting actions for the null item, which in this case means
-                // the body item
-                final Action[] actions = ah.getActions(this, this);
-                if (actions != null) {
-                    for (Action action : actions) {
-                        actionSet.add(action);
-                        keys.add(actionMapper.key(action));
-                    }
-                }
-            }
-            target.addAttribute("alb", keys.toArray());
-        }
-        return actionSet;
-    }
+	private void paintActions(PaintTarget target, final Set<Action> actionSet)
+			throws PaintException {
+		if (!actionSet.isEmpty()) {
+			target.addVariable(this, "action", "");
+			target.startTag("actions");
+			for (Action a : actionSet) {
+				target.startTag("action");
+				if (a.getCaption() != null) {
+					target.addAttribute("caption", a.getCaption());
+				}
+				if (a.getIcon() != null) {
+					target.addAttribute("icon", a.getIcon());
+				}
+				target.addAttribute("key", actionMapper.key(a));
+				target.endTag("action");
+			}
+			target.endTag("actions");
+		}
+	}
 
-    /**
-     * Registers a new action handler for this container
-     * 
-     * @see com.vaadin.event.Action.Container#addActionHandler(Action.Handler)
-     */
-    public void addActionHandler(Action.Handler actionHandler) {
-        if (actionHandler != null) {
-            if (!actionHandlers.contains(actionHandler)) {
-                actionHandlers.add(actionHandler);
-                requestRepaint();
-            }
-        }
-    }
+	private Set<Action> findAndPaintBodyActions(PaintTarget target) {
+		Set<Action> actionSet = new LinkedHashSet<Action>();
+		if (actionHandlers != null) {
+			final ArrayList<String> keys = new ArrayList<String>();
+			for (Action.Handler ah : actionHandlers) {
+				// Getting actions for the null item, which in this case means
+				// the body item
+				final Action[] actions = ah.getActions(this, this);
+				if (actions != null) {
+					for (Action action : actions) {
+						actionSet.add(action);
+						keys.add(actionMapper.key(action));
+					}
+				}
+			}
+			target.addAttribute("alb", keys.toArray());
+		}
+		return actionSet;
+	}
 
-    /**
-     * Removes a previously registered action handler for the contents of this
-     * container.
-     * 
-     * @see com.vaadin.event.Action.Container#removeActionHandler(Action.Handler)
-     */
-    public void removeActionHandler(Action.Handler actionHandler) {
-        if (actionHandlers != null && actionHandlers.contains(actionHandler)) {
-            actionHandlers.remove(actionHandler);
-            requestRepaint();
-        }
-    }
+	/**
+	 * Registers a new action handler for this container
+	 * 
+	 * @see com.vaadin.event.Action.Container#addActionHandler(Action.Handler)
+	 */
+	public void addActionHandler(Action.Handler actionHandler) {
+		if (actionHandler != null) {
+			if (!actionHandlers.contains(actionHandler)) {
+				actionHandlers.add(actionHandler);
+				requestRepaint();
+			}
+		}
+	}
 
-    public void removeLayer(Layer layer) {
-        removeComponent(layer);
-    }
+	/**
+	 * Removes a previously registered action handler for the contents of this
+	 * container.
+	 * 
+	 * @see com.vaadin.event.Action.Container#removeActionHandler(Action.Handler)
+	 */
+	public void removeActionHandler(Action.Handler actionHandler) {
+		if (actionHandlers != null && actionHandlers.contains(actionHandler)) {
+			actionHandlers.remove(actionHandler);
+			requestRepaint();
+		}
+	}
+
+	public void removeLayer(Layer layer) {
+		removeComponent(layer);
+	}
+
+	//STARTING FROM HERE !!!
+	
+	private void mapClicked(PointInformation pointInfo) {
+		MapClickEvent mapClickEvent = new MapClickEvent(this, pointInfo);
+		fireEvent(mapClickEvent);
+	}
+
+	public interface MapClickListener {
+
+		public final Method method = ReflectTools.findMethod(
+				MapClickListener.class, "mapClicked", MapClickEvent.class);
+
+		public void mapClicked(MapClickEvent event);
+
+	}
+
+	public void addListener(MapClickListener listener) {
+		addListener("click", MapClickEvent.class, listener, MapClickListener.method);
+		//addListener(MapClickEvent.class, listener, MapClickListener.method);
+	}
+
+	public void removeListener(MapClickListener listener) {
+		removeListener("click", MapClickEvent.class, null);
+		//removeListener(MapClickEvent.class, listener, MapClickListener.method);
+	}
+
+	public class MapClickEvent extends Event {
+
+		private PointInformation pointInfo;
+
+		public MapClickEvent(Component source, PointInformation pointInfo) {
+			super(source);
+			this.setPointInfo(pointInfo);
+
+		}
+
+		private void setPointInfo(PointInformation pointInfo) {
+			this.pointInfo = pointInfo;
+
+		}
+
+		public PointInformation getPointInfo() {
+			return pointInfo;
+		}
+	}
+
 }

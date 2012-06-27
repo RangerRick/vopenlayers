@@ -12,7 +12,7 @@ import com.vaadin.ui.Window;
 
 public abstract class AbstractVOLTest extends Window {
 
-    private VerticalLayout content;
+    protected VerticalLayout content;
 
     public AbstractVOLTest() {
         content = new VerticalLayout();
@@ -45,7 +45,7 @@ public abstract class AbstractVOLTest extends Window {
             MarkerAddingAndRemoving.class, OpenStreetMapTypes.class,
             StyleMapAddUniqueValueRules.class,
             UsHighWaysOnTopOfSpherialMercator.class, VectorAnimation.class,
-            WellKnownTextTest.class };
+            WellKnownTextTest.class, StyledWmsWithOpacityAndPointInfo.class };
     static Collection<Class<? extends AbstractVOLTest>> suitableOnlineDemos = Collections
             .synchronizedSet(new HashSet<Class<? extends AbstractVOLTest>>(
                     Arrays.asList(a)));

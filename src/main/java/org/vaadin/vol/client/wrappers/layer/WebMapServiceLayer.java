@@ -19,5 +19,4 @@ public class WebMapServiceLayer extends Layer {
 		options.opacity = opacity;
 		return new $wnd.OpenLayers.Layer.WMS(display, url, params, options);
 	}-*/;
-
 }
