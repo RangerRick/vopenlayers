@@ -179,7 +179,7 @@ public class Style {
     public void setStrokeWidth(double w) {
         setProperty("strokeWidth", w);
     }
-    
+
     public void setStrokeWidthByAttribute(String w) {
         setPropertyByAttribute("strokeWidth", w);
     }
@@ -408,11 +408,10 @@ public class Style {
     public void setLabel(String label) {
         setProperty("label", label);
     }
-    
+
     public void setLabelByAttribute(String label) {
         setPropertyByAttribute("label", label);
     }
-
 
     /** The font color for the label, to be provided like CSS. */
     public void setFontColor(String fontColor) {
@@ -456,6 +455,38 @@ public class Style {
      */
     public String getLabelAlign() {
         return (String) getProperty("labelAlign");
+    }
+
+    public void setLabelXOffset(int offset) {
+        setProperty("labelXOffset", offset);
+    }
+
+    public Integer getLabelXOffset() {
+        return (Integer) getProperty("labelXOffset");
+    }
+
+    public void setLabelYOffset(int offset) {
+        setProperty("labelYOffset", offset);
+    }
+
+    public Integer getLabelYOffset() {
+        return (Integer) getProperty("labelYOffset");
+    }
+
+    public void setLabelOutlineColor(String color) {
+        setProperty("labelOutlineColor", color);
+    }
+
+    public String getLabelOutlineColor() {
+        return (String) getProperty("labelOutlineColor");
+    }
+    
+    public void setLabelOutlineWidth(int width) {
+        setProperty("labelOutlineWidth", width);
+    }
+    
+    public Integer getLabelOutlineWidth(){
+        return (Integer) getProperty("labelOutlineWidth");
     }
 
     /** Stroke linecap. */
