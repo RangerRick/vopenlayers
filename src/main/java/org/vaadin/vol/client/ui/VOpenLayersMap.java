@@ -164,6 +164,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
             extentChangeListener = new GwtOlHandler() {
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
+                    
                     int zoom = map.getZoom();
                     client.updateVariable(paintableId, "zoom", zoom, false);
                     Bounds extent = map.getExtent();
@@ -184,7 +185,6 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
                 }
             };
             getMap().registerEventHandler("moveend", extentChangeListener);
-            getMap().registerEventHandler("zoomed", extentChangeListener);
 
             /*
              * Update extent on first paint.
