@@ -12,6 +12,8 @@ import org.vaadin.vol.client.wrappers.popup.PopupFramed;
 import org.vaadin.vol.client.wrappers.popup.PopupFramedCloud;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
@@ -110,7 +112,12 @@ public class VPopup extends Widget implements Paintable {
             break;
         }
 
-        getMap().addPopup(popup);
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            public void execute() {
+                getMap().addPopup(popup);
+            }
+        });
+
     }
 
     private Map getMap() {
