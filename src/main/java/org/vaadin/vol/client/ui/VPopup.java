@@ -5,6 +5,7 @@ import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Marker;
 import org.vaadin.vol.client.wrappers.Projection;
+import org.vaadin.vol.client.wrappers.Size;
 import org.vaadin.vol.client.wrappers.popup.Popup;
 import org.vaadin.vol.client.wrappers.popup.PopupAnchored;
 import org.vaadin.vol.client.wrappers.popup.PopupAnchoredBubble;
@@ -15,6 +16,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
@@ -30,14 +32,12 @@ public class VPopup extends Widget implements Paintable {
     private GwtOlHandler closeEventHandler = new GwtOlHandler() {
         @SuppressWarnings("rawtypes")
         public void onEvent(JsArray arguments) {
-            if (client.hasEventListeners(VPopup.this, "close")) {
-                client.updateVariable(client.getPid(VPopup.this), "close", "",
-                        true);
-            }
             popup.hide();
+            client.updateVariable(client.getPid(VPopup.this), "close", "", true);
         }
     };
     private ApplicationConnection client;
+    private Paintable paintable;
 
     public VPopup() {
         setElement(Document.get().createDivElement());
@@ -50,7 +50,7 @@ public class VPopup extends Widget implements Paintable {
      * com.vaadin.terminal.gwt.client.Paintable#updateFromUIDL(com.vaadin.terminal
      * .gwt.client.UIDL, com.vaadin.terminal.gwt.client.ApplicationConnection)
      */
-    public void updateFromUIDL(UIDL childUIDL,
+    public void updateFromUIDL(final UIDL childUIDL,
             final ApplicationConnection client) {
         if (client.updateComponent(this, childUIDL, false)) {
             return;
@@ -72,7 +72,9 @@ public class VPopup extends Widget implements Paintable {
         Projection projection2 = getMap().getProjection();
         point.transform(projection, projection2);
 
-        final String content = childUIDL.getStringAttribute("content");
+        paintable = client.getPaintable(childUIDL.getChildUIDL(0));
+
+        String content = "Loading...";
 
         PopupStyle style = PopupStyle.valueOf(childUIDL
                 .getStringAttribute("style"));
@@ -88,33 +90,47 @@ public class VPopup extends Widget implements Paintable {
             }
         }
 
+        boolean closable = childUIDL.getBooleanAttribute("closable");
+
+        final String pid = childUIDL.getId() + "popup";
         switch (style) {
         case ANCHORED:
-            popup = PopupAnchored.create(point, null, content, anchor.cast(),
-                    true, closeEventHandler);
+            popup = PopupAnchored.create(pid, point, null, content, anchor,
+                    closable, closeEventHandler);
             break;
         case ANCHORED_BUBBLE:
-            popup = PopupAnchoredBubble.create(point, null, content,
-                    anchor.cast(), true, closeEventHandler);
+            popup = PopupAnchoredBubble.create(pid, point, null, content,
+                    anchor, closable, closeEventHandler);
             break;
         case FRAMED:
-            popup = PopupFramed.create(point, null, content, anchor.cast(),
-                    true, closeEventHandler);
+            popup = PopupFramed.create(pid, point, null, content, anchor,
+                    closable, closeEventHandler);
             break;
         case FRAMED_CLOUD:
-            popup = PopupFramedCloud.create(point, null, content,
-                    anchor.cast(), true, closeEventHandler);
+            popup = PopupFramedCloud.create(pid, point, null, content, anchor,
+                    closable, closeEventHandler);
             break;
 
         case DEFAULT:
         default:
-            popup = Popup.create(point, null, content, true, closeEventHandler);
+            popup = Popup.create(pid, point, null, content, closable,
+                    closeEventHandler);
             break;
         }
 
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
             public void execute() {
                 getMap().addPopup(popup);
+                Element elementById = Document.get().getElementById(
+                        pid + "_contentDiv");
+                elementById.setInnerHTML("");
+                VOpenLayersMap parent2 = (VOpenLayersMap) getParent()
+                        .getParent();
+                parent2.attachSpecialWidget((Widget) paintable, elementById);
+                paintable.updateFromUIDL(childUIDL.getChildUIDL(0), client);
+                int offsetHeight = ((Widget) paintable).getOffsetHeight();
+                int offsetWidth = ((Widget) paintable).getOffsetWidth();
+                popup.setSize(Size.create(offsetWidth, offsetHeight));
             }
         });
 
@@ -131,7 +147,9 @@ public class VPopup extends Widget implements Paintable {
     @Override
     protected void onDetach() {
         super.onDetach();
+        ((Widget) paintable).removeFromParent();
         popup.hide();
+        client.unregisterPaintable(paintable);
     }
 
 }

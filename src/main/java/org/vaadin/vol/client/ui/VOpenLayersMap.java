@@ -17,6 +17,7 @@ import org.vaadin.vol.client.wrappers.control.Control;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -411,7 +412,8 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
     }
 
     public boolean hasChildComponent(Widget component) {
-        return fakePaintables.getWidgetIndex(component) != -1;
+        return fakePaintables.getWidgetIndex(component) != -1
+                || getChildren().contains(component);
     }
 
     public void updateCaption(Paintable component, UIDL uidl) {
@@ -425,8 +427,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
     }
 
     public RenderSpace getAllocatedSpace(Widget child) {
-        // TODO Auto-generated method stub
-        return null;
+        return new RenderSpace(0, 0, false);
     }
 
     public Map getMap() {
@@ -446,5 +447,10 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
      */
     public void setProjection(Projection projection) {
         serverSideProjection = projection;
+    }
+
+    public void attachSpecialWidget(Widget paintable,
+            com.google.gwt.dom.client.Element elementById) {
+        add(paintable, (Element) elementById.cast());
     }
 }

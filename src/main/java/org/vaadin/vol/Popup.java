@@ -4,6 +4,8 @@
 package org.vaadin.vol;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.vaadin.vol.client.ui.VPopup;
@@ -13,13 +15,15 @@ import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.tools.ReflectTools;
-import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.ClientWidget;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Table;
 
 @SuppressWarnings("serial")
 @ClientWidget(VPopup.class)
-public class Popup extends AbstractComponent {
+public class Popup extends AbstractComponentContainer {
 
     public class CloseEvent extends Event {
         public CloseEvent() {
@@ -39,57 +43,86 @@ public class Popup extends AbstractComponent {
         DEFAULT, ANCHORED, ANCHORED_BUBBLE, FRAMED, FRAMED_CLOUD
     }
 
-    private double lon;
-    private double lat;
-    private String html_content = "";
     private String projection = "EPSG:4326";
     private PopupStyle popupstyle = PopupStyle.DEFAULT;
-    private Marker anchor;
+    private Component anchor;
+    private Component content;
+    private Point point = new Point(0, 0);
+    private boolean closable = true;
 
     public Popup(double lon, double lat, String content) {
-        this.lon = lon;
-        this.lat = lat;
-        html_content = content;
+        point = new Point(lon, lat);
+        setContent(content);
+    }
+
+    public Popup(String content) {
+        setContent(content);
+    }
+
+    public Popup(Component content) {
+        addComponent(content);
+    }
+
+    public Popup() {
+        this("");
     }
 
     public double getLon() {
-        return lon;
+        return point.getLon();
     }
 
     public double getLat() {
-        return lat;
+        return point.getLat();
     }
 
     public void setLon(double lon) {
-        this.lon = lon;
+        point.setLon(lon);
         requestRepaint();
     }
 
     public void setLat(double lat) {
-        this.lat = lat;
+        point.setLat(lat);
         requestRepaint();
     }
 
     public void setContent(String content) {
-        html_content = content;
+        Label c = new Label(content, Label.CONTENT_XHTML);
+        c.setSizeUndefined();
+        addComponent(c);
         requestRepaint();
+    }
+
+    @Override
+    public void addComponent(Component c) {
+        if(c == null)  {
+            setContent("");
+        } else {
+            if(content != null) {
+                removeAllComponents();
+            }
+            super.addComponent(c);
+            content = c;
+        }
     }
 
     @Override
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
-        target.addAttribute("lon", lon);
-        target.addAttribute("lat", lat);
-        target.addAttribute("content", html_content);
+        target.addAttribute("lon", point.getLon());
+        target.addAttribute("lat", point.getLat());
         target.addAttribute("pr", projection);
         target.addAttribute("style", popupstyle.toString());
-        if (popupstyle != PopupStyle.DEFAULT) {
-            if (anchor == null) {
-                throw new IllegalStateException(
-                        "All but default style popups require an anchor element to be define.");
-            }
+        target.addAttribute("closable", isClosable());
+        if (anchor == null
+                && (popupstyle == PopupStyle.FRAMED
+                        || popupstyle == PopupStyle.ANCHORED || popupstyle == PopupStyle.ANCHORED_BUBBLE)) {
+            throw new IllegalStateException(
+                    "Anchor elemen hasn't been defined, but is required for this type of popup.");
+        }
+        if (anchor != null) {
             target.addAttribute("anchor", anchor);
         }
+        content.paint(target);
     }
 
     public void addClickListener(ClickListener listener) {
@@ -140,4 +173,34 @@ public class Popup extends AbstractComponent {
         super.removeListener(CloseListener.id, CloseEvent.class, listener);
     }
 
+    public boolean isClosable() {
+        return closable;
+    }
+
+    public void setClosable(boolean closable) {
+        this.closable = closable;
+    }
+
+    public void replaceComponent(Component oldComponent, Component newComponent) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Iterator<Component> getComponentIterator() {
+        return Collections.singleton(content).iterator();
+    }
+
+    @Override
+    public void removeComponent(Component c) {
+        if (c == content) {
+            super.removeComponent(c);
+            content = null;
+        } else {
+            throw new IllegalArgumentException(
+                    "Given component is not in this popup");
+        }
+    }
+
+    public void setContent(Table table) {
+        addComponent(table);
+    }
 }
