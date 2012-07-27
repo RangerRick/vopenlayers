@@ -26,7 +26,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         NONE, SIMPLE
         // MULTI, MULTI_WITH_AREA_SELECTION etc
     }
-    
+
     private Vector selectedVector;
 
     private String displayName = "Vector layer";
@@ -50,7 +50,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         target.addAttribute("name", displayName);
         target.addAttribute("dmode", drawindMode.toString());
         target.addAttribute("smode", selectionMode.toString());
-        if(selectedVector != null) {
+        if (selectedVector != null) {
             target.addAttribute("svector", selectedVector);
         }
 
@@ -88,7 +88,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     public void removeComponent(Component c) {
         vectors.remove(c);
         super.removeComponent(c);
-        if(selectedVector == c) {
+        if (selectedVector == c) {
             selectedVector = null;
             fireEvent(new VectorUnSelectedEvent(this, (Vector) c));
         }
@@ -143,7 +143,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         }
         if (variables.containsKey("vusel")) {
             Vector object = (Vector) variables.get("vusel");
-            if(selectedVector == object) {
+            if (selectedVector == object) {
                 selectedVector = null;
             }
             VectorUnSelectedEvent vectorSelectedEvent = new VectorUnSelectedEvent(
@@ -218,21 +218,21 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     public String getDisplayName() {
         return displayName;
     }
-    
+
     /**
      * @return the stylemap
      */
     public StyleMap getStyleMap() {
-    	return stylemap;
+        return stylemap;
     }
-    
+
     /**
      * @param stylemap
      *            the stylemap to set
      */
     public void setStyleMap(StyleMap stylemap) {
-    	this.stylemap = stylemap;
-    	requestRepaint();
+        this.stylemap = stylemap;
+        requestRepaint();
     }
 
     public void setSelectionMode(SelectionMode selectionMode) {
@@ -351,12 +351,12 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     }
 
     public void setSelectedVector(Vector selectedVector) {
-        if(this.selectedVector != selectedVector) {
-            if(this.selectedVector != null) {
+        if (this.selectedVector != selectedVector) {
+            if (this.selectedVector != null) {
                 fireEvent(new VectorUnSelectedEvent(this, this.selectedVector));
             }
             this.selectedVector = selectedVector;
-            if(selectedVector != null) {
+            if (selectedVector != null) {
                 fireEvent(new VectorSelectedEvent(this, selectedVector));
             }
             requestRepaint();

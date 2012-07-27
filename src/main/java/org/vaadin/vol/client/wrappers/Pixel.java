@@ -11,7 +11,7 @@ public class Pixel extends JavaScriptObject {
     /*-{
     	return new $wnd.OpenLayers.Pixel(x, y);
     }-*/;
-    
+
     public native final int getX()
     /*-{
     return this.x;
