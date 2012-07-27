@@ -186,10 +186,6 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
             };
             getMap().registerEventHandler("moveend", extentChangeListener);
 
-            /*
-             * Update extent on first paint.
-             */
-            // extentChangeListener.onEvent(null);
         }
 
         // if (clickListener == null) {
