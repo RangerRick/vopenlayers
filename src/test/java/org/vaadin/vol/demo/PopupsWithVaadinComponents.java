@@ -39,7 +39,6 @@ public class PopupsWithVaadinComponents extends AbstractVOLTest {
         cssLayout.addComponent(new TextField("TextField"));
         Button c = new Button("Vaadin button");
         c.addListener(new Button.ClickListener() {
-            @Override
             public void buttonClick(ClickEvent event) {
                 getWindow().showNotification("Use any vaadin stuff here like in a window");
             }

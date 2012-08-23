@@ -219,8 +219,10 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
                                                                                  // //
                     }
                 };
+                getMap().registerEventHandler("click", clickListener);
             }
-            getMap().registerEventHandler("click", clickListener);
+            
+           
         } else {
             // TODO : HOW WILL WE UNREGISTER EVENTHANDLER ???
         }
