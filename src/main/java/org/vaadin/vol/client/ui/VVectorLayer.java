@@ -312,7 +312,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                     // ensure selection
                     if (drawingMode == "MODIFY") {
                         ModifyFeature mf = (ModifyFeature) df.cast();
-                        if(mf.getModifiedFeature() != null) {
+                        if (mf.getModifiedFeature() != null) {
                             mf.unselect(mf.getModifiedFeature());
                         }
                         mf.select(selectedVector.getVector());
@@ -332,7 +332,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                     try {
                         selectFeature.unselectAll();
                     } catch (Exception e) {
-                        // NOP, may throw exception if selected vector gets deleted
+                        // NOP, may throw exception if selected vector gets
+                        // deleted
                     }
                 }
             }
@@ -344,9 +345,9 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         if (drawingMode != newDrawingMode) {
             if (drawingMode != "NONE") {
                 // remove old drawing feature
-                if(drawingMode == "MODIFY") {
+                if (drawingMode == "MODIFY") {
                     ModifyFeature mf = df.cast();
-                    if(mf.getModifiedFeature() != null) {
+                    if (mf.getModifiedFeature() != null) {
                         mf.unselect(mf.getModifiedFeature());
                     }
                 }
@@ -469,8 +470,17 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 
     @Override
     protected void onDetach() {
-        super.onDetach();
         getMap().removeLayer(getLayer());
+        added = false;
+        super.onDetach();
+    }
+
+    @Override
+    protected void onAttach() {
+        super.onAttach();
+        if (!added && vectors != null) {
+            getMap().addLayer(getLayer());
+        }
     }
 
     private Map getMap() {

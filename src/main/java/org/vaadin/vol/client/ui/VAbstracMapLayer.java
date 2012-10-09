@@ -9,67 +9,75 @@ import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.UIDL;
 
 public abstract class VAbstracMapLayer<T extends Layer> extends Widget
-		implements VLayer {
+        implements VLayer {
 
-	public VAbstracMapLayer() {
-		setElement(Document.get().createDivElement());
-	}
+    public VAbstracMapLayer() {
+        setElement(Document.get().createDivElement());
+    }
 
-	private T layer;
-	protected boolean layerAttached = false;
-	private String displayName;
-	private String projection;
+    private T layer;
+    protected boolean layerAttached = false;
+    private String displayName;
+    private String projection;
 
-	public T getLayer() {
-		if (layer == null) {
-			layer = createLayer();
-		}
-		return layer;
-	}
+    public T getLayer() {
+        if (layer == null) {
+            layer = createLayer();
+        }
+        return layer;
+    }
 
-	abstract T createLayer();
+    abstract T createLayer();
 
-	public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
-		if (client.updateComponent(this, uidl, false)) {
-			return;
-		}
-		
-		displayName = uidl.hasAttribute("name") ? uidl.getStringAttribute("name") : null;
-		projection = uidl.hasAttribute("projection") ? uidl.getStringAttribute("projection") : null;
-		// we'll do this lazy, not in attach, so implementations can
-		// customize parameters for layer constructors. Possible changes must be
-		// dealt inimplementation.
-		if (!layerAttached) {
-			attachLayerToMap();
-			layerAttached = true;
-		}
-	}
+    public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
+        if (client.updateComponent(this, uidl, false)) {
+            return;
+        }
 
-	protected void attachLayerToMap() {
-		getMap().addLayer(getLayer());
-	}
+        displayName = uidl.hasAttribute("name") ? uidl
+                .getStringAttribute("name") : null;
+        projection = uidl.hasAttribute("projection") ? uidl
+                .getStringAttribute("projection") : null;
+        // we'll do this lazy, not in attach, so implementations can
+        // customize parameters for layer constructors. Possible changes must be
+        // dealt inimplementation.
+        if (!layerAttached) {
+            attachLayerToMap();
+            layerAttached = true;
+        }
+    }
 
-	protected Map getMap() {
-		return ((VOpenLayersMap) getParent().getParent()).getMap();
-	}
+    protected void attachLayerToMap() {
+        getMap().addLayer(getLayer());
+    }
 
-	@Override
-	protected void onDetach() {
-		super.onDetach();
-		getMap().removeLayer(getLayer());
-	}
+    protected Map getMap() {
+        return ((VOpenLayersMap) getParent().getParent()).getMap();
+    }
 
-	@Override
-	protected void onAttach() {
-		super.onAttach();
-	}
-	
-	protected String getProjection() {
-		return projection;
-	}
-	
-	protected String getDisplayName() {
-		return displayName;
-	}
+    @Override
+    protected void onDetach() {
+        if(layerAttached) {
+            getMap().removeLayer(layer);
+            layerAttached = false;
+        }
+        super.onDetach();
+    }
+
+    @Override
+    protected void onAttach() {
+        super.onAttach();
+        if(!layerAttached && layer != null) {
+            attachLayerToMap();
+        }
+    }
+
+    protected String getProjection() {
+        return projection;
+    }
+
+    protected String getDisplayName() {
+        return displayName;
+    }
 
 }
