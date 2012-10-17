@@ -9,9 +9,7 @@ public class WebFeatureServiceLayer extends VectorLayer {
 
     public native final static WebFeatureServiceLayer create(String display,
 			String url, String featureType, String ns, String projection, StyleMap styleMap)
-	/*-{
-	    
-	    // TODO projection
+	/*-{	    
 	    var options = {
                 'strategies': [new $wnd.OpenLayers.Strategy.BBOX()],
                 'protocol': new $wnd.OpenLayers.Protocol.WFS({
@@ -19,7 +17,10 @@ public class WebFeatureServiceLayer extends VectorLayer {
                     'featureType': featureType,
                     'featureNS': ns
                 })
-            };
+            };	    
+            if (projection) {
+                options.projection = projection;
+            }
             if(styleMap) {
                 options.styleMap = styleMap;
             }
