@@ -1,7 +1,7 @@
 package org.vaadin.vol.demo;
 
-import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.FeatureSelectedEvent;
-import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.FeatureSelectedListener;
+import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.BeforeFeatureSelectedEvent;
+import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.BeforeFeatureSelectedListener;
 import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.OpenStreetMapLayer;
 import org.vaadin.vol.Style;
@@ -11,13 +11,16 @@ import org.vaadin.vol.WebFeatureServiceLayer;
 import com.vaadin.ui.Component;
 
 /**
- * http://openlayers.org/dev/examples/wfs-states.js
+ * Loads different feature types from a wfs use beforefeature select event
+ * to show messages.
+ * TODO - only the last added Listener catch the mouse clicks, seems to be a bug
+ * in mouse click handling
  */
 public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
 
     @Override
-    public String getDescription() {
-        return "Just another WFS example.";
+    public String getDescription() {    	
+        return "Just another WFS example. Shows reclickable feature";
     }
 
     private WebFeatureServiceLayer createWfsLayer(String displayName,
@@ -60,23 +63,43 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
         WebFeatureServiceLayer wfsCities = createWfsLayer("Cities", proxyUrl,
                 "tasmania_cities");
         setStyle(wfsCities, 1, "yellow", "red", 4, 2);
-
-        WebFeatureServiceLayer wfsRoads = createWfsLayer("Roads", proxyUrl,
-                "tasmania_roads");
-        setStyle(wfsRoads, 1, "gray", "gray", 0, 4);
-        wfsRoads.addListener(new FeatureSelectedListener() {
-            public void featureSelected(FeatureSelectedEvent event) {
-                Object typeName = event.getAttributes().get("TYPE");
-                showNotification("Road type: " + typeName);
+        wfsCities.addListener(new BeforeFeatureSelectedListener() {
+            public boolean beforeFeatureSelected(BeforeFeatureSelectedEvent event) {
+                showNotification("I'm a city");
+                return false;
             }
         });
 
+        final WebFeatureServiceLayer wfsRoads = createWfsLayer("Roads", proxyUrl,
+                "tasmania_roads");
+        setStyle(wfsRoads, 1, "gray", "gray", 0, 4);
+        // don't use beforeselected and selected listener at the same time to show massages
+        wfsRoads.addListener(new BeforeFeatureSelectedListener() {
+            public boolean beforeFeatureSelected(BeforeFeatureSelectedEvent event) {
+                Object typeName = event.getAttributes().get("TYPE");
+                showNotification("Before feature Selected: Road type: " + typeName);
+                return false;
+            }
+        });
         WebFeatureServiceLayer wfsBoundaries = createWfsLayer("Boundaries",
                 proxyUrl, "tasmania_state_boundaries");
         wfsBoundaries.setEnabled(false);
+        wfsBoundaries.addListener(new BeforeFeatureSelectedListener() {
+            public boolean beforeFeatureSelected(BeforeFeatureSelectedEvent event) {
+                showNotification("No idea what I am :'-(");
+                return false;
+            }
+        });
+        
         WebFeatureServiceLayer wfsWater = createWfsLayer("Water", proxyUrl,
                 "tasmania_water_bodies");
         setStyle(wfsWater, 0.5, "blue", "blue", 1, 2);
+        wfsWater.addListener(new BeforeFeatureSelectedListener() {
+            public boolean beforeFeatureSelected(BeforeFeatureSelectedEvent event) {
+                showNotification("I am water :-D");
+                return false;
+            }
+        });
 
         openLayersMap.addLayer(osmLayer);
         openLayersMap.addLayer(wfsCities);

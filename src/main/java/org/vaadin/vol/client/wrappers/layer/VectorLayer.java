@@ -1,5 +1,6 @@
 package org.vaadin.vol.client.wrappers.layer;
 
+import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
 
@@ -74,5 +75,20 @@ public class VectorLayer extends Layer {
     /*-{
         this.removeAllFeatures();
     }-*/;
-
+    
+    /**
+     * it's maybe useful for blocking beforefeatureselected events
+     * @param eventName
+     * @param handler
+     */
+	public native final void registerReturnFalseHandler(String eventName, GwtOlHandler handler) 
+	/*-{
+		var f = function() {
+			$entry(handler.@org.vaadin.vol.client.wrappers.GwtOlHandler::onEvent(Lcom/google/gwt/core/client/JsArray;)(arguments));
+			return false;
+		};
+		this.events.addEventType(eventName);
+		this.events.register(eventName,this,f);
+		
+	}-*/;
 }

@@ -32,7 +32,6 @@ public class VWebFeatureServiceLayer extends
 		super.updateFromUIDL(uidl, client);
 
 		updateSelectionControl(client);
-
 	}
 
 	public String getUri() {

@@ -14,6 +14,7 @@ public class WebFeatureServiceLayer extends AbstractAutoPopulatedVectorLayer imp
     private String uri = "";
     private String featureType = "basic";
     private String featureNS;
+    boolean unselectAll=false;
 
 
     public WebFeatureServiceLayer() {
@@ -51,6 +52,5 @@ public class WebFeatureServiceLayer extends AbstractAutoPopulatedVectorLayer imp
 
     public String getFeatureNS() {
         return featureNS;
-    }
-
+    }    
 }

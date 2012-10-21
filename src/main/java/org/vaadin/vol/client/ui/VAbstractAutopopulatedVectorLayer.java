@@ -27,6 +27,8 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
     private SelectFeature control;
     private StyleMap styleMap;
     private GwtOlHandler selectedhandler;
+    private GwtOlHandler beforeSelectedhandler;
+    private GwtOlHandler unselectedhandler;
     private String paintableId;
 
     public VAbstractAutopopulatedVectorLayer() {
@@ -42,12 +44,12 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
     }
 
     protected void updateSelectionControl(final ApplicationConnection client) {
-        if (client.hasEventListeners(this, "vsel")) {
+    	boolean hasSelListener=client.hasEventListeners(this, "vsel");
+    	boolean hasUnselListener=client.hasEventListeners(this, "vunsel");
+    	boolean hasBefSelListener=client.hasEventListeners(this, "vbefsel");
+        if (hasSelListener || hasBefSelListener) {
             if (control == null) {
-                if (selectedhandler == null) {
-
-                    // create select/unselect feature and communicate fid to
-                    // server
+                if (hasSelListener && selectedhandler == null) {
                     selectedhandler = new GwtOlHandler() {
                         @SuppressWarnings("rawtypes")
                         public void onEvent(JsArray arguments) {
@@ -77,10 +79,89 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
                             String wkt = wktFormatter.write(vector);
                             client.updateVariable(paintableId, "wkt", wkt,
                                     false);
+                            // todo - maybe there is some more important object than fid 
+                            client.updateVariable(paintableId, "vsel", fid,
+                                    false);
                             client.sendPendingVariableChanges();
                         }
                     };
                     layer.registerHandler("featureselected", selectedhandler);
+                }
+                if (hasUnselListener && unselectedhandler == null) {
+                    unselectedhandler = new GwtOlHandler() {
+                        @SuppressWarnings("rawtypes")
+                        public void onEvent(JsArray arguments) {
+                            ValueMap javaScriptObject = arguments.get(0).cast();
+                            Vector vector = javaScriptObject.getValueMap(
+                                    "feature").cast();
+                            String fid = vector.getFeatureId();
+                            ValueMap attr = vector.getAttributes();
+                            client.updateVariable(paintableId, "fid", fid,
+                                    false);
+                            Map<String, Object> hashMap = new HashMap<String, Object>();
+                            for (String key : attr.getKeySet()) {
+                                hashMap.put(key, attr.getString(key));
+                            }
+                            client.updateVariable(paintableId, "attr", hashMap,
+                                    false);
+                            Projection targetProjection = getMap()
+                                    .getProjection();
+                            String projection = getProjection();
+                            if (projection == null) {
+                                projection = "EPSG:4326";
+                            }
+                            Projection sourceProjection = Projection
+                                    .get(projection);
+                            WKT wktFormatter = WKT.create(sourceProjection,
+                                    targetProjection);
+                            String wkt = wktFormatter.write(vector);
+                            client.updateVariable(paintableId, "wkt", wkt,
+                                    false);
+                            // todo - maybe there is some more important object than fid 
+                            client.updateVariable(paintableId, "vunsel", fid,
+                                    false);
+                            client.sendPendingVariableChanges();
+                        }
+                    };
+                    layer.registerHandler("featureunselected", unselectedhandler);
+                }
+                if (hasBefSelListener && beforeSelectedhandler == null) {
+                    beforeSelectedhandler = new GwtOlHandler() {
+                        @SuppressWarnings("rawtypes")
+                        public void onEvent(JsArray arguments) {
+                            ValueMap javaScriptObject = arguments.get(0).cast();
+                            Vector vector = javaScriptObject.getValueMap(
+                                    "feature").cast();
+                            String fid = vector.getFeatureId();
+                            ValueMap attr = vector.getAttributes();
+                            client.updateVariable(paintableId, "fid", fid,
+                                    false);
+                            Map<String, Object> hashMap = new HashMap<String, Object>();
+                            for (String key : attr.getKeySet()) {
+                                hashMap.put(key, attr.getString(key));
+                            }
+                            client.updateVariable(paintableId, "attr", hashMap,
+                                    false);
+                            Projection targetProjection = getMap()
+                                    .getProjection();
+                            String projection = getProjection();
+                            if (projection == null) {
+                                projection = "EPSG:4326";
+                            }
+                            Projection sourceProjection = Projection
+                                    .get(projection);
+                            WKT wktFormatter = WKT.create(sourceProjection,
+                                    targetProjection);
+                            String wkt = wktFormatter.write(vector);
+                            client.updateVariable(paintableId, "wkt", wkt,
+                                    false);
+                            // todo - maybe there is some more important object than fid 
+                            client.updateVariable(paintableId, "vbefsel", fid,
+                                    false);
+                            client.sendPendingVariableChanges();
+                        }
+                    };
+                    layer.registerReturnFalseHandler("beforefeatureselected", beforeSelectedhandler);
                 }
                 control = SelectFeature.create(layer);
                 getMap().addControl(control);
@@ -116,5 +197,4 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
     public void setStyleMap(StyleMap styleMap) {
         this.styleMap = styleMap;
     }
-
 }
