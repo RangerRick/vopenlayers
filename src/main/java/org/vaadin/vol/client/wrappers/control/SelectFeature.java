@@ -3,6 +3,8 @@ package org.vaadin.vol.client.wrappers.control;
 import org.vaadin.vol.client.wrappers.Vector;
 import org.vaadin.vol.client.wrappers.layer.Layer;
 
+import com.google.gwt.core.client.JsArray;
+
 public class SelectFeature extends Control {
     protected SelectFeature() {
     }
@@ -64,5 +66,10 @@ public class SelectFeature extends Control {
     public final native void clickFeature(Vector vector)
     /*-{
         this.clickFeature(vector);
+    }-*/;
+
+    public final native void setLayer(JsArray<Layer> layers)
+    /*-{
+        this.setLayer(layers);
     }-*/;
 }

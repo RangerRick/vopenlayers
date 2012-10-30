@@ -24,6 +24,12 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
     private String projection;
     private String displayName = "WFS";
 	private SelectionMode selectionMode;
+	
+	/**
+	 * this will be used to group vector layers to share the same SelectFeature
+	 * control 
+	 */
+	private String selectionCtrlId;
 
     public AbstractAutoPopulatedVectorLayer() {
         super();
@@ -63,6 +69,9 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
         target.addAttribute("display", displayName);
         if (projection != null) {
             target.addAttribute("projection", projection);
+        }
+        if (selectionCtrlId!=null) {
+        	target.addAttribute("selectionCtrlId",selectionCtrlId);
         }
         if (stylemap != null) {
             stylemap.paint(target);
@@ -108,6 +117,14 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
 
     public SelectionMode getSelectionMode() {
         return selectionMode;
+    }
+    
+    public void setSelectionCtrlId(String selectionCtrlId) {
+    	this.selectionCtrlId = selectionCtrlId;
+    }
+    
+    public String getSelectionCtrlId() {
+    	return selectionCtrlId;
     }
     
     public interface FeatureSelectedListener {

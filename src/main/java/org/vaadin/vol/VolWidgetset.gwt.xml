@@ -5,5 +5,4 @@
 	<!--  USE THIS IF YOU DON'T WANT TO USE THE HOSTED OL API -->
 	<inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
 	<script src="helpers.js"></script>
-
 </module>

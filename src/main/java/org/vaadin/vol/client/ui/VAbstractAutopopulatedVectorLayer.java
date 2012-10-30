@@ -5,10 +5,12 @@ import java.util.Map;
 
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.Projection;
+import org.vaadin.vol.client.wrappers.SelectFeatureFactory;
 import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
 import org.vaadin.vol.client.wrappers.control.SelectFeature;
 import org.vaadin.vol.client.wrappers.format.WKT;
+import org.vaadin.vol.client.wrappers.layer.Layer;
 import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 import com.google.gwt.core.client.JsArray;
@@ -29,6 +31,7 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
     private GwtOlHandler selectedhandler;
     private GwtOlHandler beforeSelectedhandler;
     private GwtOlHandler unselectedhandler;
+    private String selectionCtrlId;
     private String paintableId;
 
     public VAbstractAutopopulatedVectorLayer() {
@@ -39,6 +42,7 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
         if (!uidl.hasAttribute("cached")) {
             this.paintableId = uidl.getId();
             display = uidl.getStringAttribute("display");
+            selectionCtrlId = uidl.getStringAttribute("selectionCtrlId");
             setStyleMap(VVectorLayer.getStyleMap(uidl));
         }
     }
@@ -47,7 +51,7 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
     	boolean hasSelListener=client.hasEventListeners(this, "vsel");
     	boolean hasUnselListener=client.hasEventListeners(this, "vunsel");
     	boolean hasBefSelListener=client.hasEventListeners(this, "vbefsel");
-        if (hasSelListener || hasBefSelListener) {
+        if (hasSelListener || hasBefSelListener || hasUnselListener) {
             if (control == null) {
                 if (hasSelListener && selectedhandler == null) {
                     selectedhandler = new GwtOlHandler() {
@@ -161,15 +165,19 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
                             client.sendPendingVariableChanges();
                         }
                     };
-                    layer.registerReturnFalseHandler("beforefeatureselected", beforeSelectedhandler);
+                    layer.registerReturnFalseHandler("beforefeatureselected", 
+                    		beforeSelectedhandler);
                 }
-                control = SelectFeature.create(layer);
-                getMap().addControl(control);
+                /*
+                 * In openLayers the constructor for OpenLayers.Control.SelectFeature
+                 * takes a array of layers. IMO all Instances of VAbstractAutopopulatedVectorLayer
+                 * should share only one map owned select control.
+                 */                
+                control = SelectFeatureFactory.getInst().getOrCreate(selectionCtrlId,getMap(),layer);
             }
             control.activate();
         } else if (control != null) {
-            control.deActivate();
-            getMap().removeControl(control);
+        	SelectFeatureFactory.getInst().removeLayer(control,selectionCtrlId,getMap(),layer);
             control = null;
         }
     }

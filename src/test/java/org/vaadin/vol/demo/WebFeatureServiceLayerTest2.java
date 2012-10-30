@@ -20,7 +20,7 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
 
     @Override
     public String getDescription() {    	
-        return "Just another WFS example. Shows reclickable feature";
+        return "Just another WFS example. Shows reclickable feature, and btw you can click on all layers :-D";
     }
 
     private WebFeatureServiceLayer createWfsLayer(String displayName,
@@ -31,6 +31,7 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
         wfsLayer.setFeatureType(featureType);
         wfsLayer.setFeatureNS("http://www.openplans.org/topp");
         wfsLayer.setProjection("EPSG:4326");
+        wfsLayer.setSelectionCtrlId("1");
         return wfsLayer;
     }
 
@@ -69,7 +70,6 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
                 return false;
             }
         });
-
         final WebFeatureServiceLayer wfsRoads = createWfsLayer("Roads", proxyUrl,
                 "tasmania_roads");
         setStyle(wfsRoads, 1, "gray", "gray", 0, 4);
@@ -83,14 +83,12 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
         });
         WebFeatureServiceLayer wfsBoundaries = createWfsLayer("Boundaries",
                 proxyUrl, "tasmania_state_boundaries");
-        wfsBoundaries.setEnabled(false);
         wfsBoundaries.addListener(new BeforeFeatureSelectedListener() {
             public boolean beforeFeatureSelected(BeforeFeatureSelectedEvent event) {
                 showNotification("No idea what I am :'-(");
                 return false;
             }
         });
-        
         WebFeatureServiceLayer wfsWater = createWfsLayer("Water", proxyUrl,
                 "tasmania_water_bodies");
         setStyle(wfsWater, 0.5, "blue", "blue", 1, 2);
@@ -100,7 +98,6 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
                 return false;
             }
         });
-
         openLayersMap.addLayer(osmLayer);
         openLayersMap.addLayer(wfsCities);
         openLayersMap.addLayer(wfsRoads);

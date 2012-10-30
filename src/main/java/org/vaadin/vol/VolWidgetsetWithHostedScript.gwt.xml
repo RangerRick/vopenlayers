@@ -9,5 +9,4 @@
 	<script src="http://openlayers.org/api/2.12/OpenLayers.js"></script>
 	
     <!-- <set-property name="user.agent" value="gecko"/> -->
-
 </module>
