@@ -21,7 +21,6 @@
 			</plugin>
 
 			<plugin>
-
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
@@ -100,7 +99,28 @@
 					</descriptors>
 				</configuration>
 			</plugin>
-
+			
+			<!-- 
+				This is use for running the demo from maven. 
+				Useful for calls like that:
+				mvn clean compile test-compile gwt:compile exec:java
+			 -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>                        
+                    			</execution>
+		                </executions>
+				<configuration>
+					<mainClass>org.vaadin.vol.VolTestServer</mainClass>
+					<classpathScope>test</classpathScope>
+				</configuration>
+			</plugin>
 		</plugins>
 
 		<!-- This is needed for the sources required by the GWT compiler to be 
@@ -116,7 +136,6 @@
 				<directory>src/test/java</directory>
 			</resource>
 		</resources>
-
 	</build>
 
 	<repositories>
@@ -184,5 +203,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>
