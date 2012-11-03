@@ -2,10 +2,13 @@ package org.vaadin.vol.demo;
 
 import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.BeforeFeatureSelectedEvent;
 import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.BeforeFeatureSelectedListener;
+import org.vaadin.vol.LabelVector;
 import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.OpenStreetMapLayer;
+import org.vaadin.vol.Point;
 import org.vaadin.vol.Style;
 import org.vaadin.vol.StyleMap;
+import org.vaadin.vol.VectorLayer;
 import org.vaadin.vol.WebFeatureServiceLayer;
 
 import com.vaadin.ui.Component;
@@ -98,11 +101,23 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
                 return false;
             }
         });
+        
         openLayersMap.addLayer(osmLayer);
         openLayersMap.addLayer(wfsCities);
         openLayersMap.addLayer(wfsRoads);
         openLayersMap.addLayer(wfsWater);
         openLayersMap.addLayer(wfsBoundaries);
+        
+        // add a comment
+        VectorLayer vectorLayer = new VectorLayer();
+        vectorLayer.setDisplayName("Comments");
+        LabelVector labelVector = new LabelVector("don't click on this cities \n (vopenlayers issue 99)");
+        labelVector.getCustomStyle().setFontColor("red");
+        labelVector.setPoints(new Point(147, -44.5429));
+        vectorLayer.addVector(labelVector);
+        openLayersMap.addLayer(vectorLayer);
+        
+        
         openLayersMap.setSizeFull();
 
         openLayersMap.setCenter(146.9417, -42.0429);
