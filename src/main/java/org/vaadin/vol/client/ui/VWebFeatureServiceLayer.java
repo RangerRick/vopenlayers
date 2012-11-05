@@ -31,6 +31,9 @@ public class VWebFeatureServiceLayer extends
 		}
 		super.updateFromUIDL(uidl, client);
 
+        if (uidl.hasAttribute("visibility") && layer!=null)
+        	layer.setVisability(uidl.getBooleanAttribute("visibility"));
+
 		updateSelectionControl(client);
 	}
 

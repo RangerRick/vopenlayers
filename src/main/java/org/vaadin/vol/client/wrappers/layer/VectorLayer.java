@@ -75,6 +75,16 @@ public class VectorLayer extends Layer {
     /*-{
         this.removeAllFeatures();
     }-*/;
+
+    /**
+     * can set the visibility of a layer. inivisble layer are in layer switcher 
+     * but will not loaded until they are visible.
+     * @param visibility
+     */
+    public native final void setVisability(boolean visibility) 
+    /*-{
+        this.setVisibility(visibility);
+    }-*/;
     
     /**
      * it's maybe useful for blocking beforefeatureselected events

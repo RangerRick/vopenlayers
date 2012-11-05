@@ -25,6 +25,10 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
     private String displayName = "WFS";
 	private SelectionMode selectionMode;
 	
+	private boolean visibility;
+	private boolean visibilitySet=false; // maybe, should change to the setDirty
+										// way from org.vaadin.vol.OpenLayersMap
+	
 	/**
 	 * this will be used to group vector layers to share the same SelectFeature
 	 * control 
@@ -76,6 +80,10 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
         if (stylemap != null) {
             stylemap.paint(target);
         }
+        if (visibilitySet) {
+        	target.addAttribute("visibility",visibility);
+        	visibilitySet=false;
+        }
     }
 
     /**
@@ -125,9 +133,22 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
     
     public String getSelectionCtrlId() {
     	return selectionCtrlId;
-    }
+    }        
     
-    public interface FeatureSelectedListener {
+    /**
+     * allows to set visibility of a layer. A call with 'setVisibility(false)'
+     * displays layer in layer switcher but don't load its data. 
+     * @return
+     */
+	public void setVisibility(boolean visibility) {
+		this.visibility = visibility;
+		this.visibilitySet = true;
+		requestRepaint();
+	}
+
+
+
+	public interface FeatureSelectedListener {
 
         public final String EVENT_ID = "vsel";
 

@@ -92,6 +92,7 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
                 return false;
             }
         });
+        wfsBoundaries.setVisibility(false);
         WebFeatureServiceLayer wfsWater = createWfsLayer("Water", proxyUrl,
                 "tasmania_water_bodies");
         setStyle(wfsWater, 0.5, "blue", "blue", 1, 2);
