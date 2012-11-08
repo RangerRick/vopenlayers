@@ -42,5 +42,9 @@ public abstract class Layer extends AbstractOpenLayersWrapper {
 		this.maxExtent = bounds;
 	}-*/;
 
+	public final native boolean isVisible () 
+	/*-{
+	 	return this.visibility;
+	}-*/;
 	
 }

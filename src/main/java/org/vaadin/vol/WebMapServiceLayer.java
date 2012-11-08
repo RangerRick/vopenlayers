@@ -11,7 +11,7 @@ import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.ClientWidget;
 
 @ClientWidget(VWebMapServiceLayer.class)
-public class WebMapServiceLayer extends AbstractComponent implements Layer {
+public class WebMapServiceLayer extends AbstractLayerBase implements Layer {
 	private String uri = "";
 	private String type = "wms";
 	private String layers = "basic";

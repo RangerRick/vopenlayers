@@ -14,7 +14,7 @@ import com.vaadin.ui.ClientWidget;
  * OpenStreeMap layer that can be added to {@link OpenLayersMap}.
  */
 @ClientWidget(VOpenStreetMapLayer.class)
-public class OpenStreetMapLayer extends AbstractComponent implements Layer {
+public class OpenStreetMapLayer extends AbstractLayerBase implements Layer {
 
     private String displayName;
     private String projection;

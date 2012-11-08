@@ -18,7 +18,7 @@ import com.vaadin.ui.Component;
  * 
  */
 public abstract class AbstractAutoPopulatedVectorLayer extends
-        AbstractComponent {
+        AbstractLayerBase {
 
     private StyleMap stylemap;
     private String projection;

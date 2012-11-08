@@ -10,7 +10,6 @@ import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
 import org.vaadin.vol.client.wrappers.control.SelectFeature;
 import org.vaadin.vol.client.wrappers.format.WKT;
-import org.vaadin.vol.client.wrappers.layer.Layer;
 import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 import com.google.gwt.core.client.JsArray;
@@ -32,7 +31,6 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
     private GwtOlHandler beforeSelectedhandler;
     private GwtOlHandler unselectedhandler;
     private String selectionCtrlId;
-    private String paintableId;
 
     public VAbstractAutopopulatedVectorLayer() {
         super();
@@ -40,7 +38,6 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
 
     protected void updateGenericVectorLayersAttributes(UIDL uidl) {
         if (!uidl.hasAttribute("cached")) {
-            this.paintableId = uidl.getId();
             display = uidl.getStringAttribute("display");
             selectionCtrlId = uidl.getStringAttribute("selectionCtrlId");
             setStyleMap(VVectorLayer.getStyleMap(uidl));
