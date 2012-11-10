@@ -92,12 +92,6 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
             vectors.registerHandler("featureunselected", new GwtOlHandler() {
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
-                    if (updating) {
-                        // ignore selections that happend during update, those
-                        // should be already known and notified by the server
-                        // side
-                        return;
-                    }
                     ValueMap javaScriptObject = arguments.get(0).cast();
                     Vector vector = javaScriptObject.getValueMap("feature")
                             .cast();
@@ -105,7 +99,10 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                         VAbstractVector v = (VAbstractVector) w;
                         if (v.getVector() == vector) {
                             v.revertDefaultIntent();
-                            if (client.hasEventListeners(VVectorLayer.this,
+                            // ignore selections that happend during update, those
+                            // should be already known and notified by the server
+                            // side
+                            if (!updating && client.hasEventListeners(VVectorLayer.this,
                                     "vusel")) {
                                 client.updateVariable(paintableId, "vusel", v,
                                         true);
@@ -331,6 +328,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                 } else {
                     try {
                         selectFeature.unselectAll();
+                       
                     } catch (Exception e) {
                         // NOP, may throw exception if selected vector gets
                         // deleted
