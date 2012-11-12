@@ -20,6 +20,7 @@ public class WebMapServiceLayer extends AbstractLayerBase implements Layer {
 	private Boolean isBaseLayer = true;
 	private Double opacity = 1.0;
 	private Boolean transparent = true;
+	private Boolean isSingleTile = false;
 	private String feature_id = "";
 	private String format = "image/jpeg";
 	private String projection;
@@ -35,6 +36,7 @@ public class WebMapServiceLayer extends AbstractLayerBase implements Layer {
 		target.addAttribute("display", display_name);
 		target.addAttribute("isBaseLayer", isBaseLayer);
 		target.addAttribute("opacity", opacity);
+		target.addAttribute("isSingleTile", isSingleTile);
 		target.addAttribute("featureid", feature_id);
 		target.addAttribute("format", format);
 		target.addAttribute("transparent", transparent);
@@ -154,6 +156,14 @@ public class WebMapServiceLayer extends AbstractLayerBase implements Layer {
 
     public void setProjection(String projection) {
         this.projection = projection;
+    }
+
+    public Boolean isSingleTile() {
+        return isSingleTile;
+    }
+
+    public void setSingleTile(Boolean isSingleTile) {
+        this.isSingleTile = isSingleTile;
     }
 	
 	

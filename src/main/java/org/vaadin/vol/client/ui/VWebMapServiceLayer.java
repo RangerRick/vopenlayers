@@ -11,6 +11,7 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
     private String layers;
     private String display;
     private Boolean isBaseLayer;
+    private Boolean isSingleTile;
     private Double opacity;
     private String format;
     private boolean transparent;
@@ -19,12 +20,13 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
 
     @Override
     WebMapServiceLayer createLayer() {
-        return WebMapServiceLayer.create(display, uri, layers, format,
-                cqlFilter, isBaseLayer, transparent, opacity, projection);
+	return WebMapServiceLayer.create(display, uri, layers, format,
+		cqlFilter, isBaseLayer, transparent, opacity, isSingleTile,
+		projection);
     }
 
     @Override
-    public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
+    public void updateFromUIDL(final UIDL uidl, final ApplicationConnection client) {
         if (!uidl.hasAttribute("cached")) {
             uri = uidl.getStringAttribute("uri");
             layers = uidl.getStringAttribute("layers");
@@ -32,6 +34,7 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
             isBaseLayer = uidl.getBooleanAttribute("isBaseLayer");
             transparent = uidl.getBooleanAttribute("transparent");
             opacity = uidl.getDoubleAttribute("opacity");
+	    isSingleTile = uidl.getBooleanAttribute("isSingleTile");
             format = uidl.getStringAttribute("format");
             cqlFilter = uidl.hasAttribute("cqlFilter") ? uidl
                     .getStringAttribute("cqlFilter") : null;
@@ -67,5 +70,9 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
 
     public boolean isTransparent() {
         return transparent;
+    }
+
+    public Boolean isSingleTile() {
+	return isSingleTile;
     }
 }

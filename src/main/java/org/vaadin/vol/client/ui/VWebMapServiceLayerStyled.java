@@ -14,8 +14,8 @@ public class VWebMapServiceLayerStyled extends VWebMapServiceLayer
 
     @Override
     WebMapServiceLayerStyled createLayer() {
-    	wms = WebMapServiceLayerStyled.create(super.getDisplay(), super.getUri(), super.getLayers(), super.getFormat(), 
-		super.isBaseLayer(), super.isTransparent(), super.getOpacity(), sld);
+     	wms = WebMapServiceLayerStyled.create(super.getDisplay(), super.getUri(), super.getLayers(), super.getFormat(), 
+		super.isBaseLayer(), super.isTransparent(), super.getOpacity(), super.isSingleTile(), sld);
     	return wms;
     }
     
