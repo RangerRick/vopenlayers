@@ -46,7 +46,7 @@ public class ImageLayerExample extends AbstractVOLTest {
         map.addLayer(webMapServiceLayer);
 
         final VectorLayer vectorLayer = new VectorLayer();
-        vectorLayer.setDrawindMode(DrawingMode.LINE);
+        vectorLayer.setDrawingMode(DrawingMode.LINE);
         vectorLayer.addListener(new VectorDrawnListener() {
             public void vectorDrawn(VectorDrawnEvent event) {
                 Vector vector = event.getVector();

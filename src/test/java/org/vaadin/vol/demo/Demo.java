@@ -279,7 +279,7 @@ public class Demo extends AbstractVOLTest {
                         || mode == DrawingMode.POINT
                         || mode == DrawingMode.RECTANGLE
                         || mode == DrawingMode.NONE) {
-                    vectorLayer.setDrawindMode(mode);
+                    vectorLayer.setDrawingMode(mode);
                 } else {
                     showNotification("Sorry, feature is on TODO list. Try area.");
                 }

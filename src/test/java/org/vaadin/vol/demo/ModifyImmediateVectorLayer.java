@@ -59,7 +59,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         OpenStreetMapLayer osm = new OpenStreetMapLayer();
 
         vectorLayer.setImmediate(true);
-        vectorLayer.setDrawindMode(DrawingMode.MODIFY);
+        vectorLayer.setDrawingMode(DrawingMode.MODIFY);
 
         /*
          * Set thicker stroke width so editing the polyline is easier.
@@ -145,14 +145,14 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         controls.addComponent(new Button("Toggle editable-plainselectable",
                 new Button.ClickListener() {
                     public void buttonClick(ClickEvent event) {
-                        if (vectorLayer.getDrawindMode() == DrawingMode.MODIFY) {
-                            vectorLayer.setDrawindMode(DrawingMode.NONE);
+                        if (vectorLayer.getDrawingMode() == DrawingMode.MODIFY) {
+                            vectorLayer.setDrawingMode(DrawingMode.NONE);
                             vectorLayer.setSelectionMode(SelectionMode.SIMPLE);
                             vectorLayer.getWindow().showNotification(
                                     "Selections only");
                         } else {
                             vectorLayer.setSelectionMode(SelectionMode.NONE);
-                            vectorLayer.setDrawindMode(DrawingMode.MODIFY);
+                            vectorLayer.setDrawingMode(DrawingMode.MODIFY);
                             vectorLayer.getWindow().showNotification(
                                     "Modifications allowed");
                         }

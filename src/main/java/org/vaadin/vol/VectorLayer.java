@@ -39,7 +39,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         NONE, LINE, AREA, RECTANGLE, POINT, MODIFY
     }
 
-    private DrawingMode drawindMode = DrawingMode.NONE;
+    private DrawingMode drawingMode = DrawingMode.NONE;
 
     public void addVector(Vector m) {
         addComponent(m);
@@ -48,7 +48,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     @Override
     public void paintContent(PaintTarget target) throws PaintException {
         target.addAttribute("name", displayName);
-        target.addAttribute("dmode", drawindMode.toString());
+        target.addAttribute("dmode", drawingMode.toString());
         target.addAttribute("smode", selectionMode.toString());
         if (selectedVector != null) {
             target.addAttribute("svector", selectedVector);
@@ -95,13 +95,13 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         requestRepaint();
     }
 
-    public void setDrawindMode(DrawingMode drawindMode) {
-        this.drawindMode = drawindMode;
+    public void setDrawingMode(DrawingMode drawingMode) {
+        this.drawingMode = drawingMode;
         requestRepaint();
     }
 
-    public DrawingMode getDrawindMode() {
-        return drawindMode;
+    public DrawingMode getDrawingMode() {
+        return drawingMode;
     }
 
     @Override
@@ -116,15 +116,15 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
                 points[i] = Point.valueOf(object[i]);
             }
 
-            if (drawindMode == DrawingMode.LINE) {
+            if (drawingMode == DrawingMode.LINE) {
                 PolyLine polyline = new PolyLine();
                 polyline.setPoints(points);
                 newVectorPainted(polyline);
-            } else if (drawindMode == DrawingMode.AREA) {
+            } else if (drawingMode == DrawingMode.AREA) {
                 Area area = new Area();
                 area.setPoints(points);
                 newVectorPainted(area);
-            } else if (drawindMode == DrawingMode.MODIFY) {
+            } else if (drawingMode == DrawingMode.MODIFY) {
                 Vector vector = (Vector) variables.get("modifiedVector");
                 if (vector != null) {
                     vector.setPointsWithoutRepaint(points);
@@ -135,7 +135,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
                 }
             }
         }
-        if (drawindMode == DrawingMode.POINT && variables.containsKey("x")) {
+        if (drawingMode == DrawingMode.POINT && variables.containsKey("x")) {
             Double x = (Double) variables.get("x");
             Double y = (Double) variables.get("y");
             PointVector point = new PointVector(x, y);

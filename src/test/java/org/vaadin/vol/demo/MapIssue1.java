@@ -36,7 +36,7 @@ public class MapIssue1 extends AbstractVOLTest {
          */
         VectorLayer vectorLayer = new VectorLayer();
         vectorLayer.setDisplayName("Vector layer");
-        vectorLayer.setDrawindMode(VectorLayer.DrawingMode.NONE);
+        vectorLayer.setDrawingMode(VectorLayer.DrawingMode.NONE);
 
         OpenStreetMapLayer osmLayer = new OpenStreetMapLayer();
 
