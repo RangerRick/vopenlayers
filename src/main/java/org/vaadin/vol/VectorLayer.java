@@ -36,7 +36,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     private SelectionMode selectionMode = SelectionMode.NONE;
 
     public enum DrawingMode {
-        NONE, LINE, AREA, POINT, MODIFY
+        NONE, LINE, AREA, RECTANGLE, POINT, MODIFY
     }
 
     private DrawingMode drawindMode = DrawingMode.NONE;

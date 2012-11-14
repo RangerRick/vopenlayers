@@ -277,6 +277,7 @@ public class Demo extends AbstractVOLTest {
                 if (mode == DrawingMode.MODIFY || mode == DrawingMode.AREA
                         || mode == DrawingMode.LINE
                         || mode == DrawingMode.POINT
+                        || mode == DrawingMode.RECTANGLE
                         || mode == DrawingMode.NONE) {
                     vectorLayer.setDrawindMode(mode);
                 } else {

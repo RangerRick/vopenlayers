@@ -22,6 +22,7 @@ import org.vaadin.vol.client.wrappers.geometry.Point;
 import org.vaadin.vol.client.wrappers.handler.PathHandler;
 import org.vaadin.vol.client.wrappers.handler.PointHandler;
 import org.vaadin.vol.client.wrappers.handler.PolygonHandler;
+import org.vaadin.vol.client.wrappers.handler.RegularPolygonHandler;
 import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 import com.google.gwt.core.client.JsArray;
@@ -196,7 +197,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                         Vector feature = event.getFieldByName("feature").cast();
                         Geometry geometry = feature.getGeometry();
 
-                        if (drawingMode == "AREA" || drawingMode == "LINE") {
+                        if (drawingMode == "AREA" || drawingMode == "LINE" || drawingMode == "RECTANGLE") {
                             LineString ls = geometry.cast();
                             JsArray<Point> allVertices = ls.getAllVertices();
                             // TODO this can be removed??
@@ -363,6 +364,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                 df = ModifyFeature.create(getLayer());
             } else if (drawingMode == "POINT") {
                 df = DrawFeature.create(getLayer(), PointHandler.get());
+            } else if (drawingMode == "RECTANGLE") {
+                df = DrawFeature.create(getLayer(), RegularPolygonHandler.get(), RegularPolygonHandler.getRectangleOptions());
             }
             if (df != null) {
                 getMap().addControl(df);
