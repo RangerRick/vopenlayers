@@ -197,7 +197,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                         Vector feature = event.getFieldByName("feature").cast();
                         Geometry geometry = feature.getGeometry();
 
-                        if (drawingMode == "AREA" || drawingMode == "LINE" || drawingMode == "RECTANGLE") {
+                        if (drawingMode == "AREA" || drawingMode == "LINE" || drawingMode == "RECTANGLE" || drawingMode == "CIRCLE") {
                             LineString ls = geometry.cast();
                             JsArray<Point> allVertices = ls.getAllVertices();
                             // TODO this can be removed??
@@ -366,6 +366,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                 df = DrawFeature.create(getLayer(), PointHandler.get());
             } else if (drawingMode == "RECTANGLE") {
                 df = DrawFeature.create(getLayer(), RegularPolygonHandler.get(), RegularPolygonHandler.getRectangleOptions());
+            } else if (drawingMode == "CIRCLE") {
+                df = DrawFeature.create(getLayer(), RegularPolygonHandler.get(), RegularPolygonHandler.getCircleOptions());
             }
             if (df != null) {
                 getMap().addControl(df);

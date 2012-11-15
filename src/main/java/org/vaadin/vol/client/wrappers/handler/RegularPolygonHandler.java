@@ -16,4 +16,9 @@ public class RegularPolygonHandler extends Handler {
         return { handlerOptions: { sides: 4, irregular: true}};
     }-*/;
 
+	public static final native JavaScriptObject getCircleOptions()
+	/*-{
+        return { handlerOptions: { sides: 36, irregular: false}};
+    }-*/;
+
 }

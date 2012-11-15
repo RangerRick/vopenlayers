@@ -36,7 +36,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     private SelectionMode selectionMode = SelectionMode.NONE;
 
     public enum DrawingMode {
-        NONE, LINE, AREA, RECTANGLE, POINT, MODIFY
+        NONE, LINE, AREA, RECTANGLE, CIRCLE, POINT, MODIFY
     }
 
     private DrawingMode drawingMode = DrawingMode.NONE;
@@ -120,7 +120,9 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
                 PolyLine polyline = new PolyLine();
                 polyline.setPoints(points);
                 newVectorPainted(polyline);
-            } else if (drawingMode == DrawingMode.AREA) {
+            } else if (drawingMode == DrawingMode.AREA 
+            		|| drawingMode == DrawingMode.RECTANGLE 
+            		|| drawingMode == DrawingMode.CIRCLE) {
                 Area area = new Area();
                 area.setPoints(points);
                 newVectorPainted(area);

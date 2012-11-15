@@ -41,8 +41,8 @@ public class XYZLayer extends AbstractComponent implements Layer {
 
     public void setDisplayName(String displayName) {
         this.name = displayName;
+        setCaption(displayName);
         requestRepaint();
-
     }
 
     public String getUri() {
