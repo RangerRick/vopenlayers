@@ -91,6 +91,11 @@ abstract public class AbstractLayerBase extends AbstractComponent {
         return attribution;
     }
 
+    /**
+     * Sets the attribution text for layer. Feature is not functional in all layers.
+     * 
+     * @param attribution
+     */
     public void setAttribution(String attribution) {
         this.attribution = attribution;
     }
