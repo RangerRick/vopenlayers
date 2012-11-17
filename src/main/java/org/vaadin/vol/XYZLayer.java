@@ -7,14 +7,12 @@ import org.vaadin.vol.client.ui.VXYZLayer;
 
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
-import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.ClientWidget;
 
 /**
- * see great tool: www.maptiler.org
  */
 @ClientWidget(VXYZLayer.class)
-public class XYZLayer extends AbstractComponent implements Layer {
+public class XYZLayer extends AbstractLayerBase implements Layer {
     private String uri = "";
     private String name = "";
     private boolean sphericalMercator = false;
@@ -23,6 +21,7 @@ public class XYZLayer extends AbstractComponent implements Layer {
     }
 
     public void paintContent(PaintTarget target) throws PaintException {
+        super.paintContent(target);
         target.addAttribute("uri", uri);
         target.addAttribute("name", name);
         if(isSphericalMercator()) {

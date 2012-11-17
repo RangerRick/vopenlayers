@@ -21,7 +21,7 @@ public class VXYZLayer extends VAbstracMapLayer<XYZLayer> {
 
     @Override
     XYZLayer createLayer() {
-        return XYZLayer.create(getDisplayName(), uri, spheriacalMercator);
+        return XYZLayer.create(getDisplayName(), uri, spheriacalMercator, getAttribution());
     }
 
 }

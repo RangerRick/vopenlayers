@@ -39,12 +39,14 @@ public class XyzLayerExample extends AbstractVOLTest {
         xyzLayer.setUri("http://tiles.kartat.kapsi.fi/peruskartta/${z}/${x}/${y}.png");
         xyzLayer.setSphericalMercator(true);
         xyzLayer.setDisplayName("Peruskartta");
+        xyzLayer.setAttribution("Kartta: Maanmittauslaitos, hosted by kartat.kapsi.fi");
         map.addComponent(xyzLayer);
         
         xyzLayer = new XYZLayer();
         xyzLayer.setUri("http://tiles.kartat.kapsi.fi/ortokuva/${z}/${x}/${y}.png");
         xyzLayer.setSphericalMercator(true);
         xyzLayer.setDisplayName("Ortokuva");
+        xyzLayer.setAttribution("Kartta: Maanmittauslaitos, hosted by kartat.kapsi.fi");
         map.addComponent(xyzLayer);
         
         map.addLayer(new OpenStreetMapLayer());

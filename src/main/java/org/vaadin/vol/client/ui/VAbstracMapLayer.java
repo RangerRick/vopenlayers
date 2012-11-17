@@ -27,6 +27,7 @@ public abstract class VAbstracMapLayer<T extends Layer> extends Widget
     private GwtOlHandler loadStartHandler;
     private GwtOlHandler loadEndHandler;
     private GwtOlHandler visChangedHandler;
+    private String attribution;
     
 
     public T getLayer() {
@@ -47,6 +48,8 @@ public abstract class VAbstracMapLayer<T extends Layer> extends Widget
             this.paintableId = uidl.getId();
         }
         
+        attribution = uidl.hasAttribute("attribution") ? uidl
+                .getStringAttribute("attribution") : null;
         displayName = uidl.hasAttribute("name") ? uidl
                 .getStringAttribute("name") : null;
         projection = uidl.hasAttribute("projection") ? uidl
@@ -127,6 +130,10 @@ public abstract class VAbstracMapLayer<T extends Layer> extends Widget
 
     protected String getDisplayName() {
         return displayName;
+    }
+    
+    protected String getAttribution() {
+        return attribution;
     }
 
 }
