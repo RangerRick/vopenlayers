@@ -2,10 +2,12 @@ package org.vaadin.vol.demo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import com.vaadin.Application;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
+import com.vaadin.data.util.DefaultItemSorter;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Label;
@@ -133,7 +135,23 @@ public class VolApplication extends Application {
                 }
             }
         }
+        
+        // sorting - start
+        indexedContainer.setItemSorter(new DefaultItemSorter(new Comparator<Object>() {
+            public int compare(Object o1, Object o2) {
+                if (o1 instanceof String && o2 instanceof String) {
+                    return ((String) o1).compareTo(
+                            ((String) o2));
+                }
+                return 0;
 
+            }
+        }));
+        
+        String[] propertyIds={"name"};
+        boolean[] ascending={true};
+        indexedContainer.sort(propertyIds, ascending);
+        // sorting - end
         return indexedContainer;
     }
 
