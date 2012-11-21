@@ -16,8 +16,6 @@ import com.vaadin.ui.Component;
 /**
  * Loads different feature types from a wfs use beforefeature select event
  * to show messages.
- * TODO - only the last added Listener catch the mouse clicks, seems to be a bug
- * in mouse click handling
  */
 public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
 

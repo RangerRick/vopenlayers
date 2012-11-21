@@ -29,6 +29,18 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
 	private boolean visibilitySet=false; // maybe, should change to the setDirty
 										// way from org.vaadin.vol.OpenLayersMap
 	
+
+	// it's a really poor implementation but I don't unterstand the use of
+	// org.vaadin.vol.filter.Filter :-(
+	// If I got an idea how to pass such filter object to the client site I will
+	// change the code
+	private String filterValue;
+	private String filterProp;
+	private String filterType;
+	private boolean filterRefresh=false;
+	private boolean filterSet=false; // maybe, should change to the setDirty
+									// way from org.vaadin.vol.OpenLayersMap
+	
 	/**
 	 * this will be used to group vector layers to share the same SelectFeature
 	 * control 
@@ -83,6 +95,16 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
         if (visibilitySet) {
         	target.addAttribute("visibility",visibility);
         	visibilitySet=false;
+        }
+        if (filterSet) {
+        	target.addAttribute("filterValue",filterValue);
+        	target.addAttribute("filterType",filterType);
+        	target.addAttribute("filterProp",filterProp);
+        	if (filterRefresh) {
+        		target.addAttribute("filterRefresh",true);
+        		filterRefresh=false;
+        	}
+        	filterSet=false;
         }
     }
 
@@ -145,8 +167,19 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
 		this.visibilitySet = true;
 		requestRepaint();
 	}
+	
+	public void setFilter(String filterType,String filterProp,String filterValue) {
+		this.filterType=filterType;
+		this.filterProp=filterProp;
+		this.filterValue=filterValue;
+		this.filterSet=true;
+		requestRepaint();
+	}
 
-
+	public void setFilterAndRefresh(String filterType,String filterProp,String filterValue) {
+		this.filterRefresh=true;
+		setFilter(filterType,filterProp,filterValue);
+	}
 
 	public interface FeatureSelectedListener {
 
@@ -263,11 +296,9 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
     }
 
     public class BeforeFeatureSelectedEvent extends FeatureSelectedEvent {
-
 		public BeforeFeatureSelectedEvent(Component source, String featureId,Map<String, Object> attr, String wkt) {
 			super(source, featureId, attr, wkt);
 		}
-
     }
 
 }

@@ -101,4 +101,30 @@ public class VectorLayer extends Layer {
 		this.events.register(eventName,this,f);
 		
 	}-*/;
+	
+	/**
+	 * set to restrict content for the layer
+	 * @param filterType kind of filter (==,!=,<,<=,>,>=,..,~)
+	 * @param filterProp filtered property
+	 * @param filterValue value for filter
+	 */
+	public native final void setFilter(String filterType,String filterProp,
+			String filterValue)
+	/*-{
+	 if (filterValue) {
+		 this.filter=new $wnd.OpenLayers.Filter.Comparison({
+	                            type: filterType,
+	                            property: filterProp,
+	                            value: filterValue
+	                        });
+     }
+     else
+     	 this.filter=null;
+	}-*/;
+
+	public native final void refresh()
+	/*-{
+ 		this.refresh({force: true});
+	}-*/;
+
 }

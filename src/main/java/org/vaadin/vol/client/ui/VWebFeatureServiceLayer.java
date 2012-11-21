@@ -12,11 +12,12 @@ public class VWebFeatureServiceLayer extends
 	private String uri;
 	private String featureType;
 	private String ns;
+
 	@Override
 	WebFeatureServiceLayer createLayer() {
 		if (layer == null) {
 			layer = WebFeatureServiceLayer.create(getDisplay(), uri, featureType,
-					ns, getProjection(), getStyleMap());
+				ns, getProjection(), getStyleMap());
 		}
 		return (WebFeatureServiceLayer) layer;
 	}
@@ -29,12 +30,22 @@ public class VWebFeatureServiceLayer extends
 			featureType = uidl.getStringAttribute("featureType");
 			ns = uidl.getStringAttribute("featureNS");
 		}
+		
 		super.updateFromUIDL(uidl, client);
 
+        if (uidl.hasAttribute("filterType") && layer!=null) {
+        	String filterType=uidl.getStringAttribute("filterType");
+        	String filterProp=uidl.getStringAttribute("filterProp");
+        	String filterValue=uidl.getStringAttribute("filterValue");
+    		layer.setFilter(filterType,filterProp,filterValue);                	
+        	if(uidl.hasAttribute("filterRefresh"))
+        		layer.refresh();
+        }
+		
         if (uidl.hasAttribute("visibility") && layer!=null)
-        	layer.setVisability(uidl.getBooleanAttribute("visibility"));
+        	layer.setVisability(uidl.getBooleanAttribute("visibility"));        
 
-		updateSelectionControl(client);
+        updateSelectionControl(client);        
 	}
 
 	public String getUri() {
