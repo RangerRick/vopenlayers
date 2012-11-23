@@ -1,5 +1,6 @@
 package org.vaadin.vol;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import org.vaadin.vol.client.Costants;
@@ -14,7 +15,7 @@ import com.vaadin.terminal.PaintTarget;
  * possibly overridden style name in the vector.
  * 
  */
-public class StyleMap {
+public class StyleMap implements Serializable {
 
     private HashMap<String, Style> styles = new HashMap<String, Style>();
 

@@ -1,6 +1,8 @@
 package org.vaadin.vol;
 
-public class PointInformation {
+import java.io.Serializable;
+
+public class PointInformation implements Serializable {
 
     private int x;
     private int y;

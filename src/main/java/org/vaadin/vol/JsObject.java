@@ -1,5 +1,6 @@
 package org.vaadin.vol;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -8,7 +9,7 @@ import java.util.Set;
  * A helper class to reproduce Javascript Object on server side
  * 
  */
-public class JsObject {
+public class JsObject implements Serializable {
 	private HashMap<String, Object> keyvalue;
 
 	public JsObject() {

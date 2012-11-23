@@ -1,6 +1,8 @@
 package org.vaadin.vol;
 
-public class RenderIntent {
+import java.io.Serializable;
+
+public class RenderIntent implements Serializable {
     public static final RenderIntent DEFAULT = new RenderIntent("default");
     public static final RenderIntent SELECT = new RenderIntent("select");
     public static final RenderIntent TEMPORARY = new RenderIntent("temporary");
