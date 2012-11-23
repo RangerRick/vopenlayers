@@ -1,9 +1,11 @@
 package org.vaadin.vol;
 
+import java.io.Serializable;
+
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 
-public class Bounds {
+public class Bounds implements Serializable {
 
     private double top;
     private double bottom;
@@ -12,10 +14,12 @@ public class Bounds {
 
     public Bounds(Point... points) {
         init();
-
         for (int i = 0; i < points.length; i++) {
             Point p = points[i];
             extend(p);
+        }
+        if(points.length == 1) {
+            extend(points[0]);
         }
     }
 
