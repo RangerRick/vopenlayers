@@ -140,4 +140,9 @@ public class MapOverlay extends AbstractOpenLayersWrapper {
         return this.getLonLatFromPixel(pixel);
     }-*/;
 
+    public final native void updateSize()
+    /*-{
+        this.updateSize();
+    }-*/;
+
 }

@@ -15,6 +15,7 @@ import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.control.Control;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.user.client.Element;
@@ -32,6 +33,7 @@ import com.vaadin.terminal.gwt.client.VConsole;
 import com.vaadin.terminal.gwt.client.ui.Action;
 import com.vaadin.terminal.gwt.client.ui.ActionOwner;
 import com.vaadin.terminal.gwt.client.ui.TreeAction;
+import com.vaadin.terminal.gwt.client.ui.VLazyExecutor;
 
 /**
  * Client side widget which communicates with the server. Messages from the
@@ -450,5 +452,23 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
     public void attachSpecialWidget(Widget paintable,
             com.google.gwt.dom.client.Element elementById) {
         add(paintable, (Element) elementById.cast());
+    }
+    
+    VLazyExecutor resizeMap = new VLazyExecutor(300, new ScheduledCommand() {
+        public void execute() {
+            map.updateSize();
+        }
+    });
+    
+    @Override
+    public void setWidth(String width) {
+        super.setWidth(width);
+        resizeMap.trigger();
+    }
+    
+    @Override
+    public void setHeight(String height) {
+        super.setHeight(height);
+        resizeMap.trigger();
     }
 }

@@ -143,4 +143,8 @@ public class Map extends Widget {
         return getMap().getLonLatFromPixel(pixel);
     }
 
+    public void updateSize() {
+        getMap().updateSize();
+    }
+
 }
